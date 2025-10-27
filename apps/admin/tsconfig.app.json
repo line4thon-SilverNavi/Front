@@ -22,7 +22,24 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* Paths */
+    "baseUrl": ".",
+    "paths": {
+      "@apis/*": ["src/apis/*"],
+      "@atoms/*": ["src/atoms/*"],
+      "@components/*": ["src/components/*"],
+      "@constants/*": ["src/constants/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@pages/*": ["src/pages/*"],
+      "@layouts/*": ["src/layouts/*"],
+      "@interfaces/*": ["src/lib/interfaces/*"],
+      "@routes/*": ["src/routes/*"],
+      "@styles/*": ["src/styles/*"],
+      "@core": ["../../packages/core/src"],
+      "@core/*": ["../../packages/core/src/*"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "../../packages/core/src/theme-aug.d.ts"]
 }

@@ -8,5 +8,8 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "styled-components": "^6.1.19"
+  }
 }
