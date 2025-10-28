@@ -11,5 +11,6 @@ export default defineConfig({
       "@pages": path.resolve(__dirname, "./src/pages"),
       "@core": path.resolve(__dirname, "../../packages/core/src"),
     },
+    dedupe: ["react", "react-dom", "styled-components"],
   },
 });

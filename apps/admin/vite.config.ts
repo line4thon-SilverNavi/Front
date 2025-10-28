@@ -10,5 +10,6 @@ export default defineConfig({
       "@layouts": path.resolve(__dirname, "./src/layouts"),
       "@core": path.resolve(__dirname, "../../packages/core/src"),
     },
+    dedupe: ["react", "react-dom", "styled-components"],
   },
 });

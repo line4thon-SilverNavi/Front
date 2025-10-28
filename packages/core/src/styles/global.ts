@@ -1,6 +1,6 @@
 import { createGlobalStyle, css } from "styled-components";
 
-export const global = (maxWidth: string, isAdmin = false) => css`
+export const global = (maxWidth: string) => css`
   ${resetCSS}
 
   @font-face {
@@ -23,12 +23,14 @@ export const global = (maxWidth: string, isAdmin = false) => css`
       Arial,
       "Noto Sans KR",
       sans-serif;
+    background-color: ${({ theme }) => theme.colors.blue03};
   }
 
   #root {
     max-width: ${maxWidth};
     width: 100%;
     margin: 0 auto;
+    background-color: white;
   }
 `;
 
@@ -80,7 +82,6 @@ const resetCSS = css`
 
 export const GlobalStyle = createGlobalStyle<{
   maxWidth: string;
-  isAdmin: boolean;
 }>`
-  ${({ maxWidth, isAdmin }) => global(maxWidth, isAdmin)}
+  ${({ maxWidth }) => global(maxWidth)}
 `;

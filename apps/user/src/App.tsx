@@ -4,7 +4,7 @@ import { SilverNaviProvider } from "@core";
 
 function App() {
   return (
-    <SilverNaviProvider isAdmin={false}>
+    <SilverNaviProvider maxWidth="393px">
       <RouterProvider router={router} />
     </SilverNaviProvider>
   );

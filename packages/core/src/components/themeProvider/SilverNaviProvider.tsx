@@ -5,17 +5,15 @@ import { theme } from "../../styles/theme";
 
 type SilverNaviProviderProps = PropsWithChildren<{
   maxWidth?: string;
-  isAdmin?: boolean;
 }>;
 
 const SilverNaviProvider = ({
   maxWidth = "none",
-  isAdmin = false,
   children,
 }: SilverNaviProviderProps) => {
   return (
     <ThemeProvider theme={theme(maxWidth)}>
-      <GlobalStyle maxWidth={maxWidth} isAdmin={isAdmin} />
+      <GlobalStyle maxWidth={maxWidth} />
       {children}
     </ThemeProvider>
   );

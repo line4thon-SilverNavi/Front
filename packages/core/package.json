@@ -5,19 +5,29 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsup src/index.ts --dts --format esm,cjs --out-dir dist"
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
   },
-  "devDependencies": {
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
-    "styled-components": "^6.1.19",
-    "tsup": "^8.5.0",
-    "typescript": "^5.9.3"
+  "scripts": {
+    "build": "tsup src/index.ts --dts --format esm,cjs --out-dir dist --external react,react-dom,react/jsx-runtime,styled-components"
   },
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18",
     "styled-components": "^6"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
   }
 }
