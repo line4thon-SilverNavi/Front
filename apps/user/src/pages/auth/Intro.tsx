@@ -1,4 +1,5 @@
 import { Button, ButtonLayout } from "@core/ui/button";
+import OrDivider from "@core/ui/OrDivider";
 import * as s from "./Intro_styled";
 
 const Intro = () => {
@@ -12,7 +13,7 @@ const Intro = () => {
         <Button tone="blue" radius="5px" typo="body3">
           기존 계정으로 로그인
         </Button>
-        <p>또는</p>
+        <OrDivider>또는</OrDivider>
         <ButtonLayout type="stack" gap={12}>
           <Button tone="blue" variant="outline" radius="5px" typo="body3">
             데모 계정으로 시작
