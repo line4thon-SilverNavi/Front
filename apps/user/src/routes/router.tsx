@@ -10,17 +10,19 @@ import Home from "@pages/home/Home";
 import Mypage from "@pages/mypage/MyPage";
 import Btn from "@pages/test/Btn";
 import Intro from "@pages/auth/Intro";
+import Signup from "@pages/auth/Signup";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <DefaultLayout />,
     children: [
+      { path: "intro", element: <Intro /> },
       {
         path: "login",
         element: <Login />,
       },
-      { path: "intro", element: <Intro /> },
+      { path: "signup", element: <Signup /> },
       {
         // element: <PrivateRoute />,
         children: [
