@@ -2,12 +2,18 @@ import { Button, ButtonLayout } from "@core/ui/button";
 import OrDivider from "@core/ui/OrDivider";
 import * as s from "./Intro_styled";
 import { useNavigate } from "react-router-dom";
+import { postDemoLogin } from "@apis/auth/demoLogin";
 
 const Intro = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => navigate("/login");
   const handleSignup = () => navigate("/signup");
+  const handleDemoLogin = async () => {
+    const ok = await postDemoLogin();
+    if (ok) navigate("/");
+    else alert("데모 로그인 실패");
+  };
 
   return (
     <s.IntroWrapper>
@@ -21,7 +27,13 @@ const Intro = () => {
         </Button>
         <OrDivider>또는</OrDivider>
         <ButtonLayout type="stack" gap={12}>
-          <Button tone="blue" variant="outline" radius="5px" typo="body3">
+          <Button
+            tone="blue"
+            variant="outline"
+            radius="5px"
+            typo="body3"
+            onClick={handleDemoLogin}
+          >
             데모 계정으로 시작
           </Button>
           <Button
