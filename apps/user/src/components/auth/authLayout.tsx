@@ -65,7 +65,7 @@ const Content = styled.div`
 `;
 
 const Footer = styled.footer`
-  padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
+  padding: 16px 0px calc(16px + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   gap: 12px;
