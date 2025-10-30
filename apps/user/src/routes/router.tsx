@@ -8,6 +8,7 @@ import DefaultLayout from "@layouts/DefaultLayout";
 import Login from "@pages/login/Login";
 import Home from "@pages/home/Home";
 import Mypage from "@pages/mypage/MyPage";
+import Btn from "@pages/test/Btn";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <Home /> },
           { path: "mypage", element: <Mypage /> },
+          { path: "button", element: <Btn /> },
         ],
       },
     ],
