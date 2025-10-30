@@ -9,8 +9,7 @@ export const global = (maxWidth: string) => css`
   }
 
   body {
-    width: 100%;
-    min-height: 100%;
+    width: 100vw;
     display: flex;
     justify-content: center;
     font-family:
@@ -29,8 +28,9 @@ export const global = (maxWidth: string) => css`
   #root {
     max-width: ${maxWidth};
     width: 100%;
-    margin: 0 auto;
     background-color: white;
+    min-height: 100dvh; /* 여기도 vh 대신 d/vh */
+    height: 100svh; /* iOS Safari 대응 */
   }
 `;
 
@@ -41,14 +41,9 @@ const resetCSS = css`
     box-sizing: border-box;
   }
   * {
-    margin: 0;
     padding: 0;
-  }
-
-  html,
-  body,
-  #root {
-    height: 100%;
+    margin: 0;
+    box-sizing: border-box;
   }
 
   ul,
@@ -62,6 +57,13 @@ const resetCSS = css`
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    min-height: 100dvh; /* 동적 뷰포트 */
   }
 
   a {
