@@ -40,6 +40,7 @@ const Wrap = styled.div`
   background: #fff;
   padding: 1.36rem 1.36rem calc(1.36rem + env(safe-area-inset-bottom));
   gap: 1rem;
+  flex: 1;
 `;
 
 const Header = styled.header`
