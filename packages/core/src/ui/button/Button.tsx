@@ -24,7 +24,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const SIZE_MAP: Record<Size, { h: string; pad: string }> = {
   sm: { h: "36px", pad: "8px 14px" },
   md: { h: "44px", pad: "12px 18px" },
-  lg: { h: "52px", pad: "16px 60px" },
+  lg: { h: "60px", pad: "20px 60px" },
 };
 
 // tone별 색상
