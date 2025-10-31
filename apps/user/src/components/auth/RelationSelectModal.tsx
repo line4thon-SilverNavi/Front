@@ -80,7 +80,7 @@ const Sheet = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.colors.gray01};
   border-radius: 20px 20px 0 0;
-  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+  padding: 1.3rem 1.3rem calc(16px + env(safe-area-inset-bottom));
   max-width: 393px;
 `;
 
@@ -92,10 +92,12 @@ const Header = styled.div`
 
   h3 {
     margin: 0;
-    font-size: 16px;
+    color: ${({ theme }) => theme.colors.gray07};
+    ${({ theme }) => theme.fonts.heading3}
   }
   button {
-    font-size: 18px;
+    font-size: 17px;
+    color: ${({ theme }) => theme.colors.gray05};
   }
 `;
 
