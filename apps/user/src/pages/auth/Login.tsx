@@ -32,11 +32,12 @@ export default function LoginPage() {
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
         <InputContainer
-          label="아이디"
+          label="휴대폰 번호"
           value={id}
-          onChange={setId}
-          placeholder="아이디"
+          onChange={(v) => setId(v.replace(/[^0-9]/g, ""))}
+          placeholder="휴대폰 번호를 입력해주세요.(- 빼고 입력)"
           autoComplete="username"
+          type="number"
           helperText=" "
         />
         <InputContainer
