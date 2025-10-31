@@ -5,7 +5,7 @@ import type { PropsWithChildren } from "react";
 type AuthLayoutProps = {
   title: string;
   onBack?: () => void;
-  footer?: React.ReactNode; // 하단 버튼 등
+  footer?: React.ReactNode;
 };
 
 export default function AuthLayout({
@@ -36,11 +36,10 @@ const Wrap = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  height: 100svh;
   background: #fff;
   padding-bottom: env(safe-area-inset-bottom);
   padding: 1.36rem;
-  gap: 2rem;
+  gap: 1rem;
 `;
 
 const Header = styled.header`
@@ -69,4 +68,5 @@ const Footer = styled.footer`
   display: flex;
   flex-direction: column;
   gap: 12px;
+  bottom: 1rem;
 `;
