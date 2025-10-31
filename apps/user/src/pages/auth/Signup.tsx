@@ -21,13 +21,7 @@ export default function Signup() {
   const onSubmit = async () => {
     setError(null);
 
-    if (!name || !relation || !phone)
-      return setError("필수 항목을 입력해주세요.");
-    if (pw.length < 6 || pw.length > 21)
-      return setError("비밀번호는 6자 이상 20자 이하이어야 합니다.");
-    if (pw !== pwCheck) return setError("비밀번호가 일치하지 않습니다.");
-
-    const ok = await postSignup({
+    const res = await postSignup({
       name,
       relation,
       phone: phone.replace(/[^0-9]/g, ""),
@@ -35,7 +29,10 @@ export default function Signup() {
       passwordCheck: pwCheck,
     });
 
-    if (!ok) return setError("회원가입에 실패했습니다.");
+    if (!res?.isSuccess) {
+      return setError(res?.message || "회원가입에 실패했습니다.");
+    }
+
     navigate("/login");
   };
 
@@ -104,7 +101,6 @@ export default function Signup() {
           type="password"
           autoComplete="new-password"
           showToggleForPassword
-          errorText={error ?? undefined}
         />
       </div>
     </AuthLayout>

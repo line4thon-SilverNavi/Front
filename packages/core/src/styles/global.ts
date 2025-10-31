@@ -29,8 +29,8 @@ export const global = (maxWidth: string) => css`
     max-width: ${maxWidth};
     width: 100%;
     background-color: white;
-    min-height: 100dvh; /* 여기도 vh 대신 d/vh */
-    height: 100svh; /* iOS Safari 대응 */
+    min-height: 100vh;
+    height: 100%;
   }
 `;
 

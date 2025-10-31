@@ -15,6 +15,8 @@ export default DefaultLayout;
 const OutletWrapper = styled.section`
   display: flex;
   flex-direction: column;
-  height: auto;
-  min-height: 100dvh;
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  flex: 1;
 `;
