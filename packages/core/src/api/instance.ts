@@ -19,11 +19,7 @@ type TokenErrorBody = {
 // retry 플래그를 추가한 요청 타입
 type RetriableRequest = InternalAxiosRequestConfig & { _retry?: boolean };
 
-const PUBLIC_PATHS = [
-  "/api/auth/signup/",
-  "/api/auth/login/",
-  "/api/auth/refresh/",
-];
+const PUBLIC_PATHS = ["/api/users/signup", "/api/users/signin"];
 
 /* -------------------- Request interceptor -------------------- */
 instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
@@ -31,13 +27,15 @@ instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 
   const headers = (config.headers ?? {}) as AxiosRequestHeaders;
 
-  const isPublic = PUBLIC_PATHS.some((path) =>
-    (config.url ?? "").includes(path)
-  );
-  if (!isPublic && accessToken) {
-    headers.Authorization = `Bearer ${accessToken}`;
-  }
+  const isPublic = PUBLIC_PATHS.some((p) => (config.url ?? "").includes(p));
 
+  if (isPublic) {
+    delete headers.Authorization;
+  } else {
+    const token = localStorage.getItem("access");
+    if (token) headers.Authorization = `Bearer ${token}`;
+  }
+  headers["Content-Type"] ??= "application/json";
   config.headers = headers;
   return config;
 });
@@ -86,18 +84,23 @@ instance.interceptors.response.use(
 );
 
 /* -------------------- Helpers -------------------- */
-export const postResponse = async <TRequest, TResponse>(
+export async function postResponse<TReq, TRes>(
   url: string,
-  body: TRequest
-): Promise<TResponse | null> => {
+  body: TReq
+): Promise<TRes> {
   try {
-    const res = await instance.post<TResponse>(url, body);
+    const res = await instance.post(url, body);
     return res.data;
-  } catch (e: unknown) {
-    console.error("POST 요청 실패:", e);
-    return null;
+  } catch (err: any) {
+    // 서버가 주는 응답 메시지 추출
+    const fallback = {
+      isSuccess: false,
+      message: err?.response?.data?.message || "요청 중 오류가 발생했습니다.",
+    };
+
+    return fallback as TRes; // 실패 시에도 항상 반환
   }
-};
+}
 
 export const postNoResponse = async <TRequest>(
   url: string,

@@ -16,7 +16,11 @@ export default function LoginPage() {
   const onSubmit = async () => {
     setError(null);
     const res = await postLogin({ id, password: pw });
-    if (!res) return setError("로그인에 실패했습니다.");
+
+    if (!res?.isSuccess) {
+      return setError(res?.message || "로그인에 실패했습니다.");
+    }
+
     setTokens({ access: res.token, refresh: "" });
     navigate("/");
   };

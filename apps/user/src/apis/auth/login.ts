@@ -8,6 +8,8 @@ export type LoginRequest = {
 export type LoginResponse = {
   token: string;
   careGrade: string | null;
+  message: string;
+  isSuccess: boolean;
 };
 
 export async function postLogin(body: LoginRequest) {
