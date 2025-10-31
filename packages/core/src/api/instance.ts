@@ -23,8 +23,6 @@ const PUBLIC_PATHS = ["/api/users/signup", "/api/users/signin"];
 
 /* -------------------- Request interceptor -------------------- */
 instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const accessToken = localStorage.getItem("access");
-
   const headers = (config.headers ?? {}) as AxiosRequestHeaders;
 
   const isPublic = PUBLIC_PATHS.some((p) => (config.url ?? "").includes(p));
