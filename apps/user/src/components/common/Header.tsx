@@ -4,7 +4,8 @@ import { useState } from "react";
 
 export default function Header(){
     const { address, error } = useFetchAddress();
-    const [ noti, setNoti] = useState(false);
+    const [ noti, _setNoti] = useState(false);
+    // _setNoti 추후 알림기능 백과 연동 후 사용
 
     return(
         <HeaderContainer>
