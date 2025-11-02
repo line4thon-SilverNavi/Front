@@ -1,6 +1,8 @@
 {
   "packageManager": "yarn@4.10.3",
   "devDependencies": {
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
     "eslint": "^9.38.0",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3"
@@ -8,5 +10,10 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.5"
+  }
 }
