@@ -58,6 +58,7 @@ const CardWrapper = styled.div`
     width: 100%;
     border-radius: 20px;
     position: relative;
+    cursor: pointer;
 `;
 
 const BookmarkButtonWrapper = styled.div`

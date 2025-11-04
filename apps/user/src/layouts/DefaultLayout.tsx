@@ -9,9 +9,13 @@ const DefaultLayout = () => {
   // Header와 NavBar를 숨길 경로들
   const noNavBar = ["/intro", "/login", "/signup"];
   const showNavBar = !noNavBar.includes(location.pathname);
+  
+  // Padding을 제외할 경로들 (auth 관련 페이지)
+  const noPadding = ["/intro", "/login", "/signup"];
+  const hasPadding = !noPadding.includes(location.pathname);
 
   return (
-    <OutletWrapper>
+    <OutletWrapper $hasPadding={hasPadding}>
       {showNavBar && <Header />}
       <ContentWrapper>
         <Outlet />
@@ -23,14 +27,18 @@ const DefaultLayout = () => {
 
 export default DefaultLayout;
 
-const OutletWrapper = styled.section`
+const OutletWrapper = styled.section<{ $hasPadding: boolean }>`
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 100vh;
   background: ${({ theme }) => theme.colors.gray01};
-  padding: 1.36rem 1.36rem calc(1.36rem + env(safe-area-inset-bottom));
-  gap: 1rem;
+  padding: ${({ $hasPadding }) => 
+    $hasPadding 
+      ? '1.36rem 1.36rem calc(1.36rem + env(safe-area-inset-bottom))' 
+      : '0'
+  };
+  gap: ${({ $hasPadding }) => ($hasPadding ? '1rem' : '0')};
 `;
 
 const ContentWrapper = styled.div`
