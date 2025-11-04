@@ -205,7 +205,7 @@ const ApplicantText = styled.p`
 
 const ProgressBarContainer = styled.div`
     flex: 1;
-    height: 8px;
+    height: 5px;
     background-color: ${({ theme }) => theme.colors.gray03};
     border-radius: 4px;
     overflow: hidden;
