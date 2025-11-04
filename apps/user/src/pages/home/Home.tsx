@@ -125,8 +125,10 @@ const Home = () => {
       }
     };
 
-    fetchFacilities();
-    fetchPrograms();
+    // 일단 더미 데이터만 사용 (API 서버 연결 확인 필요)
+    console.log("API 서버 연결 실패 - 더미 데이터 사용 중");
+    // fetchFacilities();
+    // fetchPrograms();
   }, []);
 
   return (
@@ -153,7 +155,7 @@ const Home = () => {
         )}
       </s.Facilities>
 
-      <s.SectionTitle>프로그램 목록</s.SectionTitle>
+      <s.SectionTitle className="horizontal-scroll-title">프로그램 목록</s.SectionTitle>
       <s.Programs>
         {programs.length > 0 ? (
           programs.map((program) => (
