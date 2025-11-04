@@ -63,8 +63,8 @@ const CardWrapper = styled.div`
 
 const BookmarkButtonWrapper = styled.div`
     position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
+    top: 0.8rem;
+    right: 0.8rem;
     z-index: 10;
 `;
 
