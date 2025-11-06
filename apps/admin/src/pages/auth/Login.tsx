@@ -65,6 +65,8 @@ const Login = () => {
           errorText={error ?? undefined}
           labelTypo="heading2"
           inputTypo="heading1"
+          width="38.4px"
+          height="38.4px"
         />
       </s.LoginContent>
 

@@ -32,7 +32,7 @@ const AuthLayoutWrapper = styled.div`
 `;
 const TitleArea = styled.div`
   width: 100%;
-  max-width: 730px;
+  max-width: 750px;
   margin: 0 auto clamp(8px, 1vh, 20px);
 `;
 

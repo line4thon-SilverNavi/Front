@@ -24,6 +24,8 @@ type Props = {
   labelTypo?: FontKey;
   inputTypo?: FontKey;
   descTypo?: FontKey;
+  width?: string;
+  height?: string;
 };
 
 export default function InputContainer({
@@ -43,6 +45,8 @@ export default function InputContainer({
   onClickInput,
   labelTypo = "label",
   inputTypo = "body2",
+  width,
+  height,
 }: Props) {
   const id = useId();
   const [show, setShow] = useState(false);
@@ -87,7 +91,11 @@ export default function InputContainer({
         />
 
         {rightIconVisible && (
-          <IconButton onClick={() => setShow((p) => !p)}>
+          <IconButton
+            onClick={() => setShow((p) => !p)}
+            width={width}
+            height={height}
+          >
             <img src={show ? openIcon : closeIcon} />
           </IconButton>
         )}
@@ -151,14 +159,14 @@ const Input = styled.input<{
   }
 `;
 
-const IconButton = styled.div`
+const IconButton = styled.div<{ width?: string; height?: string }>`
   position: absolute;
   right: 0;
   line-height: 1;
 
   img {
-    width: 24px;
-    height: 24px;
+    width: ${({ width }) => width || "24px"};
+    height: ${({ height }) => height || "24px"};
     cursor: pointer;
   }
 `;

@@ -60,7 +60,7 @@ const Signup = () => {
           label="제휴코드"
           value={code}
           onChange={setCode}
-          placeholder="제휴코드를 입력하세요."
+          placeholder="제휴코드를 입력하세요"
           autoComplete="code"
           type="text"
           labelTypo="heading2"
@@ -70,7 +70,7 @@ const Signup = () => {
           label="아이디"
           value={id}
           onChange={setId}
-          placeholder="아이디를 입력해주세요."
+          placeholder="아이디를 입력하세요"
           autoComplete="id"
           type="text"
           helperText=" "
@@ -88,18 +88,22 @@ const Signup = () => {
           labelTypo="heading2"
           inputTypo="heading1"
           errorText={error ?? undefined}
+          width="38.4px"
+          height="38.4px"
         />
         <InputContainer
           label="비밀번호 확인"
-          value={pwCheck}
           onChange={setPwCheck}
           placeholder="영문, 숫자, 특수문자 조합 6자 이상"
           type="password"
           autoComplete="new-password"
           showToggleForPassword
           labelTypo="heading2"
+          value={pwCheck}
           inputTypo="heading1"
           errorText={error ?? undefined}
+          width="38.4px"
+          height="38.4px"
         />
       </s.LoginContent>
       <Button
