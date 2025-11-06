@@ -13,7 +13,7 @@ export const dummyProgramData: ProgramListResponse[] = [
     currentApplicants: 15,
     capacity: 20,
     fee: "무료",
-    thumbnail: "/img/dummy/ImageWithFallback.png",
+    thumbnail: "/img/dummy/ProgramDummyImage.png",
     bookmarked: true,
   },
   {
@@ -28,7 +28,7 @@ export const dummyProgramData: ProgramListResponse[] = [
     currentApplicants: 18,
     capacity: 20,
     fee: "5,000원",
-    thumbnail: "/img/dummy/ImageWithFallback.png",
+    thumbnail: "/img/dummy/ProgramDummyImage.png",
     bookmarked: false,
   },
   {
@@ -43,7 +43,7 @@ export const dummyProgramData: ProgramListResponse[] = [
     currentApplicants: 12,
     capacity: 15,
     fee: "무료",
-    thumbnail: "/img/dummy/ImageWithFallback.png",
+    thumbnail: "/img/dummy/ProgramDummyImage.png",
     bookmarked: false,
   },
 ];

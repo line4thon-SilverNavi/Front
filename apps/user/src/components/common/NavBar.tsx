@@ -1,27 +1,43 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function NavBar(){
-    const [ menu, setMenu] = useState("home");
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const getActiveMenu = () => {
+        const path = location.pathname;
+        if (path === "/") return "home";
+        if (path.startsWith("/facility")) return "facility";
+        if (path.startsWith("/calendar")) return "calendar";
+        if (path.startsWith("/mypage")) return "mypage";
+        return "home";
+    };
+
+    const activeMenu = getActiveMenu();
+
+    const handleMenuClick = (path: string) => {
+        navigate(path);
+    };
 
     return(
         <NavBarContainer>
             <MenuBar>
-                <MenuContainer onClick={() => setMenu("home")} $isActive={menu === "home"}>
-                    <img src={menu === "home" ? "/img/navbar/home-blue.png" : "/img/navbar/home-gray.png"}/>
-                    <MenuText $isActive={menu === "home"}>홈</MenuText>
+                <MenuContainer onClick={() => handleMenuClick("/")} $isActive={activeMenu === "home"}>
+                    <img src={activeMenu === "home" ? "/img/navbar/home-blue.png" : "/img/navbar/home-gray.png"}/>
+                    <MenuText $isActive={activeMenu === "home"}>홈</MenuText>
                 </MenuContainer>
-                <MenuContainer onClick={() => setMenu("facility")} $isActive={menu === "facility"}>
-                    <img src={menu === "facility" ? "/img/navbar/facility-blue.png" : "/img/navbar/facility-gray.png"} />
-                    <MenuText $isActive={menu === "facility"}>시설</MenuText>
+                <MenuContainer onClick={() => handleMenuClick("/facility")} $isActive={activeMenu === "facility"}>
+                    <img src={activeMenu === "facility" ? "/img/navbar/facility-blue.png" : "/img/navbar/facility-gray.png"} />
+                    <MenuText $isActive={activeMenu === "facility"}>시설</MenuText>
                 </MenuContainer>
-                <MenuContainer onClick={() => setMenu("calendar")} $isActive={menu === "calendar"}>
-                    <img src={menu === "calendar" ? "/img/navbar/calendar-blue.png" : "/img/navbar/calendar-gray.png"}/>
-                    <MenuText $isActive={menu === "calendar"}>캘린더</MenuText>
+                <MenuContainer onClick={() => handleMenuClick("/calendar")} $isActive={activeMenu === "calendar"}>
+                    <img src={activeMenu === "calendar" ? "/img/navbar/calendar-blue.png" : "/img/navbar/calendar-gray.png"}/>
+                    <MenuText $isActive={activeMenu === "calendar"}>캘린더</MenuText>
                 </MenuContainer>
-                <MenuContainer onClick={() => setMenu("mypage")} $isActive={menu === "mypage"}>
-                    <img src={menu === "mypage" ? "/img/navbar/mypage-blue.png" : "/img/navbar/mypage-gray.png"}/>
-                    <MenuText $isActive={menu === "mypage"}>마이</MenuText>
+                <MenuContainer onClick={() => handleMenuClick("/mypage")} $isActive={activeMenu === "mypage"}>
+                    <img src={activeMenu === "mypage" ? "/img/navbar/mypage-blue.png" : "/img/navbar/mypage-gray.png"}/>
+                    <MenuText $isActive={activeMenu === "mypage"}>마이</MenuText>
                 </MenuContainer>
             </MenuBar>
         </NavBarContainer>

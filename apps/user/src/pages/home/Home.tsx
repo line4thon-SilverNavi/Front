@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import * as s from "./Home_styled";
 import FacilityCard from "@components/facility/facilityCard";
 import ProgramCard from "@components/program/programCard";
@@ -8,6 +9,7 @@ import { dummyFacilityData } from "@apis/dummy/facilityDummy";
 import { dummyProgramData } from "@apis/dummy/programDummy";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [facilities, setFacilities] = useState<FacilityListResponse[]>(dummyFacilityData);
   const [programs, setPrograms] = useState<ProgramListResponse[]>(dummyProgramData);
   const [selectedCategory, setSelectedCategory] = useState<string>("전체");
@@ -112,11 +114,12 @@ const Home = () => {
 
       <s.SectionTitle className="withMoreInfo">
         가까운 복지시설
-        <s.MoreInfo>
+        <s.MoreInfo onClick={() => navigate("/facility")}>
             더보기
             <img src={"/img/home/arrow-right.png"}/>
       </s.MoreInfo>
       </s.SectionTitle>
+
       <s.Facilities>
         {facilities.length > 0 ? (
           facilities.map((facility) => (
