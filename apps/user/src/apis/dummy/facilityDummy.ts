@@ -1,0 +1,40 @@
+import type { FacilityListResponse } from "@apis/facility/facilityList";
+
+export const dummyFacilityData: FacilityListResponse[] = [
+  {
+    facilityId: 1,
+    name: "정릉주간보호센터",
+    thumbnail: "/img/dummy/ImageWithFallback.png",
+    distanceKm: 2.9,
+    averageRating: 4.4,
+    reviewCount: 28,
+    operatingHours: "평일 09:00 - 18:00",
+    phoneNumber: "02-321-7890",
+    category: "주간보호센터",
+    bookmarked: true,
+  },
+  {
+    facilityId: 2,
+    name: "성북노인복지관",
+    thumbnail: "/img/dummy/ImageWithFallback.png",
+    distanceKm: 1.5,
+    averageRating: 4.7,
+    reviewCount: 42,
+    operatingHours: "평일 09:00 - 18:00",
+    phoneNumber: "02-123-4567",
+    category: "복지관",
+    bookmarked: false,
+  },
+  {
+    facilityId: 3,
+    name: "안암동 데이케어센터",
+    thumbnail: "/img/dummy/ImageWithFallback.png",
+    distanceKm: 3.2,
+    averageRating: 4.2,
+    reviewCount: 15,
+    operatingHours: "평일 08:00 - 19:00",
+    phoneNumber: "02-987-6543",
+    category: "데이케어센터",
+    bookmarked: false,
+  },
+];

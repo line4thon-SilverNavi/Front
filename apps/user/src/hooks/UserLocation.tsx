@@ -55,8 +55,8 @@ export function useFetchAddress(){
         })
         .catch((err) => {
             if(isMounted) {
+                console.error("Kakao 주소 변환 실패:", err);
                 setError(err.message);
-                setAddress("오류");
             }
         });
 
