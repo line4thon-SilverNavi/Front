@@ -6,10 +6,17 @@ import PrivateRoute from "@layouts/PrivateLayout";
 import Login from "@pages/auth/Login";
 import Signup from "@pages/auth/Signup";
 
+import ScrollToTop from "@core/hooks/ScrollToTop";
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <DefaultLayout />,
+    element: (
+      <>
+        <ScrollToTop />
+        <DefaultLayout />
+      </>
+    ),
     children: [
       {
         path: "login",
