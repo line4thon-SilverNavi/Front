@@ -21,5 +21,20 @@ export const LoginContent = styled.div`
   width: 100%;
   margin-top: 2rem;
   margin-bottom: 2rem;
-  gap: 4rem;
+  gap: 1.875rem;
+`;
+
+export const TitleContainer = styled.section`
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  color: ${({ theme }) => theme.colors.blue01};
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 6rem;
+
+  img {
+    height: 22px;
+    cursor: pointer;
+  }
 `;

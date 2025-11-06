@@ -27,13 +27,13 @@ const AuthLayoutWrapper = styled.div`
   padding-inline: clamp(16px, 4vw, 48px);
   padding-block: clamp(16px, 5vh, 36px);
   padding-bottom: calc(
-    clamp(16px, 5vh, 36px) + env(safe-area-inset-bottom, 0px)
+    clamp(16px, 5vh, 25px) + env(safe-area-inset-bottom, 0px)
   );
 `;
 const TitleArea = styled.div`
   width: 100%;
   max-width: 730px;
-  margin: 0 auto clamp(8px, 2vh, 20px);
+  margin: 0 auto clamp(8px, 1vh, 20px);
 `;
 
 const Main = styled.main`
@@ -57,5 +57,5 @@ const Footer = styled.span`
   color: #b4b4bb;
   text-align: center;
   margin-top: auto;
-  padding-top: clamp(12px, 2vh, 20px);
+  padding-top: clamp(12px, 3vh, 20px);
 `;

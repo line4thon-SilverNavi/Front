@@ -47,7 +47,7 @@ const Login = () => {
           label="아이디"
           value={id}
           onChange={setId}
-          placeholder="아이디를 입력해주세요."
+          placeholder="아이디를 입력해주세요"
           autoComplete="id"
           type="text"
           helperText=" "
@@ -58,7 +58,7 @@ const Login = () => {
           label="비밀번호"
           value={pw}
           onChange={setPw}
-          placeholder="비밀번호"
+          placeholder="비밀번호를 입력해주세요"
           type="password"
           autoComplete="current-password"
           showToggleForPassword
