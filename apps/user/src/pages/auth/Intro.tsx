@@ -2,7 +2,7 @@ import { Button, ButtonLayout } from "@core/ui/button";
 import OrDivider from "@core/ui/OrDivider";
 import * as s from "./Intro_styled";
 import { useNavigate } from "react-router-dom";
-import { postDemoLogin } from "@apis/auth/demoLogin";
+import { postDemoLogin } from "@core/api/demoLogin";
 
 const Intro = () => {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ const Intro = () => {
   const handleLogin = () => navigate("/login");
   const handleSignup = () => navigate("/signup");
   const handleDemoLogin = async () => {
-    const ok = await postDemoLogin();
+    const ok = await postDemoLogin("user");
     if (ok) navigate("/");
     else alert("데모 로그인 실패");
   };

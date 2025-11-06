@@ -1,19 +1,8 @@
 import { postResponse } from "@core/api/instance";
+import type { AdminLoginRequest, LoginResponse } from "@core/api/login_type";
 
-export type LoginRequest = {
-  id: string;
-  password: string;
-};
-
-export type LoginResponse = {
-  token: string;
-  message: string;
-  isSuccess: boolean;
-  code: string;
-};
-
-export async function postLogin(body: LoginRequest) {
-  return await postResponse<LoginRequest, LoginResponse>(
+export async function postLogin(body: AdminLoginRequest) {
+  return await postResponse<AdminLoginRequest, LoginResponse>(
     "/api/managers/signin",
     body
   );

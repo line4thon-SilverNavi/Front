@@ -3,9 +3,9 @@ import { useState } from "react";
 import { Button } from "@core/ui/button";
 import { postLogin } from "@apis/auth/login";
 import { useNavigate } from "react-router-dom";
-import { setTokens } from "@apis/auth/auth";
 import AuthLayout from "@components/auth/authLayout";
 import InputContainer from "@core/components/inputContainer";
+import { setTokens } from "@core/api/auth";
 
 export default function LoginPage() {
   const [id, setId] = useState("");
@@ -21,7 +21,7 @@ export default function LoginPage() {
       return setError(res?.message || "로그인에 실패했습니다.");
     }
 
-    setTokens({ access: res.token, refresh: "" });
+    setTokens({ access: res.data.token, refresh: "" });
     navigate("/");
   };
 

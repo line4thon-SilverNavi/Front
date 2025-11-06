@@ -5,22 +5,32 @@ import * as s from "./Auth.styled";
 import { useState } from "react";
 import { postLogin } from "@apis/auth/login";
 import { useNavigate } from "react-router-dom";
+import { postDemoLogin } from "@core/api/demoLogin";
+import { setTokens } from "@core/api/auth";
 
 const Login = () => {
   const navigate = useNavigate();
+  const handleSignup = () => navigate("/signup");
+
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
   const [error, setError] = useState<string | null>(null);
   const onSubmit = async () => {
     setError(null);
-    const res = await postLogin({ id, password: pw });
+    const res = await postLogin({ loginId: id, password: pw });
 
     if (!res?.isSuccess) {
       return setError(res?.message || "로그인에 실패했습니다.");
     }
 
-    // setTokens({ access: res.token, refresh: "" });
+    setTokens({ access: res.data.token, refresh: "" });
     navigate("/");
+  };
+
+  const handleDemoLogin = async () => {
+    const ok = await postDemoLogin("admin");
+    if (ok) navigate("/");
+    else alert("데모 로그인 실패");
   };
 
   return (
@@ -74,6 +84,7 @@ const Login = () => {
           radius="9.6px"
           typo="heading2"
           size="adminAuth"
+          onClick={handleDemoLogin}
         >
           데모 계정으로 시작
         </Button>
@@ -83,6 +94,7 @@ const Login = () => {
           radius="9.6px"
           typo="heading2"
           size="adminAuth"
+          onClick={handleSignup}
         >
           회원가입
         </Button>
