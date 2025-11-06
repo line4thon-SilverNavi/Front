@@ -7,7 +7,7 @@ export const dummyFacilityData: FacilityListResponse[] = [
     thumbnail: "/img/dummy/ImageWithFallback.png",
     distanceKm: 2.9,
     averageRating: 4.4,
-    reviewCount: 28,
+    reviewCount: 100,
     operatingHours: "평일 09:00 - 18:00",
     phoneNumber: "02-321-7890",
     category: "주간보호센터",

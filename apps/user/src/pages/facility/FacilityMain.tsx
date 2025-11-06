@@ -8,12 +8,29 @@ import { Button } from "@core/ui/button/Button";
 const FacilityMain = () => {
     const [facilities, setFacilities] = useState<FacilityListResponse[]>(dummyFacilityData);
     const [selectedCategory, setSelectedCategory] = useState<string>("전체");
+    const [sortOption, setSortOption] = useState<string>("거리순");
+    const [isSortOpen, setIsSortOpen] = useState<boolean>(false);
 
     const categories = ["전체", "요양병원", "요양원/요양센터", "주간보호센터"];
+    const sortOptions = ["거리순", "평점순", "리뷰많은순"];
 
     const filteredFacility = selectedCategory === "전체" 
         ? facilities 
         : facilities.filter(facility => facility.category === selectedCategory);
+
+    // 정렬 로직
+    const sortedFacilities = [...filteredFacility].sort((a, b) => {
+        switch (sortOption) {
+            case "거리순":
+                return a.distanceKm - b.distanceKm;
+            case "평점순":
+                return b.averageRating - a.averageRating;
+            case "리뷰많은순":
+                return b.reviewCount - a.reviewCount;
+            default:
+                return 0;
+        }
+    });
 
     useEffect(() => {
         const fetchFacilities = async () => {
@@ -37,11 +54,33 @@ const FacilityMain = () => {
 
         <s.SectionTitle className="withMoreInfo">
             요양보호시설
-        <s.MoreInfo>
-                더보기
-                <img src={"/img/home/arrow-right.png"}/>
-        </s.MoreInfo>
         </s.SectionTitle>
+
+        <s.Selecting>
+            <s.Total>총 {sortedFacilities.length}개</s.Total>
+            <s.SortContainer>
+                <s.SortButton onClick={() => setIsSortOpen(!isSortOpen)}>
+                    {sortOption}
+                    <img src={"/img/facility/arrow-down.png"}/>
+                </s.SortButton>
+                {isSortOpen && (
+                    <s.SortDropdown>
+                        {sortOptions.map((option) => (
+                            <s.SortOption
+                                key={option}
+                                $isSelected={sortOption === option}
+                                onClick={() => {
+                                    setSortOption(option);
+                                    setIsSortOpen(false);
+                                }}
+                            >
+                                {option}
+                            </s.SortOption>
+                        ))}
+                    </s.SortDropdown>
+                )}
+            </s.SortContainer>
+        </s.Selecting>
         
         <s.CategoryButtons>
             {categories.map((category) => (
@@ -60,8 +99,8 @@ const FacilityMain = () => {
         </s.CategoryButtons>
 
         <s.Facilities>
-            {filteredFacility.length > 0 ? (
-            filteredFacility.map((facility) => (
+            {sortedFacilities.length > 0 ? (
+            sortedFacilities.map((facility) => (
                 <FacilityCard
                 key={facility.facilityId}
                 facilityId={facility.facilityId}
