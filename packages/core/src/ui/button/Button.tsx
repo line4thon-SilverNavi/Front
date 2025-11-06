@@ -33,7 +33,7 @@ const toneColor = (theme: DefaultTheme, tone: Tone) => {
   switch (tone) {
     case "gray":
       return {
-        base: c.gray07,
+        base: c.gray06,
         bg: c.gray03,
         subtle: c.gray02,
       };

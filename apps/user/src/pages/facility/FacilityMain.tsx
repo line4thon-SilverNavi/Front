@@ -3,7 +3,7 @@ import * as s from "./FacilityMain_styled";
 import FacilityCard from "@components/facility/facilityCard";
 import { getFacilityList, type FacilityListResponse } from "@apis/facility/facilityList";
 import { dummyFacilityData } from "@apis/dummy/facilityDummy";
-
+import { Button } from "@core/ui/button/Button";
 
 const FacilityMain = () => {
     const [facilities, setFacilities] = useState<FacilityListResponse[]>(dummyFacilityData);
@@ -45,13 +45,17 @@ const FacilityMain = () => {
         
         <s.CategoryButtons>
             {categories.map((category) => (
-            <s.CategoryButton
+            <Button
                 key={category}
-                $isActive={selectedCategory === category}
+                tone={selectedCategory === category ? "blue" : "gray"}
+                variant={selectedCategory === category ? "subtle" : "subtle"}
+                size="sm"
+                radius="sm"
+                typo={selectedCategory === category ? "label1" : "label2"}
                 onClick={() => setSelectedCategory(category)}
-            >
-                {category}
-            </s.CategoryButton>
+                >
+                        {category}
+            </Button>
             ))}
         </s.CategoryButtons>
 

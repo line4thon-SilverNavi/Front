@@ -7,6 +7,7 @@ import { getFacilityList, type FacilityListResponse } from "@apis/facility/facil
 import { getProgramList, type ProgramListResponse } from "@apis/program/programList";
 import { dummyFacilityData } from "@apis/dummy/facilityDummy";
 import { dummyProgramData } from "@apis/dummy/programDummy";
+import { Button } from "@core/ui/button/Button";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -77,13 +78,17 @@ const Home = () => {
       
       <s.CategoryButtons>
         {categories.map((category) => (
-          <s.CategoryButton
+          <Button
             key={category}
-            $isActive={selectedCategory === category}
+            tone={selectedCategory === category ? "blue" : "gray"}
+            variant={selectedCategory === category ? "subtle" : "subtle"}
+            size="sm"
+            radius="sm"
+            typo={selectedCategory === category ? "label1" : "label2"}
             onClick={() => setSelectedCategory(category)}
           >
             {category}
-          </s.CategoryButton>
+          </Button>
         ))}
       </s.CategoryButtons>
 

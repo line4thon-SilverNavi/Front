@@ -99,15 +99,5 @@ export const CategoryButtons = styled.div`
     > * {
         scroll-snap-align: start;
     }
-`;
-
-export const CategoryButton = styled.button<{ $isActive: boolean }>`
-    ${({ theme, $isActive }) => $isActive ? theme.fonts.label1 : theme.fonts.label2};
-    padding: 0.4rem 1rem;
-    border-radius: 5px;
-    border: none;
-    background-color: ${({ theme, $isActive }) => $isActive ? theme.colors.blue02 : theme.colors.gray02};
-    color: ${({ theme, $isActive }) => $isActive ? theme.colors.blue01 : theme.colors.gray06};
-    cursor: pointer;
     white-space: nowrap;
 `;
