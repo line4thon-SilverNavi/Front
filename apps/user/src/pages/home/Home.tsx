@@ -10,6 +10,13 @@ import { dummyProgramData } from "@apis/dummy/programDummy";
 const Home = () => {
   const [facilities, setFacilities] = useState<FacilityListResponse[]>(dummyFacilityData);
   const [programs, setPrograms] = useState<ProgramListResponse[]>(dummyProgramData);
+  const [selectedCategory, setSelectedCategory] = useState<string>("전체");
+
+  const categories = ["전체", "건강", "문화", "치료"];
+
+  const filteredPrograms = selectedCategory === "전체" 
+    ? programs 
+    : programs.filter(program => program.category === selectedCategory);
 
   useEffect(() => {
     const fetchFacilities = async () => {
@@ -44,32 +51,43 @@ const Home = () => {
 
   return (
     <s.HomeWrapper>
-      <s.SectionTitle>시설 목록</s.SectionTitle>
-      <s.Facilities>
-        {facilities.length > 0 ? (
-          facilities.map((facility) => (
-            <FacilityCard
-              key={facility.facilityId}
-              facilityId={facility.facilityId}
-              name={facility.name}
-              thumbnail={facility.thumbnail}
-              distanceKm={facility.distanceKm}
-              averageRating={facility.averageRating}
-              reviewCount={facility.reviewCount}
-              operatingHours={facility.operatingHours}
-              phoneNumber={facility.phoneNumber}
-              bookmarked={facility.bookmarked}
-            />
-          ))
-        ) : (
-          <p>시설 정보가 없습니다.</p>
-        )}
-      </s.Facilities>
+      <s.SectionTitle>내 주변 최신 소식</s.SectionTitle>
+      <s.News>
+        <s.NewsTitle>
+          <span style={{fontSize:"0.85rem"}}>🎉</span> 신규 프로그램 안내
+        </s.NewsTitle>
+        <s.NewsInfo>
+          11월 특별 프로그램이 개설 되었습니다.
+          <s.MoreInfo>
+            더보기
+            <img src={"/img/home/arrow-right.png"}/>
+          </s.MoreInfo>
+        </s.NewsInfo>
+      </s.News>
 
-      <s.SectionTitle className="horizontal-scroll-title">프로그램 목록</s.SectionTitle>
+      <s.SectionTitle className="withMoreInfo">
+        이번 주 우리 동네 프로그램
+      <s.MoreInfo>
+            더보기
+            <img src={"/img/home/arrow-right.png"}/>
+      </s.MoreInfo>
+      </s.SectionTitle>
+      
+      <s.CategoryButtons>
+        {categories.map((category) => (
+          <s.CategoryButton
+            key={category}
+            $isActive={selectedCategory === category}
+            onClick={() => setSelectedCategory(category)}
+          >
+            {category}
+          </s.CategoryButton>
+        ))}
+      </s.CategoryButtons>
+
       <s.Programs>
-        {programs.length > 0 ? (
-          programs.map((program) => (
+        {filteredPrograms.length > 0 ? (
+          filteredPrograms.map((program) => (
             <ProgramCard
               key={program.programId}
               programId={program.programId}
@@ -91,6 +109,36 @@ const Home = () => {
           <p>프로그램 정보가 없습니다.</p>
         )}
       </s.Programs>
+
+      <s.SectionTitle className="withMoreInfo">
+        가까운 복지시설
+        <s.MoreInfo>
+            더보기
+            <img src={"/img/home/arrow-right.png"}/>
+      </s.MoreInfo>
+      </s.SectionTitle>
+      <s.Facilities>
+        {facilities.length > 0 ? (
+          facilities.map((facility) => (
+            <FacilityCard
+              key={facility.facilityId}
+              facilityId={facility.facilityId}
+              name={facility.name}
+              thumbnail={facility.thumbnail}
+              distanceKm={facility.distanceKm}
+              averageRating={facility.averageRating}
+              reviewCount={facility.reviewCount}
+              operatingHours={facility.operatingHours}
+              phoneNumber={facility.phoneNumber}
+              bookmarked={facility.bookmarked}
+            />
+          ))
+        ) : (
+          <p>시설 정보가 없습니다.</p>
+        )}
+      </s.Facilities>
+
+
     </s.HomeWrapper>
   );
 };

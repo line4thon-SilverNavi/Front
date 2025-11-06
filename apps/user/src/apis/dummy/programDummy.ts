@@ -19,7 +19,7 @@ export const dummyProgramData: ProgramListResponse[] = [
   {
     programId: 2,
     programName: "실버요가 프로그램",
-    category: "운동",
+    category: "문화",
     date: "2025-11-18",
     dayOfWeek: "월",
     location: "성북노인복지관",
@@ -34,7 +34,7 @@ export const dummyProgramData: ProgramListResponse[] = [
   {
     programId: 3,
     programName: "인지능력 향상 프로그램",
-    category: "교육",
+    category: "치료",
     date: "2025-11-20",
     dayOfWeek: "수",
     location: "안암동 데이케어센터",
