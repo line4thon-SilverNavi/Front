@@ -1,5 +1,7 @@
 import { useId, useState } from "react";
 import styled, { css } from "styled-components";
+import openIcon from "../assets/img/auth/open.png";
+import closeIcon from "../assets/img/auth/close.png";
 
 type Props = {
   label: string;
@@ -77,7 +79,7 @@ export default function InputContainer({
 
         {rightIconVisible && (
           <IconButton onClick={() => setShow((p) => !p)}>
-            <img src={show ? "/img/auth/open.png" : "/img/auth/close.png"} />
+            <img src={show ? openIcon : closeIcon} />
           </IconButton>
         )}
       </InputRow>

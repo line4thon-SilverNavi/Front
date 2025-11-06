@@ -5,7 +5,7 @@ import { postLogin } from "@apis/auth/login";
 import { useNavigate } from "react-router-dom";
 import { setTokens } from "@apis/auth/auth";
 import AuthLayout from "@components/auth/authLayout";
-import InputContainer from "@components/auth/inputContainer";
+import InputContainer from "@core/components/inputContainer";
 
 export default function LoginPage() {
   const [id, setId] = useState("");

@@ -33,7 +33,7 @@
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts src/**/index.ts --dts --format esm,cjs --out-dir dist --clean --treeshake --sourcemap",
+    "build": "tsup src/index.ts src/**/index.ts --dts --format esm,cjs --out-dir dist --clean --treeshake --sourcemap --loader .png=dataurl",
     "dev": "tsup src/index.ts src/**/index.ts --dts --format esm,cjs --out-dir dist --watch"
   },
   "peerDependencies": {
