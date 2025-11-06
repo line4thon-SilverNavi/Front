@@ -3,11 +3,25 @@ import { Button, ButtonLayout } from "@core/ui/button";
 import InputContainer from "@core/components/inputContainer";
 import * as s from "./Auth.styled";
 import { useState } from "react";
+import { postLogin } from "@apis/auth/login";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
-  const [error, _] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const onSubmit = async () => {
+    setError(null);
+    const res = await postLogin({ id, password: pw });
+
+    if (!res?.isSuccess) {
+      return setError(res?.message || "로그인에 실패했습니다.");
+    }
+
+    // setTokens({ access: res.token, refresh: "" });
+    navigate("/");
+  };
 
   return (
     <AuthLayout
@@ -45,7 +59,13 @@ const Login = () => {
       </s.LoginContent>
 
       <ButtonLayout type="stack" gap={16}>
-        <Button tone="blue" radius="9.6px" typo="heading2" size="adminAuth">
+        <Button
+          tone="blue"
+          radius="9.6px"
+          typo="heading2"
+          size="adminAuth"
+          onClick={onSubmit}
+        >
           로그인
         </Button>
         <Button

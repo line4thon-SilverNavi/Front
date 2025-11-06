@@ -19,7 +19,13 @@ type TokenErrorBody = {
 // retry 플래그를 추가한 요청 타입
 type RetriableRequest = InternalAxiosRequestConfig & { _retry?: boolean };
 
-const PUBLIC_PATHS = ["/api/users/signup", "/api/users/signin"];
+const PUBLIC_PATHS = [
+  "/api/users/signup",
+  "/api/users/signin",
+  "/api/managers/signin",
+  "/api/managers/signup",
+  "/api/code/create",
+];
 
 /* -------------------- Request interceptor -------------------- */
 instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
