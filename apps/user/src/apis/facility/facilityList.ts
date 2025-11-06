@@ -1,12 +1,12 @@
 import { getResponse } from "@core/api/instance";
 
 export type FacilityListResponse = {
-    facilityId: number | 0;
+    facilityId: number;
     name: string | null;
     thumbnail: string;
-    distanceKm: number | 0;
-    averageRating: number | 0;
-    reviewCount: number | 0;
+    distanceKm: number;
+    averageRating: number;
+    reviewCount: number;
     operatingHours: string | null;
     phoneNumber: string | null;
     category: string | null;
