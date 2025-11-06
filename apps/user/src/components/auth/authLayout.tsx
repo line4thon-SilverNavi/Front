@@ -37,7 +37,7 @@ const Wrap = styled.div`
   flex-direction: column;
   /* height: 100%;
   min-height: 100dvh; */
-  background: #fff;
+  background: ${({ theme }) => theme.colors.gray01};;
   padding: 1.36rem 1.36rem calc(1.36rem + env(safe-area-inset-bottom));
   gap: 1rem;
   flex: 1;
