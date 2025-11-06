@@ -2,6 +2,9 @@ import { useId, useState } from "react";
 import styled, { css } from "styled-components";
 import openIcon from "../assets/img/auth/open.png";
 import closeIcon from "../assets/img/auth/close.png";
+import type { DefaultTheme } from "styled-components";
+
+type FontKey = keyof DefaultTheme["fonts"];
 
 type Props = {
   label: string;
@@ -18,6 +21,9 @@ type Props = {
   showToggleForPassword?: boolean;
   clickable?: boolean;
   onClickInput?: () => void;
+  labelTypo?: FontKey;
+  inputTypo?: FontKey;
+  descTypo?: FontKey;
 };
 
 export default function InputContainer({
@@ -35,6 +41,8 @@ export default function InputContainer({
   showToggleForPassword,
   clickable = false,
   onClickInput,
+  labelTypo = "label",
+  inputTypo = "body2",
 }: Props) {
   const id = useId();
   const [show, setShow] = useState(false);
@@ -52,7 +60,7 @@ export default function InputContainer({
 
   return (
     <Field>
-      <Label htmlFor={id}>
+      <Label htmlFor={id} $labelTypo={labelTypo}>
         {label} {required && <em aria-hidden>*</em>}
       </Label>
 
@@ -75,6 +83,7 @@ export default function InputContainer({
           aria-haspopup={clickable ? "listbox" : undefined}
           tabIndex={clickable ? 0 : undefined}
           $clickable={clickable}
+          $inputTypo={inputTypo}
         />
 
         {rightIconVisible && (
@@ -99,8 +108,8 @@ const Field = styled.div`
   gap: 8px;
 `;
 
-const Label = styled.label`
-  ${({ theme }) => theme.fonts.label};
+const Label = styled.label<{ $labelTypo: FontKey }>`
+  ${({ theme, $labelTypo }) => theme.fonts[$labelTypo]};
   color: ${({ theme }) => theme.colors.gray05};
   em {
     color: ${({ theme }) => theme.colors.alert};
@@ -124,12 +133,16 @@ const InputRow = styled.div<{ $error: boolean }>`
   }
 `;
 
-const Input = styled.input<{ $isPassword?: boolean; $clickable?: boolean }>`
+const Input = styled.input<{
+  $isPassword?: boolean;
+  $clickable?: boolean;
+  $inputTypo: FontKey;
+}>`
   flex: 1;
   border: 0;
   outline: 0;
   background: transparent;
-  ${({ theme }) => theme.fonts.body2};
+  ${({ theme, $inputTypo }) => theme.fonts[$inputTypo]};
   color: ${({ theme }) => theme.colors.gray07};
   cursor: ${({ $clickable }) => ($clickable ? "pointer" : "text")};
 
