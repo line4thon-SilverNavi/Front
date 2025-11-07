@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import * as s from "./FacilityMain_styled";
+import * as s from "../Main_styled";
 import FacilityCard from "@components/facility/facilityCard";
+import CardList from "@components/common/CardList";
 import { getFacilityList, type FacilityListResponse } from "@apis/facility/facilityList";
 import { dummyFacilityData } from "@apis/dummy/facilityDummy";
 import { Button } from "@core/ui/button/Button";
@@ -98,26 +99,24 @@ const FacilityMain = () => {
             ))}
         </s.CategoryButtons>
 
-        <s.Facilities>
-            {sortedFacilities.length > 0 ? (
-            sortedFacilities.map((facility) => (
+        <CardList
+            items={sortedFacilities}
+            renderCard={(facility) => (
                 <FacilityCard
-                key={facility.facilityId}
-                facilityId={facility.facilityId}
-                name={facility.name}
-                thumbnail={facility.thumbnail}
-                distanceKm={facility.distanceKm}
-                averageRating={facility.averageRating}
-                reviewCount={facility.reviewCount}
-                operatingHours={facility.operatingHours}
-                phoneNumber={facility.phoneNumber}
-                bookmarked={facility.bookmarked}
+                    key={facility.facilityId}
+                    facilityId={facility.facilityId}
+                    name={facility.name}
+                    thumbnail={facility.thumbnail}
+                    distanceKm={facility.distanceKm}
+                    averageRating={facility.averageRating}
+                    reviewCount={facility.reviewCount}
+                    operatingHours={facility.operatingHours}
+                    phoneNumber={facility.phoneNumber}
+                    bookmarked={facility.bookmarked}
                 />
-            ))
-            ) : (
-            <p>시설 정보가 없습니다.</p>
             )}
-        </s.Facilities>
+            direction="vertical"
+        />
 
 
         </s.HomeWrapper>

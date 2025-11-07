@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import * as s from "./Home_styled";
+import * as s from "../Main_styled";
 import FacilityCard from "@components/facility/facilityCard";
 import ProgramCard from "@components/program/programCard";
+import CardList from "@components/common/CardList";
 import { getFacilityList, type FacilityListResponse } from "@apis/facility/facilityList";
 import { getProgramList, type ProgramListResponse } from "@apis/program/programList";
 import { dummyFacilityData } from "@apis/dummy/facilityDummy";
@@ -92,30 +93,28 @@ const Home = () => {
         ))}
       </s.CategoryButtons>
 
-      <s.Programs>
-        {filteredPrograms.length > 0 ? (
-          filteredPrograms.map((program) => (
-            <ProgramCard
-              key={program.programId}
-              programId={program.programId}
-              programName={program.programName}
-              category={program.category}
-              date={program.date}
-              dayOfWeek={program.dayOfWeek}
-              location={program.location}
-              startTime={program.startTime}
-              endTime={program.endTime}
-              currentApplicants={program.currentApplicants}
-              capacity={program.capacity}
-              fee={program.fee}
-              thumbnail={program.thumbnail}
-              bookmarked={program.bookmarked}
-            />
-          ))
-        ) : (
-          <p>프로그램 정보가 없습니다.</p>
+      <CardList
+        items={filteredPrograms}
+        renderCard={(program) => (
+          <ProgramCard
+            key={program.programId}
+            programId={program.programId}
+            programName={program.programName}
+            category={program.category}
+            date={program.date}
+            dayOfWeek={program.dayOfWeek}
+            location={program.location}
+            startTime={program.startTime}
+            endTime={program.endTime}
+            currentApplicants={program.currentApplicants}
+            capacity={program.capacity}
+            fee={program.fee}
+            thumbnail={program.thumbnail}
+            bookmarked={program.bookmarked}
+          />
         )}
-      </s.Programs>
+        direction="horizontal"
+      />
 
       <s.SectionTitle className="withMoreInfo">
         가까운 복지시설
@@ -125,26 +124,24 @@ const Home = () => {
       </s.MoreInfo>
       </s.SectionTitle>
 
-      <s.Facilities>
-        {facilities.length > 0 ? (
-          facilities.map((facility) => (
-            <FacilityCard
-              key={facility.facilityId}
-              facilityId={facility.facilityId}
-              name={facility.name}
-              thumbnail={facility.thumbnail}
-              distanceKm={facility.distanceKm}
-              averageRating={facility.averageRating}
-              reviewCount={facility.reviewCount}
-              operatingHours={facility.operatingHours}
-              phoneNumber={facility.phoneNumber}
-              bookmarked={facility.bookmarked}
-            />
-          ))
-        ) : (
-          <p>시설 정보가 없습니다.</p>
+      <CardList
+        items={facilities}
+        renderCard={(facility) => (
+          <FacilityCard
+            key={facility.facilityId}
+            facilityId={facility.facilityId}
+            name={facility.name}
+            thumbnail={facility.thumbnail}
+            distanceKm={facility.distanceKm}
+            averageRating={facility.averageRating}
+            reviewCount={facility.reviewCount}
+            operatingHours={facility.operatingHours}
+            phoneNumber={facility.phoneNumber}
+            bookmarked={facility.bookmarked}
+          />
         )}
-      </s.Facilities>
+        direction="horizontal"
+      />
 
 
     </s.HomeWrapper>
