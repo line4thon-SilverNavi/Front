@@ -1,15 +1,26 @@
 import { useEffect, useState } from "react";
-import * as s from "./Home_styled";
+import { useNavigate } from "react-router-dom";
+import * as s from "../Main_styled";
 import FacilityCard from "@components/facility/facilityCard";
 import ProgramCard from "@components/program/programCard";
+import CardList from "@components/common/CardList";
 import { getFacilityList, type FacilityListResponse } from "@apis/facility/facilityList";
 import { getProgramList, type ProgramListResponse } from "@apis/program/programList";
 import { dummyFacilityData } from "@apis/dummy/facilityDummy";
 import { dummyProgramData } from "@apis/dummy/programDummy";
+import { Button } from "@core/ui/button/Button";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [facilities, setFacilities] = useState<FacilityListResponse[]>(dummyFacilityData);
   const [programs, setPrograms] = useState<ProgramListResponse[]>(dummyProgramData);
+  const [selectedCategory, setSelectedCategory] = useState<string>("전체");
+
+  const categories = ["전체", "건강", "문화", "치료"];
+
+  const filteredPrograms = selectedCategory === "전체" 
+    ? programs 
+    : programs.filter(program => program.category === selectedCategory);
 
   useEffect(() => {
     const fetchFacilities = async () => {
@@ -44,53 +55,95 @@ const Home = () => {
 
   return (
     <s.HomeWrapper>
-      <s.SectionTitle>시설 목록</s.SectionTitle>
-      <s.Facilities>
-        {facilities.length > 0 ? (
-          facilities.map((facility) => (
-            <FacilityCard
-              key={facility.facilityId}
-              facilityId={facility.facilityId}
-              name={facility.name}
-              thumbnail={facility.thumbnail}
-              distanceKm={facility.distanceKm}
-              averageRating={facility.averageRating}
-              reviewCount={facility.reviewCount}
-              operatingHours={facility.operatingHours}
-              phoneNumber={facility.phoneNumber}
-              bookmarked={facility.bookmarked}
-            />
-          ))
-        ) : (
-          <p>시설 정보가 없습니다.</p>
-        )}
-      </s.Facilities>
+      <s.SectionTitle>내 주변 최신 소식</s.SectionTitle>
+      <s.News>
+        <s.NewsTitle>
+          <span style={{fontSize:"0.85rem"}}>🎉</span> 신규 프로그램 안내
+        </s.NewsTitle>
+        <s.NewsInfo>
+          11월 특별 프로그램이 개설 되었습니다.
+          <s.MoreInfo>
+            더보기
+            <img src={"/img/home/arrow-right.png"}/>
+          </s.MoreInfo>
+        </s.NewsInfo>
+      </s.News>
 
-      <s.SectionTitle className="horizontal-scroll-title">프로그램 목록</s.SectionTitle>
-      <s.Programs>
-        {programs.length > 0 ? (
-          programs.map((program) => (
-            <ProgramCard
-              key={program.programId}
-              programId={program.programId}
-              programName={program.programName}
-              category={program.category}
-              date={program.date}
-              dayOfWeek={program.dayOfWeek}
-              location={program.location}
-              startTime={program.startTime}
-              endTime={program.endTime}
-              currentApplicants={program.currentApplicants}
-              capacity={program.capacity}
-              fee={program.fee}
-              thumbnail={program.thumbnail}
-              bookmarked={program.bookmarked}
-            />
-          ))
-        ) : (
-          <p>프로그램 정보가 없습니다.</p>
+      <s.SectionTitle className="withMoreInfo">
+        이번 주 우리 동네 프로그램
+      <s.MoreInfo>
+            더보기
+            <img src={"/img/home/arrow-right.png"}/>
+      </s.MoreInfo>
+      </s.SectionTitle>
+      
+      <s.CategoryButtons>
+        {categories.map((category) => (
+          <Button
+            key={category}
+            tone={selectedCategory === category ? "blue" : "gray"}
+            variant={selectedCategory === category ? "subtle" : "subtle"}
+            size="sm"
+            radius="sm"
+            typo={selectedCategory === category ? "label1" : "label2"}
+            onClick={() => setSelectedCategory(category)}
+          >
+            {category}
+          </Button>
+        ))}
+      </s.CategoryButtons>
+
+      <CardList
+        items={filteredPrograms}
+        renderCard={(program) => (
+          <ProgramCard
+            key={program.programId}
+            programId={program.programId}
+            programName={program.programName}
+            category={program.category}
+            date={program.date}
+            dayOfWeek={program.dayOfWeek}
+            location={program.location}
+            startTime={program.startTime}
+            endTime={program.endTime}
+            currentApplicants={program.currentApplicants}
+            capacity={program.capacity}
+            fee={program.fee}
+            thumbnail={program.thumbnail}
+            bookmarked={program.bookmarked}
+          />
         )}
-      </s.Programs>
+        direction="horizontal"
+      />
+
+      <s.SectionTitle className="withMoreInfo">
+        가까운 복지시설
+        <s.MoreInfo onClick={() => navigate("/facility")}>
+            더보기
+            <img src={"/img/home/arrow-right.png"}/>
+      </s.MoreInfo>
+      </s.SectionTitle>
+
+      <CardList
+        items={facilities}
+        renderCard={(facility) => (
+          <FacilityCard
+            key={facility.facilityId}
+            facilityId={facility.facilityId}
+            name={facility.name}
+            thumbnail={facility.thumbnail}
+            distanceKm={facility.distanceKm}
+            averageRating={facility.averageRating}
+            reviewCount={facility.reviewCount}
+            operatingHours={facility.operatingHours}
+            phoneNumber={facility.phoneNumber}
+            bookmarked={facility.bookmarked}
+          />
+        )}
+        direction="horizontal"
+      />
+
+
     </s.HomeWrapper>
   );
 };

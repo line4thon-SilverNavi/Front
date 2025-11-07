@@ -32,8 +32,9 @@ export const fonts = {
   body4: fontGenerator("0.8125rem", 400),
 
   //label
-  label: fontGenerator("1rem", 600),
-  caption: fontGenerator("0.875rem", 400),
+  label1: fontGenerator("1rem", 600),
+  label2: fontGenerator("1rem", 400),
+  caption: fontGenerator("0.75rem", 400),
 };
 
 export const FontList = Object.keys(fonts);
