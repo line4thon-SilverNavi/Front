@@ -107,11 +107,11 @@ export const MoreInfo = styled.div`
 `;
 
 export const CategoryButtons = styled.div`
-  display: flex;
-  gap: 0.7rem;
-  margin-bottom: 1rem;
-  overflow-x: auto;
-  
+    display: flex;
+    gap: 0.7rem;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    box-shadow: none;
 
   &::-webkit-scrollbar {
     display: none;
@@ -144,8 +144,10 @@ export const SortContainer = styled.div`
 export const SortButton = styled.button`
   ${({ theme }) => theme.fonts.body1};
   color: ${({ theme }) => theme.colors.gray04};
+  background: ${({ theme }) => theme.colors.gray01};
   border: 1px solid ${({theme}) => theme.colors.gray03};
   border-radius: 5px;
+  box-shadow: none;
   cursor: pointer;
   display: flex;
   align-items: center;
