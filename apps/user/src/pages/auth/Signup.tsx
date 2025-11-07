@@ -1,9 +1,8 @@
-// src/pages/auth/Signup.tsx
 import { useState } from "react";
 import { Button } from "@core/ui/button";
 import { useNavigate } from "react-router-dom";
 import AuthLayout from "@components/auth/authLayout";
-import InputContainer from "@components/auth/inputContainer";
+import InputContainer from "@core/components/inputContainer";
 import { postSignup } from "@apis/auth/signup";
 import { relationLabel, type RelationCode } from "@constants/relation";
 import RelationSelectModal from "@components/auth/RelationSelectModal";

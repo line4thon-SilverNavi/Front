@@ -1,16 +1,5 @@
 import { postResponse } from "@core/api/instance";
-
-export type LoginRequest = {
-  id: string;
-  password: string;
-};
-
-export type LoginResponse = {
-  token: string;
-  careGrade: string | null;
-  message: string;
-  isSuccess: boolean;
-};
+import type { LoginRequest, LoginResponse } from "@core/api/login_type";
 
 export async function postLogin(body: LoginRequest) {
   return await postResponse<LoginRequest, LoginResponse>(

@@ -41,5 +41,9 @@
       "@core/*": ["../../packages/core/src/*"]
     }
   },
-  "include": ["src", "../../packages/core/src/theme-aug.d.ts"]
+  "include": [
+    "src",
+    "../../packages/core/src/theme-aug.d.ts",
+    "../../packages/core/src/components/inputContainer.tsx"
+  ]
 }
