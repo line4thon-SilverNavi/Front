@@ -53,7 +53,7 @@ const FacilityMain = () => {
     return (
         <s.HomeWrapper>
 
-        <s.SectionTitle className="withMoreInfo">
+        <s.SectionTitle>
             요양보호시설
         </s.SectionTitle>
 
