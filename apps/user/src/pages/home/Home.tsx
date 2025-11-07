@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import * as s from "../Main_styled";
 import FacilityCard from "@components/facility/facilityCard";
@@ -8,6 +8,7 @@ import { getFacilityList, type FacilityListResponse } from "@apis/facility/facil
 import { getProgramList, type ProgramListResponse } from "@apis/program/programList";
 import { dummyFacilityData } from "@apis/dummy/facilityDummy";
 import { dummyProgramData } from "@apis/dummy/programDummy";
+import { patchLocation } from "@apis/home/patchLocation";
 import { Button } from "@core/ui/button/Button";
 
 const Home = () => {
@@ -15,6 +16,7 @@ const Home = () => {
   const [facilities, setFacilities] = useState<FacilityListResponse[]>(dummyFacilityData);
   const [programs, setPrograms] = useState<ProgramListResponse[]>(dummyProgramData);
   const [selectedCategory, setSelectedCategory] = useState<string>("전체");
+  const locationSentRef = useRef(false);
 
   const categories = ["전체", "건강", "문화", "치료"];
 
@@ -23,6 +25,34 @@ const Home = () => {
     : programs.filter(program => program.category === selectedCategory);
 
   useEffect(() => {
+    // 최초 1회만 위치 정보 전송
+    const sendLocation = async () => {
+      if (locationSentRef.current) return;
+
+      if (!navigator.geolocation) {
+        console.error("위치 정보를 지원하지 않는 브라우저입니다.");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            await patchLocation({
+              latitude: position.coords.latitude.toString(),
+              longitude: position.coords.longitude.toString(),
+            });
+            locationSentRef.current = true;
+            console.log("✅ 위치 정보 전송 완료");
+          } catch (error) {
+            console.error("❌ 위치 정보 전송 실패:", error);
+          }
+        },
+        (error) => {
+          console.error("❌ 위치 권한 거부 또는 오류:", error.message);
+        }
+      );
+    };
+
     const fetchFacilities = async () => {
       try {
         const data = await getFacilityList();
@@ -49,6 +79,7 @@ const Home = () => {
       }
     };
 
+    sendLocation();
     fetchFacilities();
     fetchPrograms();
   }, []);

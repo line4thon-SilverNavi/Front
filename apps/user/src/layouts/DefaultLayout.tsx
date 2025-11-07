@@ -7,12 +7,18 @@ const DefaultLayout = () => {
   const location = useLocation();
   
   // Header와 NavBar를 숨길 경로들
-  const noNavBar = ["/intro", "/login", "/signup"];
-  const showNavBar = !noNavBar.includes(location.pathname);
+  const hideLayoutPaths = [
+    "/intro", 
+    "/login", 
+    "/signup", 
+    "/facility/apply"
+  ];
   
-  // Padding을 제외할 경로들 (auth 관련 페이지)
-  const noPadding = ["/intro", "/login", "/signup"];
-  const hasPadding = !noPadding.includes(location.pathname);
+  const isHidden = hideLayoutPaths.includes(location.pathname) || 
+                   location.pathname.match(/^\/facility\/\d+$/);
+  
+  const showNavBar = !isHidden;
+  const hasPadding = !isHidden;
 
   return (
     <OutletWrapper $hasPadding={hasPadding}>

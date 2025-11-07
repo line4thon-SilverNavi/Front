@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import BookmarkButton from "@components/common/BookmarkButton";
 
 type FacilityCardProps = {
@@ -24,9 +25,19 @@ export default function FacilityCard({
     phoneNumber,
     bookmarked
 }: FacilityCardProps){
+    const navigate = useNavigate();
+
+    const handleCardClick = () => {
+        navigate(`/facility/${facilityId}`);
+    };
+
+    const handleBookmarkClick = (e: React.MouseEvent) => {
+        e.stopPropagation(); // 카드 클릭 이벤트 방지
+    };
+
     return(
-        <CardWrapper>
-            <BookmarkButtonWrapper>
+        <CardWrapper onClick={handleCardClick}>
+            <BookmarkButtonWrapper onClick={handleBookmarkClick}>
                 <BookmarkButton 
                     initialBookmarked={bookmarked}
                     contentId={facilityId}
