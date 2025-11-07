@@ -29,11 +29,6 @@ const Home = () => {
     const sendLocation = async () => {
       if (locationSentRef.current) return;
 
-      if (!navigator.geolocation) {
-        console.error("위치 정보를 지원하지 않는 브라우저입니다.");
-        return;
-      }
-
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           try {

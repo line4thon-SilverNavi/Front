@@ -1,6 +1,7 @@
 import { Button } from "@core/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
-import AuthLayout from "@components/auth/authLayout";
+import BookmarkButton from "@components/common/BookmarkButton";
+import DetailPageLayout from "@components/common/datailPageLayout";
 
 export default function FacilityDetailPage() {
     const navigate = useNavigate();
@@ -11,7 +12,7 @@ export default function FacilityDetailPage() {
     };
 
     return (
-        <AuthLayout
+        <DetailPageLayout
             title="시설 상세"
             footer={
                 <Button tone="blue" radius="pill" size="lg" onClick={handleApply}>
@@ -19,7 +20,8 @@ export default function FacilityDetailPage() {
                 </Button>
             }
         >
-            <div>시설 ID: {facilityId}</div>
-        </AuthLayout>
+            
+
+        </DetailPageLayout>
     );
 }

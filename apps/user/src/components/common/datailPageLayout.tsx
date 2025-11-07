@@ -28,21 +28,20 @@ export default function DetailPageLayout({
 
   return (
     <Wrap>
-      <Header>
-        <BackButton onClick={handleBack}>
-          <img src="/img/auth/back.png" alt="뒤로가기" />
-        </BackButton>
-        {bookmarkProps && (
-          <BookmarkButton
-            initialBookmarked={bookmarkProps.initialBookmarked}
-            contentId={bookmarkProps.contentId}
-            type={bookmarkProps.type}
-          />
-        )}
-      </Header>
-
       <ImageContainer>
         <Image src={image} alt="상세 이미지" />
+        <Header>
+          <BackButton onClick={handleBack}>
+            <img src="/img/auth/back.png" alt="뒤로가기" />
+          </BackButton>
+          {bookmarkProps && (
+            <BookmarkButton
+              initialBookmarked={bookmarkProps.initialBookmarked}
+              contentId={bookmarkProps.contentId}
+              type={bookmarkProps.type}
+            />
+          )}
+        </Header>
       </ImageContainer>
 
       <Content role="main">{children}</Content>
@@ -58,7 +57,20 @@ const Wrap = styled.div`
   flex-direction: column;
   background: ${({ theme }) => theme.colors.gray01};
   min-height: 100dvh;
+`;
+
+const ImageContainer = styled.div`
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: ${({ theme }) => theme.colors.gray02};
   position: relative;
+`;
+
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `;
 
 const Header = styled.header`
@@ -83,19 +95,6 @@ const BackButton = styled.button`
     width: 18px;
     height: 18px;
   }
-`;
-
-const ImageContainer = styled.div`
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  background: ${({ theme }) => theme.colors.gray02};
-`;
-
-const Image = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 `;
 
 const Content = styled.div`

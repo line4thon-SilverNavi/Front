@@ -119,6 +119,32 @@ export const postNoResponse = async <TRequest>(
   }
 };
 
+export const patchResponse = async <TRequest, TResponse>(
+  url: string,
+  body: TRequest
+): Promise<TResponse | null> => {
+  try {
+    const res = await instance.patch<TResponse>(url, body);
+    return res.data;
+  } catch (e) {
+    console.error("PATCH 요청 실패:", e);
+    return null;
+  }
+};
+
+export const patchNoResponse = async <TRequest>(
+  url: string,
+  body: TRequest
+): Promise<boolean> => {
+  try {
+    await instance.patch<void>(url, body);
+    return true;
+  } catch (e: unknown) {
+    console.error("PATCH(무응답) 실패:", e);
+    return false;
+  }
+};
+
 export const getResponse = async <T>(url: string): Promise<T | null> => {
   try {
     const res = await instance.get<T>(url);
