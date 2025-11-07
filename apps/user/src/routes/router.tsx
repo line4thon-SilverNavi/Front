@@ -12,6 +12,8 @@ import Btn from "@pages/test/Btn";
 import Intro from "@pages/auth/Intro";
 import Signup from "@pages/auth/Signup";
 import FacilityMain from "@pages/facility/FacilityMain";
+import FacilityDetailPage from "@pages/facility/FacilityDetail";
+import FacilityApplyPage from "@pages/facility/FacilityApply";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +31,8 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <Home /> },
           { path: "facility", element: <FacilityMain />},
+          { path: "facility/:facilityId", element: <FacilityDetailPage />},
+          { path: "facility/apply", element: <FacilityApplyPage />},
           { path: "mypage", element: <Mypage /> },
           { path: "button", element: <Btn /> },
         ],
