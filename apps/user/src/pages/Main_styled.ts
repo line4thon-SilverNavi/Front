@@ -24,7 +24,7 @@ export const Facilities = styled.div`
   overflow-x: auto;
   gap: 1rem;
   
-  /* 스크롤바 숨기기 */
+
   &::-webkit-scrollbar {
     display: none;
   }
@@ -32,7 +32,7 @@ export const Facilities = styled.div`
   scrollbar-width: none;
 
   > * {
-    flex: 0 0 270px; /* 카드 너비 고정 */
+    flex: 0 0 270px; 
     scroll-snap-align: start;
   }
 `;
@@ -48,7 +48,7 @@ export const Programs = styled.div`
   overflow-x: auto;
   gap: 1rem;
   
-  /* 스크롤바 숨기기 */
+
   &::-webkit-scrollbar {
     display: none;
   }
@@ -56,7 +56,7 @@ export const Programs = styled.div`
   scrollbar-width: none;
 
   > * {
-    flex: 0 0 270px; /* 카드 너비 고정 */
+    flex: 0 0 270px; 
     scroll-snap-align: start;
   }
 `;
@@ -66,7 +66,7 @@ export const News = styled.div`
   height: 5.5rem;
   border-radius: 10px;
   border: 1px solid #FFD700;
-  padding: 1.1rem 1.4rem;
+  padding: 1.1rem 1.2rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -87,6 +87,10 @@ export const NewsInfo = styled.div`
   justify-content: space-between;
   align-items: center;
   white-space: nowrap;
+
+  @media (max-width: 375px) {
+    ${({ theme }) => theme.fonts.caption};
+  }
 `;
 
 export const MoreInfo = styled.div`
@@ -108,7 +112,7 @@ export const CategoryButtons = styled.div`
   margin-bottom: 1rem;
   overflow-x: auto;
   
-  /* 스크롤바 숨기기 */
+
   &::-webkit-scrollbar {
     display: none;
   }
