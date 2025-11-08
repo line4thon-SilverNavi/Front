@@ -177,6 +177,55 @@ const RatingContainer = styled.div`
   }
 `;
 
+// 참가자 섹션
+export const Applicants = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+`;
+
+export const ApplicantText = styled.p`
+    ${({ theme }) => theme.fonts.body3};
+    color: ${({ theme }) => theme.colors.blue01};
+    margin: 0;
+    white-space: nowrap;
+`;
+
+//참가비 섹션
+export const Fee = styled.div`
+    display: flex;
+    justify-content: space-between;
+    padding: 0.6rem 1.2rem;
+    background-color: ${({ theme }) => theme.colors.blue02};
+    border-radius: 10px;
+    ${({ theme }) => theme.fonts.label1};
+    color: ${({ theme }) => theme.colors.blue01};
+    margin: 0 0 1.2rem 0;
+    white-space: nowrap;
+    p{
+      color: ${({ theme }) => theme.colors.gray06};
+      ${({ theme }) => theme.fonts.label2};
+    }
+`;
+
+export const ProgressBarContainer = styled.div`
+    flex: 1;
+    height: 8px;
+    background-color: ${({ theme }) => theme.colors.gray03};
+    border-radius: 12px;
+    overflow: hidden;
+    margin-left: 1rem;
+`;
+
+export const ProgressBar = styled.div<{ $percentage: number }>`
+    height: 100%;
+    width: ${({ $percentage }) => Math.min($percentage, 100)}%;
+    background-color: ${({ theme }) => theme.colors.blue01};
+    border-radius: 12px;
+    transition: width 0.3s ease;
+`;
+
 // 설명 섹션
 export const DetailDescription = styled.div`
   ${({ theme }) => theme.fonts.body3};
@@ -218,8 +267,8 @@ export const FullWidthDivider = styled.div`
 export const DetailListSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin: 1rem 0 0 0;
+  gap: 0.5rem;
+  margin: 1rem 0 0.25rem 0;
 `;
 
 // 소제목
@@ -247,7 +296,7 @@ export const DetailListTitle = styled.h2`
 export const DetailList = styled.ul`
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0.25rem 0 0 0;
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
@@ -342,5 +391,51 @@ export const ReviewText = styled.div`
   color: ${({ theme }) => theme.colors.gray06};
   line-height: 1.5;
 `;
+
+// 첨부자료 & 문의전화 섹션
+export const AttachmentBox = styled.a`
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.75rem 1rem;
+  background-color: ${({ theme }) => theme.colors.gray01};
+  border: 1.5px solid ${({ theme }) => theme.colors.gray03};
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.gray02};
+  }
+`;
+
+export const AttachmentIcon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
+export const AttachmentInfo = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const AttachmentName = styled.div`
+  ${({ theme }) => theme.fonts.body1};
+  color: ${({ theme }) => theme.colors.gray07};
+`;
+
+export const AttachmentSize = styled.div`
+  ${({ theme }) => theme.fonts.body4};
+  color: ${({ theme }) => theme.colors.gray05};
+`;
+
 
 

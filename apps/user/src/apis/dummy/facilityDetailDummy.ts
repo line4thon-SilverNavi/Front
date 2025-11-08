@@ -41,6 +41,6 @@ export async function getFacilityDetailDummy(_facilityId: number): Promise<Facil
     return new Promise((resolve) => {
         setTimeout(() => {
             resolve(facilityDetailDummy);
-        }, 500); // 0.5초 지연으로 실제 API 호출처럼 보이게
+        });
     });
 }
