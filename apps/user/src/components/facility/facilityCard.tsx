@@ -5,9 +5,9 @@ import BookmarkButton from "@components/common/BookmarkButton";
 type FacilityCardProps = {
     facilityId: number;
     name: string | null;
-    thumbnail: string;
+    thumbnail: string | null;
     distanceKm: number;
-    averageRating: number;
+    averageRating: number | null;
     reviewCount: number;
     operatingHours: string | null;
     phoneNumber: string | null;
@@ -26,6 +26,9 @@ export default function FacilityCard({
     bookmarked
 }: FacilityCardProps){
     const navigate = useNavigate();
+    
+    // thumbnail이 null이면 더미 이미지 사용
+    const displayThumbnail = thumbnail || "/img/dummy/facility-default.png";
 
     const handleCardClick = () => {
         navigate(`/facility/${facilityId}`);
@@ -45,7 +48,7 @@ export default function FacilityCard({
                 />
             </BookmarkButtonWrapper>
             <Container>
-                <Img style={{ backgroundImage: `url(${thumbnail})` }}></Img>
+                <Img style={{ backgroundImage: `url(${displayThumbnail})` }}></Img>
                 <InfoContainer>
                     <Title>
                         <Name>{name}</Name>
@@ -53,11 +56,11 @@ export default function FacilityCard({
                     </Title>
                     <Details>
                         <Review>
-                            <img src={"/img/cards/rate.png"}/> {averageRating} 
+                            <img src={"/img/cards/rate.png"}/> {averageRating || "0.0"} 
                             <p>({reviewCount})</p>
                         </Review>
-                        <Time><img src={"/img/cards/time.png"}/> {operatingHours}</Time>
-                        <Tel><img src={"/img/cards/tel.png"}/> {phoneNumber}</Tel>
+                        <Time><img src={"/img/cards/time.png"}/> {operatingHours || "정보 없음"}</Time>
+                        <Tel><img src={"/img/cards/tel.png"}/> {phoneNumber || "정보 없음"}</Tel>
                     </Details>
                 </InfoContainer>
             </Container>

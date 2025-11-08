@@ -13,8 +13,8 @@ import { Button } from "@core/ui/button/Button";
 
 const Home = () => {
   const navigate = useNavigate();
-  const [facilities, setFacilities] = useState<FacilityListResponse[]>(dummyFacilityData);
-  const [programs, setPrograms] = useState<ProgramListResponse[]>(dummyProgramData);
+  const [facilities, setFacilities] = useState<FacilityListResponse[]>([]);
+  const [programs, setPrograms] = useState<ProgramListResponse[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("전체");
   const locationSentRef = useRef(false);
 

@@ -35,6 +35,9 @@ export default function ProgramCard({
     const formattedDate = useFormatDate(date);
     const formattedTime = useFormatTime(startTime, endTime);
     const applicationRate = (currentApplicants / capacity) * 100;
+    
+    // thumbnail이 null이면 더미 이미지 사용
+    const displayThumbnail = thumbnail || "/img/dummy/program-default.png";
 
     return(
         <CardWrapper>
@@ -49,7 +52,7 @@ export default function ProgramCard({
                 {category}
             </CategoryTag>
             <Container>
-                <Img style={{ backgroundImage: `url(${thumbnail})` }}></Img>
+                <Img style={{ backgroundImage: `url(${displayThumbnail})` }}></Img>
                 <InfoContainer>
                     <Title>
                         <Name>{programName}</Name>

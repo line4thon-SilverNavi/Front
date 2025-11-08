@@ -3,9 +3,9 @@ import { getResponse } from "@core/api/instance";
 export type FacilityListResponse = {
     facilityId: number;
     name: string | null;
-    thumbnail: string;
+    thumbnail: string | null;
     distanceKm: number;
-    averageRating: number;
+    averageRating: number | null;
     reviewCount: number;
     operatingHours: string | null;
     phoneNumber: string | null;
@@ -14,7 +14,8 @@ export type FacilityListResponse = {
 };
 
 export async function getFacilityList() {
-    return await getResponse<FacilityListResponse[]>(
+    const response = await getResponse<{ data: FacilityListResponse[] }>(
         "/api/facilities/list"
     );
+    return response?.data || [];
 }
