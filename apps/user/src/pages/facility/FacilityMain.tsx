@@ -37,9 +37,8 @@ const FacilityMain = () => {
         const fetchFacilities = async () => {
         try {
             const data = await getFacilityList();
-            if (data) {
-            // 최대 3개만 표시
-            setFacilities(data.slice(0, 3));
+            if (data && data.length > 0) {
+                setFacilities(data);
             }
         } catch (error) {
             console.error("시설 목록 불러오기 실패:", error);
@@ -60,16 +59,16 @@ const FacilityMain = () => {
         <s.Selecting>
             <s.Total>총 {sortedFacilities.length}개</s.Total>
             <s.SortContainer>
-                <s.SortButton onClick={() => setIsSortOpen(!isSortOpen)}>
+                <s.SortButton $isOpen={isSortOpen} onClick={() => setIsSortOpen(!isSortOpen)}>
                     {sortOption}
                     <img src={"/img/facility/arrow-down.png"}/>
                 </s.SortButton>
                 {isSortOpen && (
                     <s.SortDropdown>
-                        {sortOptions.map((option) => (
+                        {sortOptions.filter(option => option !== sortOption).map((option) => (
                             <s.SortOption
                                 key={option}
-                                $isSelected={sortOption === option}
+                                $isSelected={false}
                                 onClick={() => {
                                     setSortOption(option);
                                     setIsSortOpen(false);

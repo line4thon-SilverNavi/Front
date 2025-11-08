@@ -4,7 +4,7 @@ export const dummyFacilityData: FacilityListResponse[] = [
   {
     facilityId: 1,
     name: "정릉주간보호센터",
-    thumbnail: "/img/dummy/ImageWithFallback.png",
+    thumbnail: null,
     distanceKm: 2.9,
     averageRating: 4.4,
     reviewCount: 100,
@@ -16,7 +16,7 @@ export const dummyFacilityData: FacilityListResponse[] = [
   {
     facilityId: 2,
     name: "성북노인복지관",
-    thumbnail: "/img/dummy/ImageWithFallback.png",
+    thumbnail: null,
     distanceKm: 1.5,
     averageRating: 4.7,
     reviewCount: 42,
@@ -28,7 +28,7 @@ export const dummyFacilityData: FacilityListResponse[] = [
   {
     facilityId: 3,
     name: "안암동 데이케어센터",
-    thumbnail: "/img/dummy/ImageWithFallback.png",
+    thumbnail: null,
     distanceKm: 3.2,
     averageRating: 4.2,
     reviewCount: 15,

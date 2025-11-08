@@ -5,7 +5,7 @@ export type FacilityListResponse = {
     name: string | null;
     thumbnail: string | null;
     distanceKm: number;
-    averageRating: number | null;
+    averageRating: number;
     reviewCount: number;
     operatingHours: string | null;
     phoneNumber: string | null;
