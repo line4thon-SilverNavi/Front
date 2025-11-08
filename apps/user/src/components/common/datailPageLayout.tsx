@@ -17,7 +17,7 @@ type DetailPageLayoutProps = {
   footer?: React.ReactNode;
 };
 
-export default function DetailPageLayout({
+export function DetailPageLayout({
   image,
   category,
   onBack,

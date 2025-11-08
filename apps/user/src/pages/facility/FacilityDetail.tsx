@@ -1,23 +1,6 @@
 import { Button } from "@core/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
-import DetailPageLayout, {
-    DetailTitle,
-    DetailRating,
-    DetailDescription,
-    DetailInfoContainer,
-    DetailInfoRow,
-    DetailListSection,
-    DetailListTitle,
-    DetailList,
-    DetailListItem,
-    FullWidthDivider,
-    ReviewCard,
-    ReviewHeader,
-    ReviewName,
-    ReviewDate,
-    RatingStar,
-    ReviewText,
-} from "@components/common/datailPageLayout";
+import * as s from "@components/common/datailPageLayout";
 import { useEffect, useState } from "react";
 import { getFacilityDetailDummy } from "@apis/dummy/facilityDetailDummy";
 import type { FacilityDetailData } from "@apis/facility/facilityDetail";
@@ -59,7 +42,7 @@ export default function FacilityDetailPage() {
         : "/img/dummy/facility-default.png";
 
     return (
-        <DetailPageLayout
+        <s.DetailPageLayout
             image={displayImage}
             category={facility.category}
             bookmarkProps={{
@@ -73,62 +56,62 @@ export default function FacilityDetailPage() {
                 </Button>
             }
         >
-            <DetailTitle>{facility.name}</DetailTitle>
+            <s.DetailTitle>{facility.name}</s.DetailTitle>
             
-            <DetailRating 
+            <s.DetailRating 
                 rating={facility.averageRating} 
                 reviewCount={facility.reviewCount} 
             />
             
-            <DetailDescription>{facility.description}</DetailDescription>
+            <s.DetailDescription>{facility.description}</s.DetailDescription>
             
-            <DetailInfoContainer>
-                <DetailInfoRow>
+            <s.DetailInfoContainer>
+                <s.DetailInfoRow>
                     <img src="/img/detail-page/clock.png" style={{width:"14px", height:"14px"}}/>
                     <span>{facility.operatingHours}</span>
-                </DetailInfoRow>
-                <DetailInfoRow>
+                </s.DetailInfoRow>
+                <s.DetailInfoRow>
                     <img src="/img/detail-page/telephone.png" style={{width:"13px", height:"13px"}}/>
                     <span>{facility.number}</span>
-                </DetailInfoRow>
-                <DetailInfoRow>
+                </s.DetailInfoRow>
+                <s.DetailInfoRow>
                     <img src="/img/detail-page/location.png" style={{width:"11px", height:"16px"}}/>
                     <span>{facility.address}</span>
-                </DetailInfoRow>
-            </DetailInfoContainer>
+                </s.DetailInfoRow>
+            </s.DetailInfoContainer>
 
-            <FullWidthDivider />
+            <s.FullWidthDivider />
 
             {facility.mainServices.length > 0 && (
-                <DetailListSection>
-                    <DetailListTitle>주요 서비스</DetailListTitle>
-                    <DetailList>
+                <s.DetailListSection>
+                    <s.DetailListTitle>주요 서비스</s.DetailListTitle>
+                    <s.DetailList>
                         {facility.mainServices.map((service, index) => (
-                            <DetailListItem key={index}>{service}</DetailListItem>
+                            <s.DetailListItem key={index}>{service}</s.DetailListItem>
                         ))}
-                    </DetailList>
-                </DetailListSection>
+                    </s.DetailList>
+                </s.DetailListSection>
             )}
 
             {facility.reviews.length > 0 && (
-                <DetailListSection>
-                    <DetailListTitle className="moreinfo">이용 후기
+                <s.DetailListSection>
+                    <s.DetailListTitle className="moreinfo">이용 후기
                         <p>자세히보기</p>
-                    </DetailListTitle>
+                    </s.DetailListTitle>
                     {facility.reviews.map((review) => (
-                        <ReviewCard key={review.id}>
-                            <ReviewHeader>
-                                <ReviewName>
+                        <s.ReviewCard key={review.id}>
+                            <s.ReviewHeader>
+                                <s.ReviewName>
                                     <p>{review.authorName[0]}</p>
-                                    {review.authorName[0]}**</ReviewName>
-                                <ReviewDate>{formatDate(review.createdAt)}</ReviewDate>
-                            </ReviewHeader>
-                            <RatingStar rating={review.rating} />
-                            <ReviewText>{review.content}</ReviewText>
-                        </ReviewCard>
+                                    {review.authorName[0]}**</s.ReviewName>
+                                <s.ReviewDate>{formatDate(review.createdAt)}</s.ReviewDate>
+                            </s.ReviewHeader>
+                            <s.RatingStar rating={review.rating} />
+                            <s.ReviewText>{review.content}</s.ReviewText>
+                        </s.ReviewCard>
                     ))}
-                </DetailListSection>
+                </s.DetailListSection>
             )}
-        </DetailPageLayout>
+        </s.DetailPageLayout>
     );
 }
