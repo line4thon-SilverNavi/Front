@@ -51,7 +51,7 @@ const Home = () => {
     const fetchFacilities = async () => {
       try {
         const data = await getFacilityList();
-        if (data) {
+        if (data && data.length > 0) {
           // 최대 3개만 표시
           setFacilities(data.slice(0, 3));
         }
@@ -64,7 +64,7 @@ const Home = () => {
     const fetchPrograms = async () => {
       try {
         const data = await getProgramList();
-        if (data) {
+        if (data && data.length > 0) {
           // 최대 3개만 표시
           setPrograms(data.slice(0, 3));
         }
@@ -97,7 +97,7 @@ const Home = () => {
 
       <s.SectionTitle className="withMoreInfo">
         이번 주 우리 동네 프로그램
-      <s.MoreInfo>
+      <s.MoreInfo onClick={() => navigate("/program")}>
             더보기
             <img src={"/img/home/arrow-right.png"}/>
       </s.MoreInfo>
@@ -144,7 +144,7 @@ const Home = () => {
 
       <s.SectionTitle className="withMoreInfo">
         가까운 복지시설
-        <s.MoreInfo onClick={() => navigate("/facility")}>
+        <s.MoreInfo onClick={() => navigate("/nearfacility")}>
             더보기
             <img src={"/img/home/arrow-right.png"}/>
       </s.MoreInfo>

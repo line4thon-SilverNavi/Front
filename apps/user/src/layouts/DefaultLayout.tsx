@@ -15,7 +15,8 @@ const DefaultLayout = () => {
   ];
   
   const isHidden = hideLayoutPaths.includes(location.pathname) || 
-                   location.pathname.match(/^\/facility\/\d+$/);
+                  location.pathname.match(/^\/facility\/\d+$/) || 
+                  location.pathname.match(/^\/program\/\d+$/);
   
   const showNavBar = !isHidden;
   const hasPadding = !isHidden;

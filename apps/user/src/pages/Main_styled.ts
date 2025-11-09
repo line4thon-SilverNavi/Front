@@ -139,14 +139,18 @@ export const Total = styled.div`
 
 export const SortContainer = styled.div`
   position: relative;
+  border-radius: 5px;
 `;
 
-export const SortButton = styled.button`
+export const SortButton = styled.button<{ $isOpen?: boolean }>`
   ${({ theme }) => theme.fonts.body1};
-  color: ${({ theme }) => theme.colors.gray04};
-  background: ${({ theme }) => theme.colors.gray01};
-  border: 1px solid ${({theme}) => theme.colors.gray03};
-  border-radius: 5px;
+  color: ${({ theme, $isOpen }) => $isOpen ? theme.colors.blue01 : theme.colors.gray04};
+  background: ${({ theme, $isOpen }) => $isOpen ? theme.colors.blue03 : theme.colors.gray01};
+  border-top: 1px solid ${({ theme }) => theme.colors.gray03};
+  border-right: 1px solid ${({ theme }) => theme.colors.gray03};
+  border-left: 1px solid ${({ theme }) => theme.colors.gray03};
+  border-bottom: 1px solid ${({ theme, $isOpen }) => $isOpen ? theme.colors.gray01 : theme.colors.gray03};
+  border-radius: ${({ $isOpen }) => $isOpen ? '5px 5px 0 0' : '5px'};
   box-shadow: none;
   cursor: pointer;
   display: flex;
@@ -165,21 +169,24 @@ export const SortDropdown = styled.div`
   top: 100%;
   right: 0;
   background: ${({ theme }) => theme.colors.gray01};
-  border: 1px solid ${({ theme }) => theme.colors.gray03};
-  border-radius: 5px;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.gray03};
+  border-right: 1px solid ${({ theme }) => theme.colors.gray03};
+  border-left: 1px solid ${({ theme }) => theme.colors.gray03};
+  border-radius: 0 0 5px 5px;
   overflow: hidden;
   z-index: 100;
   width: 100%;
+  box-shadow: none;
 `;
 
 export const SortOption = styled.div<{ $isSelected: boolean }>`
   ${({ theme }) => theme.fonts.body3};
-  color: ${({ theme, $isSelected }) => $isSelected ? theme.colors.blue01 : theme.colors.gray06};
+  color: ${({ theme, $isSelected }) => $isSelected ? theme.colors.blue01 : theme.colors.gray04};
   background: ${({ theme, $isSelected }) => $isSelected ? theme.colors.blue03 : theme.colors.gray01};
   padding: 0.3rem 0.3rem 0.2rem 0.7rem;
   cursor: pointer;
   transition: background 0.2s ease;
-
+    
   &:hover {
     background: ${({ theme }) => theme.colors.gray02};
   }

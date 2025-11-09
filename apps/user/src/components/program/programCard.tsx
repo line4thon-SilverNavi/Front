@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import BookmarkButton from "@components/common/BookmarkButton";
 import { useFormatDate, useFormatTime } from "@hooks/program/ProcessingTime";
+import { useNavigate } from "react-router-dom";
 
 type ProgramCardProps = {
     programId: number;
@@ -30,26 +31,45 @@ export default function ProgramCard({
     endTime,
     currentApplicants,
     capacity,
+    fee,
     bookmarked
 }: ProgramCardProps){
+    const navigate = useNavigate();
     const formattedDate = useFormatDate(date);
     const formattedTime = useFormatTime(startTime, endTime);
     const applicationRate = (currentApplicants / capacity) * 100;
+    
+    // thumbnail이 null이면 더미 이미지 사용
+    const displayThumbnail = thumbnail || "/img/dummy/program-default.png";
+
+    const handleCardClick = () => {
+        navigate(`/program/${programId}`, {
+            state: {
+                currentApplicants,
+                capacity,
+                dayOfWeek
+            }
+        });
+    };
+
+    const handleBookmarkClick = (e: React.MouseEvent) => {
+        e.stopPropagation(); // 카드 클릭 이벤트 방지
+    };
 
     return(
-        <CardWrapper>
-            <BookmarkButtonWrapper>
+        <CardWrapper onClick={handleCardClick}>
+            <BookmarkButtonWrapper onClick={handleBookmarkClick}>
                 <BookmarkButton 
                     initialBookmarked={bookmarked}
                     contentId={programId}
-                    type="시설"
+                    type="프로그램"
                 />
             </BookmarkButtonWrapper>
             <CategoryTag>
                 {category}
             </CategoryTag>
             <Container>
-                <Img style={{ backgroundImage: `url(${thumbnail})` }}></Img>
+                <Img style={{ backgroundImage: `url(${displayThumbnail})` }}></Img>
                 <InfoContainer>
                     <Title>
                         <Name>{programName}</Name>
