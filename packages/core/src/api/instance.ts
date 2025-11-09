@@ -19,7 +19,13 @@ type TokenErrorBody = {
 // retry 플래그를 추가한 요청 타입
 type RetriableRequest = InternalAxiosRequestConfig & { _retry?: boolean };
 
-const PUBLIC_PATHS = ["/api/users/signup", "/api/users/signin"];
+const PUBLIC_PATHS = [
+  "/api/users/signup",
+  "/api/users/signin",
+  "/api/managers/signin",
+  "/api/managers/signup",
+  "/api/code/create",
+];
 
 /* -------------------- Request interceptor -------------------- */
 instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
@@ -109,6 +115,32 @@ export const postNoResponse = async <TRequest>(
     return true;
   } catch (e: unknown) {
     console.error("POST(무응답) 실패:", e);
+    return false;
+  }
+};
+
+export const patchResponse = async <TRequest, TResponse>(
+  url: string,
+  body: TRequest
+): Promise<TResponse | null> => {
+  try {
+    const res = await instance.patch<TResponse>(url, body);
+    return res.data;
+  } catch (e) {
+    console.error("PATCH 요청 실패:", e);
+    return null;
+  }
+};
+
+export const patchNoResponse = async <TRequest>(
+  url: string,
+  body: TRequest
+): Promise<boolean> => {
+  try {
+    await instance.patch<void>(url, body);
+    return true;
+  } catch (e: unknown) {
+    console.error("PATCH(무응답) 실패:", e);
     return false;
   }
 };

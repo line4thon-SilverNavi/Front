@@ -1,7 +1,177 @@
-import * as s from "./Home_styled";
+import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import * as s from "../Main_styled";
+import FacilityCard from "@components/facility/facilityCard";
+import ProgramCard from "@components/program/programCard";
+import CardList from "@components/common/CardList";
+import { getFacilityList, type FacilityListResponse } from "@apis/facility/facilityList";
+import { getProgramList, type ProgramListResponse } from "@apis/program/programList";
+import { dummyFacilityData } from "@apis/dummy/facilityDummy";
+import { dummyProgramData } from "@apis/dummy/programDummy";
+import { patchLocation } from "@apis/home/patchLocation";
+import { Button } from "@core/ui/button/Button";
 
 const Home = () => {
-  return <s.HomeWrapper>홈페이지입니다.</s.HomeWrapper>;
+  const navigate = useNavigate();
+  const [facilities, setFacilities] = useState<FacilityListResponse[]>(dummyFacilityData);
+  const [programs, setPrograms] = useState<ProgramListResponse[]>(dummyProgramData);
+  const [selectedCategory, setSelectedCategory] = useState<string>("전체");
+  const locationSentRef = useRef(false);
+
+  const categories = ["전체", "건강", "문화", "치료"];
+
+  const filteredPrograms = selectedCategory === "전체" 
+    ? programs 
+    : programs.filter(program => program.category === selectedCategory);
+
+  useEffect(() => {
+    // 최초 1회만 위치 정보 전송
+    const sendLocation = async () => {
+      if (locationSentRef.current) return;
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            await patchLocation({
+              latitude: position.coords.latitude.toString(),
+              longitude: position.coords.longitude.toString(),
+            });
+            locationSentRef.current = true;
+            console.log("✅ 위치 정보 전송 완료");
+          } catch (error) {
+            console.error("❌ 위치 정보 전송 실패:", error);
+          }
+        },
+        (error) => {
+          console.error("❌ 위치 권한 거부 또는 오류:", error.message);
+        }
+      );
+    };
+
+    const fetchFacilities = async () => {
+      try {
+        const data = await getFacilityList();
+        if (data && data.length > 0) {
+          // 최대 3개만 표시
+          setFacilities(data.slice(0, 3));
+        }
+      } catch (error) {
+        console.error("시설 목록 불러오기 실패:", error);
+        // API 실패 시 더미 데이터 유지
+      }
+    };
+
+    const fetchPrograms = async () => {
+      try {
+        const data = await getProgramList();
+        if (data && data.length > 0) {
+          // 최대 3개만 표시
+          setPrograms(data.slice(0, 3));
+        }
+      } catch (error) {
+        console.error("프로그램 목록 불러오기 실패:", error);
+        // API 실패 시 더미 데이터 유지
+      }
+    };
+
+    sendLocation();
+    fetchFacilities();
+    fetchPrograms();
+  }, []);
+
+  return (
+    <s.HomeWrapper>
+      <s.SectionTitle>내 주변 최신 소식</s.SectionTitle>
+      <s.News>
+        <s.NewsTitle>
+          <span style={{fontSize:"0.85rem"}}>🎉</span> 신규 프로그램 안내
+        </s.NewsTitle>
+        <s.NewsInfo>
+          11월 특별 프로그램이 개설 되었습니다.
+          <s.MoreInfo>
+            더보기
+            <img src={"/img/home/arrow-right.png"}/>
+          </s.MoreInfo>
+        </s.NewsInfo>
+      </s.News>
+
+      <s.SectionTitle className="withMoreInfo">
+        이번 주 우리 동네 프로그램
+      <s.MoreInfo onClick={() => navigate("/program")}>
+            더보기
+            <img src={"/img/home/arrow-right.png"}/>
+      </s.MoreInfo>
+      </s.SectionTitle>
+      
+      <s.CategoryButtons>
+        {categories.map((category) => (
+          <Button
+            key={category}
+            tone={selectedCategory === category ? "blue" : "gray"}
+            variant={selectedCategory === category ? "subtle" : "subtle"}
+            size="sm"
+            radius="sm"
+            typo={selectedCategory === category ? "label1" : "label2"}
+            onClick={() => setSelectedCategory(category)}
+          >
+            {category}
+          </Button>
+        ))}
+      </s.CategoryButtons>
+
+      <CardList
+        items={filteredPrograms}
+        renderCard={(program) => (
+          <ProgramCard
+            key={program.programId}
+            programId={program.programId}
+            programName={program.programName}
+            category={program.category}
+            date={program.date}
+            dayOfWeek={program.dayOfWeek}
+            location={program.location}
+            startTime={program.startTime}
+            endTime={program.endTime}
+            currentApplicants={program.currentApplicants}
+            capacity={program.capacity}
+            fee={program.fee}
+            thumbnail={program.thumbnail}
+            bookmarked={program.bookmarked}
+          />
+        )}
+        direction="horizontal"
+      />
+
+      <s.SectionTitle className="withMoreInfo">
+        가까운 복지시설
+        <s.MoreInfo onClick={() => navigate("/nearfacility")}>
+            더보기
+            <img src={"/img/home/arrow-right.png"}/>
+      </s.MoreInfo>
+      </s.SectionTitle>
+
+      <CardList
+        items={facilities}
+        renderCard={(facility) => (
+          <FacilityCard
+            key={facility.facilityId}
+            facilityId={facility.facilityId}
+            name={facility.name}
+            thumbnail={facility.thumbnail}
+            distanceKm={facility.distanceKm}
+            averageRating={facility.averageRating}
+            reviewCount={facility.reviewCount}
+            operatingHours={facility.operatingHours}
+            phoneNumber={facility.phoneNumber}
+            bookmarked={facility.bookmarked}
+          />
+        )}
+        direction="horizontal"
+      />
+
+
+    </s.HomeWrapper>
+  );
 };
 
 export default Home;

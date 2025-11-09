@@ -11,6 +11,12 @@ import Mypage from "@pages/mypage/MyPage";
 import Btn from "@pages/test/Btn";
 import Intro from "@pages/auth/Intro";
 import Signup from "@pages/auth/Signup";
+import FacilityMain from "@pages/facility/FacilityMain";
+import FacilityDetailPage from "@pages/facility/FacilityDetail";
+import FacilityApplyPage from "@pages/facility/FacilityApply";
+import ProgramHome from "@pages/program/ProgramHome";
+import FacilityHome from "@pages/facility/FacilityHome";
+import ProgramDetailPage from "@pages/program/ProgramDetail";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +33,12 @@ const router = createBrowserRouter([
         // element: <PrivateRoute />,
         children: [
           { index: true, element: <Home /> },
+          { path: "program", element: <ProgramHome />},
+          { path: "nearfacility", element: <FacilityHome />},
+          { path: "program/:programId", element: <ProgramDetailPage />},
+          { path: "facility", element: <FacilityMain />},
+          { path: "facility/:facilityId", element: <FacilityDetailPage />},
+          { path: "facility/apply", element: <FacilityApplyPage />},
           { path: "mypage", element: <Mypage /> },
           { path: "button", element: <Btn /> },
         ],

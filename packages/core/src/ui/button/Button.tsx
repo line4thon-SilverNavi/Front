@@ -5,7 +5,7 @@ import { fonts } from "../../styles/fonts";
 
 export type Tone = "blue" | "gray";
 export type Variant = "solid" | "subtle" | "outline";
-export type Size = "sm" | "md" | "lg";
+export type Size = "sm" | "md" | "lg" | "adminAuth";
 type FontKey = keyof typeof fonts;
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -21,10 +21,11 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 // 사이즈 세팅
-const SIZE_MAP: Record<Size, { h: string; pad: string }> = {
+const SIZE_MAP: Record<Size, { h?: string; pad: string }> = {
   sm: { h: "36px", pad: "8px 14px" },
   md: { h: "44px", pad: "12px 18px" },
   lg: { h: "60px", pad: "20px 60px" },
+  adminAuth: { pad: "1.56rem 0rem" },
 };
 
 // tone별 색상
@@ -33,7 +34,7 @@ const toneColor = (theme: DefaultTheme, tone: Tone) => {
   switch (tone) {
     case "gray":
       return {
-        base: c.gray07,
+        base: c.gray06,
         bg: c.gray03,
         subtle: c.gray02,
       };
