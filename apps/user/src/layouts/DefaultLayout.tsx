@@ -10,12 +10,11 @@ const DefaultLayout = () => {
   const hideLayoutPaths = [
     "/intro", 
     "/login", 
-    "/signup", 
-    "/facility/apply"
+    "/signup"
   ];
   
   const isHidden = hideLayoutPaths.includes(location.pathname) || 
-                  location.pathname.match(/^\/facility\/\d+$/) || 
+                  location.pathname.match(/^\/facility\/\d+/) || 
                   location.pathname.match(/^\/program\/\d+$/);
   
   const showNavBar = !isHidden;

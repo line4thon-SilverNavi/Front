@@ -1,18 +1,22 @@
 import styled from "styled-components";
 import { Button } from "@core/ui/button";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import * as s from "@components/common/datailPageLayout";
 
 type ApplyingModalProps = {
     onClose: () => void;
+    facilityId?: number;
+    facilityName?: string;
 };
 
-export default function ApplyingModal({ onClose }: ApplyingModalProps) {
+export default function ApplyingModal({ onClose, facilityId, facilityName }: ApplyingModalProps) {
     // 🔧 테스트용: 이 값을 변경해서 각 케이스 UI 확인하기
     // null, "1등급", "2등급", "3등급", "4등급", "5등급", "인지지원등급"
-    const TEST_CARE_GRADE = "인지지원등급"; // ← 여기를 수정하세요!
+    const TEST_CARE_GRADE = "1등급"; // ← 여기를 수정하세요!
     //-----나중엔 삭제--------
     
+    const navigate = useNavigate();
     const [careGrade, setCareGrade] = useState<string | null>(null);
 
     useEffect(() => {
@@ -30,7 +34,7 @@ export default function ApplyingModal({ onClose }: ApplyingModalProps) {
 
     // 등급 타입 분류 함수
     const getCareGradeType = (grade: string | null) => {
-        if (!grade) return null;
+        if (!grade || grade === '미등록') return 'unregistered';
         if (grade === '1등급' || grade === '2등급') return 'high';
         if (grade === '3등급' || grade === '4등급' || grade === '5등급') return 'middle';
         if (grade === '인지지원등급') return 'low';
@@ -42,17 +46,29 @@ export default function ApplyingModal({ onClose }: ApplyingModalProps) {
     // 핸들러 함수들
     const handleFacilityApply = () => {
         console.log("시설 상담 신청하기");
-        // API 호출 등
+        navigate(`/facility/${facilityId}/apply`, { 
+            state: { 
+                consultType: 'facility',
+                facilityName
+            } 
+        });
+        onClose();
     };
 
     const handleGeneralApply = () => {
         console.log("일반 상담 신청하기");
-        // API 호출 등
+        navigate(`/facility/${facilityId}/apply`, { 
+            state: { 
+                consultType: 'general',
+                facilityName
+            } 
+        });
+        onClose();
     };
 
     const handleViewPrograms = () => {
         console.log("프로그램 보기");
-        // 프로그램 페이지로 이동
+        navigate('/program');
     };
 
     const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -66,10 +82,10 @@ export default function ApplyingModal({ onClose }: ApplyingModalProps) {
         <Overlay onClick={handleOverlayClick}>
             <ModalWrapper>
                 <Header>
-                    상담신청
+                    상담 신청
                     <img src="/img/apply/close.png" onClick={onClose}/>
                 </Header>
-                <Container>
+                <Container $isUnregistered={gradeType === 'unregistered'}>
                     
                     {gradeType === 'high' || gradeType === 'middle' ? (
                         <>  
@@ -102,10 +118,23 @@ export default function ApplyingModal({ onClose }: ApplyingModalProps) {
                         </>
                     )}
 
-                    <MyGrade>
-                        <p>현재 등록된 등급</p>
-                        {careGrade || "미등록"}
-                    </MyGrade>
+                    {gradeType === 'unregistered' && (
+                        <>
+                            <img src="/img/apply/warning.png" style={{width:"70px", height:"63px", marginBottom:"1rem"}}/>
+                            <Title>요양등급 정보가 필요해요</Title>
+                            <Details style={{marginBottom:"1rem"}}>
+                                아직 요양등급 정보가 등록되지 않았습니다. <br />
+                                상담을 원하신다면 프로필에서 요양등급을 등록해주세요.
+                            </Details>
+                        </>
+                    )}
+
+                    {gradeType !== 'unregistered' && (
+                        <MyGrade>
+                            <p>현재 등록된 등급</p>
+                            {careGrade || "미등록"}
+                        </MyGrade>
+                    )}
 
                     {gradeType === 'high' && (
                         <Button variant="outline" typo="title2" tone="blue" radius="pill" size="md" 
@@ -116,7 +145,7 @@ export default function ApplyingModal({ onClose }: ApplyingModalProps) {
                     )}
 
                     {gradeType === 'middle' && (
-                        <Button variant="outline" typo="title2" tone="blue" radius="pill" size="md" 
+                        <Button variant="outline" typo="title2" tone="blue" radius="pill" 
                         fullWidth onClick={handleGeneralApply} style={{marginTop: "1rem"}}>
                             <img src="/img/apply/apply.png" style={{width:"20px", height:"20px"}}/>
                             일반 상담 신청하기
@@ -133,6 +162,14 @@ export default function ApplyingModal({ onClose }: ApplyingModalProps) {
                                 일반 상담 신청하기
                             </Button>
                         </ButtonGroup>
+                    )}
+
+                    {gradeType === 'unregistered' && (
+                        <Button variant="solid" typo="title3" tone="blue" radius="pill" size="sm" 
+                        onClick={onClose} style={{width:"70%"}}>
+                            <img src="/img/apply/camera.png" style={{width:"18px", height:"18px"}}/>
+                            요양등급 등록하기
+                        </Button>
                     )}
                 </Container>
             </ModalWrapper>
@@ -156,7 +193,7 @@ const Overlay = styled.div`
 const ModalWrapper = styled.div`
     background-color: #fff;
     border-radius: 20px;
-    width: 20rem;
+    width: 20.5rem;
     max-width: 400px;
     overflow: hidden;
 `;
@@ -176,13 +213,13 @@ const Header = styled.div`
     }
 `;
 
-const Container = styled.div`
+const Container = styled.div<{ $isUnregistered?: boolean }>`
     background: ${({ theme }) => theme.colors.gray01};
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem 1.8rem;
-    gap: 1rem;
+    padding: ${({ $isUnregistered }) => $isUnregistered ? '2rem 1.2rem' : '2rem 1.8rem'};
+    gap: ${({ $isUnregistered }) => $isUnregistered ? '0.4rem' : '1rem'};
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
     img{

@@ -8,5 +8,9 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@types/react-datepicker": "^7.0.0",
+    "react-datepicker": "^8.8.0"
+  }
 }
