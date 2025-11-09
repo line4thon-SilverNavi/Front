@@ -24,6 +24,7 @@ export const fonts = {
   // title
   title1: fontGenerator("1.125rem", 600),
   title2: fontGenerator("1rem", 600),
+  title3: fontGenerator("0.875rem", 500),
 
   //body
   body1: fontGenerator("1rem", 600),

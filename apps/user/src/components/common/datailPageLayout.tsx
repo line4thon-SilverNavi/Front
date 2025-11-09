@@ -51,7 +51,7 @@ export function DetailPageLayout({
         )}
       </ImageContainer>
 
-      <Content role="main">{children}</Content>
+      <ScrollableContent role="main">{children}</ScrollableContent>
 
       {footer && <Footer>{footer}</Footer>}
     </Wrap>
@@ -63,7 +63,7 @@ const Wrap = styled.div`
   display: flex;
   flex-direction: column;
   background: ${({ theme }) => theme.colors.gray01};
-  min-height: 100dvh;
+  height: 100dvh;
 `;
 
 const ImageContainer = styled.div`
@@ -120,20 +120,22 @@ const CategoryTag = styled.div`
     align-items: center;
 `;
 
-const Content = styled.div`
+const ScrollableContent = styled.div`
   flex: 1;
-  padding: 1.36rem 1.36rem 0 1.36rem;
+  overflow-y: auto;
+  padding: 1.36rem;
   display: flex;
   flex-direction: column;
-  min-height: 0;
 `;
 
 const Footer = styled.footer`
+  position: relative;
   padding: 1rem 1.36rem calc(1rem + env(safe-area-inset-bottom));
   background: ${({ theme }) => theme.colors.gray01};
   display: flex;
   flex-direction: column;
   gap: 12px;
+  border: none;
 `;
 
 
@@ -290,6 +292,10 @@ export const DetailListTitle = styled.h2`
       text-decoration: underline;
       text-decoration-thickness: 10%;
     }
+  }
+
+  &.service{
+    ${({ theme }) => theme.fonts.title3};
   }
 `;
 
