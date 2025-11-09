@@ -1,23 +1,16 @@
 import { Button } from "@core/ui/button";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import * as s from "@components/common/datailPageLayout";
 import { useEffect, useState } from "react";
 import { getFacilityDetailDummy } from "@apis/dummy/facilityDetailDummy";
 import type { FacilityDetailData } from "@apis/facility/facilityDetail";
+import ApplyingModal from "@components/facility/ApplyingModal";
+import { useFormatDateFull } from "@hooks/program/ProcessingTime";
 
 export default function FacilityDetailPage() {
-    const navigate = useNavigate();
     const { facilityId } = useParams<{ facilityId: string }>();
     const [facility, setFacility] = useState<FacilityDetailData | null>(null);
-    
-    // 날짜 포맷 함수: 2025-10-25 형식으로 변환
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    };
+    const [isModalOpen, setIsModalOpen] = useState(false);
     
     useEffect(() => {
         const fetchFacilityDetail = async () => {
@@ -30,7 +23,7 @@ export default function FacilityDetailPage() {
     }, [facilityId]);
 
     const handleApply = () => {
-        navigate('/facility/apply', { state: { facilityId } });
+        setIsModalOpen(true);
     };
 
     if (!facility) {
@@ -42,7 +35,9 @@ export default function FacilityDetailPage() {
         : "/img/dummy/facility-default.png";
 
     return (
-        <s.DetailPageLayout
+        <>
+            {isModalOpen && <ApplyingModal />}
+            <s.DetailPageLayout
             image={displayImage}
             category={facility.category}
             bookmarkProps={{
@@ -104,7 +99,7 @@ export default function FacilityDetailPage() {
                                 <s.ReviewName>
                                     <p>{review.authorName[0]}</p>
                                     {review.authorName[0]}**</s.ReviewName>
-                                <s.ReviewDate>{formatDate(review.createdAt)}</s.ReviewDate>
+                                <s.ReviewDate>{useFormatDateFull(review.createdAt)}</s.ReviewDate>
                             </s.ReviewHeader>
                             <s.RatingStar rating={review.rating} />
                             <s.ReviewText>{review.content}</s.ReviewText>
@@ -113,5 +108,6 @@ export default function FacilityDetailPage() {
                 </s.DetailListSection>
             )}
         </s.DetailPageLayout>
+        </>
     );
 }

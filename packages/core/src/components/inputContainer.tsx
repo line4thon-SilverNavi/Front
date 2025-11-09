@@ -43,7 +43,7 @@ export default function InputContainer({
   showToggleForPassword,
   clickable = false,
   onClickInput,
-  labelTypo = "label",
+  labelTypo = "body1",
   inputTypo = "body2",
   width,
   height,

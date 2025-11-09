@@ -21,7 +21,11 @@ export default function LoginPage() {
       return setError(res?.message || "로그인에 실패했습니다.");
     }
 
-    setTokens({ access: res.data.token, refresh: "" });
+    setTokens({ 
+      access: res.data.token, 
+      refresh: "",
+      careGrade: res.data.careGrade 
+    });
     navigate("/");
   };
 

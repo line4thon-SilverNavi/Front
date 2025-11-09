@@ -31,7 +31,7 @@ export default function ProgramCard({
     endTime,
     currentApplicants,
     capacity,
-    fee,
+    //fee,
     bookmarked
 }: ProgramCardProps){
     const navigate = useNavigate();
