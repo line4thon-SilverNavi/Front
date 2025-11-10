@@ -213,7 +213,7 @@ export default function SetUserInfo(){
                     label="휴대폰번호"
                     value={phone}
                     onChange={setPhone}
-                    placeholder="케어가 필요한 분의 이름을 입력해주세요"
+                    placeholder="케어가 필요한 분의 번호를 입력해주세요"
                     helperText="'-'없이 입력하세요"
                 />
 

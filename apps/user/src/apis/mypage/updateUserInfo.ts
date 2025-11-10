@@ -7,6 +7,8 @@ export type UpdateUserInfoRequest = {
     careTargetBirth?: string;
     careGrade?: "1등급" | "2등급" | "3등급" | "4등급" | "5등급" | "등급외";
     careTargetGender?: "남성" | "여성";
+    guardianName?: string;
+    guardianPhone?: string;
 };
 
 export type UpdateUserInfoResponse = {

@@ -1,9 +1,14 @@
 import styled from "styled-components";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Button } from "core/ui/button";
 
 export default function FinishApply() {
     const location = useLocation();
     const navigate = useNavigate();
+    const { facilityId } = useParams<{ facilityId?: string }>();
+    
+    // facilityId가 URL에 있으면 시설상담, 없으면 프로그램
+    const isProgram = !facilityId;
     
     const consultType = location.state?.consultType as 'facility' | 'general' | undefined;
     const facilityName = location.state?.facilityName;
@@ -20,50 +25,75 @@ export default function FinishApply() {
         <Wrapper>
             <Title>
                 <img src="/img/apply/check.png" style={{width:"81px", height:"81px"}}/>
-                <h1>상담신청이 <br /> 완료되었습니다.</h1>
+                <h1>
+                    {isProgram ? '프로그램 신청이' : '상담신청이'} <br /> 완료되었습니다.
+                </h1>
                 <SubTitle>
-                    {facilityName && (
+                    {isProgram ? (
                         <>
-                            {facilityName} <Highlight>'{consultType === 'facility' ? '시설상담' : '일반상담'}'</Highlight>
+                            신청 목록은 <strong>[신청 내역]</strong> → <br />
+                            <strong>[프로그램 신청]</strong>에서 확인하세요.
                         </>
+                    ) : (
+                        facilityName && (
+                            <>
+                                {facilityName} {consultType === 'facility' ? '시설상담' : '일반상담'}
+                            </>
+                        )
                     )}
                 </SubTitle>
             </Title>
 
-            <Container>
-                <ProcessList>
-                    <ProcessItem>
-                        <StepNumber>1</StepNumber>
-                        <Info>
-                        <StepText>상담 신청 접수</StepText>
-                        <Caption>담당자가 신청 내역을 확인합니다.</Caption>
-                        </Info>
-                    </ProcessItem>
-                    <ProcessItem>
-                        <StepNumber>2</StepNumber>
-                        <Info>
-                        <StepText>담당자 연락</StepText>
-                        <Caption>1-2일 내로 등록하신 연락처로 연락드립니다.</Caption>
-                        </Info>
-                    </ProcessItem>
-                    <ProcessItem>
-                        <StepNumber>3</StepNumber>
-                        <Info>
-                        <StepText>상담 일정 조정</StepText>
-                        <Caption>담당자와 상담 일정을 조율합니다.</Caption>
-                        </Info>
-                    </ProcessItem>
-                </ProcessList>
-            </Container>
+            {!isProgram && (
+                <Container>
+                    <ProcessList>
+                        <ProcessItem>
+                            <StepNumber>1</StepNumber>
+                            <Info>
+                            <StepText>상담 신청 접수</StepText>
+                            <Caption>담당자가 신청 내역을 확인합니다.</Caption>
+                            </Info>
+                        </ProcessItem>
+                        <ProcessItem>
+                            <StepNumber>2</StepNumber>
+                            <Info>
+                            <StepText>담당자 연락</StepText>
+                            <Caption>1-2일 내로 등록하신 연락처로 연락드립니다.</Caption>
+                            </Info>
+                        </ProcessItem>
+                        <ProcessItem>
+                            <StepNumber>3</StepNumber>
+                            <Info>
+                            <StepText>상담 일정 조정</StepText>
+                            <Caption>담당자와 상담 일정을 조율합니다.</Caption>
+                            </Info>
+                        </ProcessItem>
+                    </ProcessList>
+                </Container>
+            )}
 
-            <ButtonContainer>
-                <CloseButton onClick={handleClose}>
-                    닫기
-                </CloseButton>
-                <ViewButton onClick={handleViewConsults}>
-                    상담 내역 보기
-                </ViewButton>
-            </ButtonContainer>
+            {isProgram ? (
+                <ButtonWrapper>
+                    <Button 
+                        tone="blue" 
+                        radius="pill" 
+                        size="lg" 
+                        onClick={handleClose}
+                        fullWidth
+                    >
+                        확인
+                    </Button>
+                </ButtonWrapper>
+            ) : (
+                <ButtonContainer>
+                    <CloseButton onClick={handleClose}>
+                        닫기
+                    </CloseButton>
+                    <ViewButton onClick={handleViewConsults}>
+                        상담 내역 보기
+                    </ViewButton>
+                </ButtonContainer>
+            )}
         </Wrapper>
     );
 }
@@ -95,15 +125,11 @@ const Title = styled.div`
 `;
 
 const SubTitle = styled.p`
-    ${({ theme }) => theme.fonts.body2};
-    color: ${({ theme }) => theme.colors.gray06};
+    ${({ theme }) => theme.fonts.label1};
+    color: ${({ theme }) => theme.colors.gray05};
     margin: 0;
 `;
 
-const Highlight = styled.span`
-    color: ${({ theme }) => theme.colors.blue01};
-    font-weight: 600;
-`;
 
 const Container = styled.div`
     width: 100%;
@@ -158,6 +184,11 @@ const ButtonContainer = styled.div`
     width: 100%;
     display: flex;
     gap: 8px;
+    margin-top: 2rem;
+`;
+
+const ButtonWrapper = styled.div`
+    width: 100%;
     margin-top: 2rem;
 `;
 
