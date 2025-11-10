@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Button } from "@core/ui/button";
 import { useNavigate } from "react-router-dom";
-import AuthLayout from "@components/auth/authLayout";
+import DefaultLayout from "@layouts/DefaultLayout";
 import InputContainer from "@core/components/inputContainer";
 import { postSignup } from "@apis/auth/signup";
 import { relationLabel, type RelationCode } from "@constants/relation";
 import RelationSelectModal from "@components/auth/RelationSelectModal";
+import styled from "styled-components";
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -36,8 +37,13 @@ export default function Signup() {
   };
 
   return (
-    <AuthLayout
-      title="상세정보 입력"
+    <DefaultLayout
+      header={
+        <Header>
+          <img src="/img/auth/back.png" onClick={() => navigate(-1)} />
+          <Title>상세정보 입력</Title>
+        </Header>
+      }
       footer={
         <Button tone="blue" radius="pill" size="lg" onClick={onSubmit}>
           다음
@@ -102,6 +108,24 @@ export default function Signup() {
           showToggleForPassword
         />
       </div>
-    </AuthLayout>
+    </DefaultLayout>
   );
 }
+
+const Header = styled.header`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  img {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+`;
+
+const Title = styled.h1`
+  ${({ theme }) => theme.fonts.heading1};
+  color: ${({ theme }) => theme.colors.gray07};
+  margin: 1rem 0 0 0;
+`;

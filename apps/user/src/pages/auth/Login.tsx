@@ -1,11 +1,11 @@
 import { useState } from "react";
-
 import { Button } from "@core/ui/button";
 import { postLogin } from "@apis/auth/login";
 import { useNavigate } from "react-router-dom";
-import AuthLayout from "@components/auth/authLayout";
+import DefaultLayout from "@layouts/DefaultLayout";
 import InputContainer from "@core/components/inputContainer";
 import { setTokens } from "@core/api/auth";
+import styled from "styled-components";
 
 export default function LoginPage() {
   const [id, setId] = useState("");
@@ -30,8 +30,13 @@ export default function LoginPage() {
   };
 
   return (
-    <AuthLayout
-      title="로그인"
+    <DefaultLayout
+      header={
+        <Header>
+          <img src="/img/auth/back.png" onClick={() => navigate(-1)} />
+          <Title>로그인</Title>
+        </Header>
+      }
       footer={
         <Button tone="blue" radius="pill" size="lg" onClick={onSubmit}>
           로그인
@@ -59,6 +64,24 @@ export default function LoginPage() {
           errorText={error ?? undefined}
         />
       </div>
-    </AuthLayout>
+    </DefaultLayout>
   );
 }
+
+const Header = styled.header`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  img {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+`;
+
+const Title = styled.h1`
+  ${({ theme }) => theme.fonts.heading1};
+  color: ${({ theme }) => theme.colors.gray07};
+  margin: 1rem 0 0 0;
+`;
