@@ -1,5 +1,5 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import AuthLayout from "@components/auth/authLayout";
+import AuthLayout from "@layouts/AuthLayout";
 import { Button } from "@core/ui/button";
 import { postFacilityApply, postGeneralApply } from "@apis/facility/facilityApply";
 import styled from "styled-components";

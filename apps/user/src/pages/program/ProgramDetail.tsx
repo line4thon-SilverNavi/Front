@@ -1,7 +1,7 @@
 import { Button } from "@core/ui/button";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useFormatDate, useFormatTime } from "@hooks/program/ProcessingTime";
-import * as s from "@components/common/datailPageLayout";
+import * as s from "@layouts/DetailPageLayout";
 import { getProgramDetailDummy } from "@apis/dummy/programDetailDummy";
 import type { ProgramDetailData } from "@apis/program/programDetail";
 import { useEffect, useState } from "react";

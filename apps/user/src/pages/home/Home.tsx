@@ -1,5 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import DefaultLayout from "@layouts/DefaultLayout";
+import Header from "@components/common/Header";
+import NavBar from "@components/common/NavBar";
 import * as s from "../Main_styled";
 import FacilityCard from "@components/facility/facilityCard";
 import ProgramCard from "@components/program/programCard";
@@ -80,8 +83,9 @@ const Home = () => {
   }, []);
 
   return (
-    <s.HomeWrapper>
-      <s.SectionTitle>내 주변 최신 소식</s.SectionTitle>
+    <DefaultLayout header={<Header />} footer={<NavBar />}>
+      <s.HomeWrapper>
+        <s.SectionTitle>내 주변 최신 소식</s.SectionTitle>
       <s.News>
         <s.NewsTitle>
           <span style={{fontSize:"0.85rem"}}>🎉</span> 신규 프로그램 안내
@@ -171,6 +175,7 @@ const Home = () => {
 
 
     </s.HomeWrapper>
+    </DefaultLayout>
   );
 };
 

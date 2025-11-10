@@ -3,7 +3,7 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import type { PropsWithChildren } from "react";
-import BookmarkButton from "./BookmarkButton";
+import BookmarkButton from "@components/common/BookmarkButton";
 
 type DetailPageLayoutProps = {
   image: string;

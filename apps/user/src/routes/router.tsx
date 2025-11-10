@@ -1,9 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 
-// layouts
-import DefaultLayout from "@layouts/DefaultLayout";
-// import PrivateRoute from "@layouts/PrivateLayout";
-
 // pages
 import Login from "@pages/auth/Login";
 import Home from "@pages/home/Home";
@@ -22,29 +18,20 @@ import ProgramDetailPage from "@pages/program/ProgramDetail";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <DefaultLayout />,
     children: [
       { path: "intro", element: <Intro /> },
-      {
-        path: "login",
-        element: <Login />,
-      },
+      { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
-      {
-        // element: <PrivateRoute />,
-        children: [
-          { index: true, element: <Home /> },
-          { path: "program", element: <ProgramHome />},
-          { path: "nearfacility", element: <FacilityHome />},
-          { path: "program/:programId", element: <ProgramDetailPage />},
-          { path: "facility", element: <FacilityMain />},
-          { path: "facility/:facilityId", element: <FacilityDetailPage />},
-          { path: "facility/:facilityId/apply", element: <FacilityApplyPage />},
-          { path: "facility/:facilityId/finish-apply", element: <FinishApplyPage />},
-          { path: "mypage", element: <Mypage /> },
-          { path: "button", element: <Btn /> },
-        ],
-      },
+      { index: true, element: <Home /> },
+      { path: "program", element: <ProgramHome />},
+      { path: "nearfacility", element: <FacilityHome />},
+      { path: "program/:programId", element: <ProgramDetailPage />},
+      { path: "facility", element: <FacilityMain />},
+      { path: "facility/:facilityId", element: <FacilityDetailPage />},
+      { path: "facility/:facilityId/apply", element: <FacilityApplyPage />},
+      { path: "facility/:facilityId/finish-apply", element: <FinishApplyPage />},
+      { path: "mypage", element: <Mypage /> },
+      { path: "button", element: <Btn /> },
     ],
   },
 ]);

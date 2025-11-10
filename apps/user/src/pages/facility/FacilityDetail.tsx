@@ -1,6 +1,6 @@
 import { Button } from "@core/ui/button";
 import { useParams } from "react-router-dom";
-import * as s from "@components/common/datailPageLayout";
+import * as s from "@layouts/DetailPageLayout";
 import { useEffect, useState } from "react";
 import { getFacilityDetailDummy } from "@apis/dummy/facilityDetailDummy";
 import type { FacilityDetailData } from "@apis/facility/facilityDetail";

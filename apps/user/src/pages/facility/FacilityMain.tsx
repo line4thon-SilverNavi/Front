@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import DefaultLayout from "@layouts/DefaultLayout";
+import Header from "@components/common/Header";
+import NavBar from "@components/common/NavBar";
 import * as s from "../Main_styled";
 import FacilityCard from "@components/facility/facilityCard";
 import CardList from "@components/common/CardList";
@@ -50,6 +53,7 @@ const FacilityMain = () => {
     }, []);
 
     return (
+        <DefaultLayout header={<Header />} footer={<NavBar />}>
         <s.HomeWrapper>
 
         <s.SectionTitle>
@@ -119,6 +123,7 @@ const FacilityMain = () => {
 
 
         </s.HomeWrapper>
+        </DefaultLayout>
     );
 };
 

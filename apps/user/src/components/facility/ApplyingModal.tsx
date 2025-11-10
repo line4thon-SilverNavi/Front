@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Button } from "@core/ui/button";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import * as s from "@components/common/datailPageLayout";
+import * as s from "@layouts/DetailPageLayout";
 
 type ApplyingModalProps = {
     onClose: () => void;
