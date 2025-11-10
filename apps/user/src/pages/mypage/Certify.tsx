@@ -64,14 +64,14 @@ export default function Certify(){
                     업로드된 문서는 안전하게 암호화되어 처리되며, 
                     <br />인식 후 즉시 삭제됩니다.
                 </Guide>
-                <Button tone="blue" radius="pill" size="lg" onClick={handleCameraClick}>
+                <ResponsiveButton tone="blue" radius="pill" size="lg" onClick={handleCameraClick}>
                     <img src="/img/apply/camera.png" style={{width:"20px", height:"20px"}}/>
                     카메라로 촬영하기
-                </Button>
-                <Button variant="outline" tone="blue" radius="pill" size="lg" onClick={handleGalleryClick}>
+                </ResponsiveButton>
+                <ResponsiveButton variant="outline" tone="blue" radius="pill" size="lg" onClick={handleGalleryClick}>
                     <img src="/img/apply/apply.png" style={{width:"20px", height:"20px"}}/>
                     갤러리에서 선택하기
-                </Button>
+                </ResponsiveButton>
 
                 <HiddenInput
                     ref={cameraInputRef}
@@ -272,4 +272,11 @@ const Preview = styled.img`
 
 const HiddenInput = styled.input`
   display: none;
+`;
+
+const ResponsiveButton = styled(Button)`
+  @media (max-width: 336px) {
+    padding: 0.7rem 1.5rem !important;
+    font-size: 14px !important;
+  }
 `;
