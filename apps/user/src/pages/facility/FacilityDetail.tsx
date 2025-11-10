@@ -36,7 +36,7 @@ export default function FacilityDetailPage() {
 
     return (
         <>
-            {isModalOpen && <ApplyingModal />}
+            {isModalOpen && <ApplyingModal onClose={() => setIsModalOpen(false)} facilityId={Number(facilityId)} facilityName={facility.name} />}
             <s.DetailPageLayout
             image={displayImage}
             category={facility.category}
