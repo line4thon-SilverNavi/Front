@@ -14,6 +14,8 @@ import FinishApplyPage from "@pages/facility/FinishApply";
 import ProgramHome from "@pages/program/ProgramHome";
 import FacilityHome from "@pages/facility/FacilityHome";
 import ProgramDetailPage from "@pages/program/ProgramDetail";
+import SetUserInfo from "@pages/mypage/SetUserInfo";
+import Certify from "@pages/mypage/Certify";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +33,8 @@ const router = createBrowserRouter([
       { path: "facility/:facilityId/apply", element: <FacilityApplyPage />},
       { path: "facility/:facilityId/finish-apply", element: <FinishApplyPage />},
       { path: "mypage", element: <Mypage /> },
+      { path: "setuser", element: <SetUserInfo /> },
+      { path: "mypage/certify", element: <Certify /> },
       { path: "button", element: <Btn /> },
     ],
   },

@@ -1,5 +1,5 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import AuthLayout from "@layouts/AuthLayout";
+import DefaultLayout from "@layouts/DefaultLayout";
 import { Button } from "@core/ui/button";
 import { postFacilityApply, postGeneralApply } from "@apis/facility/facilityApply";
 import styled from "styled-components";
@@ -115,8 +115,13 @@ export default function FacilityApplyPage() {
     };
         
     return (
-        <AuthLayout
-            title={consultType === 'facility' ? '상담신청' : '일반상담신청'}
+        <DefaultLayout
+            header={
+                <Header>
+                    <img src="/img/auth/back.png" onClick={() => navigate(-1)} />
+                    <Title>{consultType === 'facility' ? '상담신청' : '일반상담신청'}</Title>
+                </Header>
+            }
             footer={
                 <Button tone="blue" radius="pill" size="lg" onClick={handleSubmitClick}>
                     신청하기
@@ -247,9 +252,27 @@ export default function FacilityApplyPage() {
                 isAlreadyApplied={isAlreadyApplied}
                 facilityName={facilityName}
             />
-        </AuthLayout>
+        </DefaultLayout>
     );
 }
+
+const Header = styled.header`
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    img {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+`;
+
+const Title = styled.h1`
+    ${({ theme }) => theme.fonts.heading1};
+    color: ${({ theme }) => theme.colors.gray07};
+    margin: 1rem 0 0 0;
+`;
 
 const Info = styled.div`
     display: flex;

@@ -18,6 +18,7 @@ export default function CommonHeader({
     <Wrap>
         <img src="/img/auth/back.png" onClick={handleBack} />
         <Title>{title}</Title>
+        ㅤ {/*공백문자*/}
     </Wrap>
   );
 }
@@ -25,14 +26,10 @@ export default function CommonHeader({
 /* styled */
 const Wrap = styled.div`
     display: flex;
-    flex-direction: column;
-    /* height: 100%;
-    min-height: 100dvh; */
     background: ${({ theme }) => theme.colors.gray01};;
-    padding: 1.36rem 1.36rem calc(1.36rem + env(safe-area-inset-bottom));
     gap: 1rem;
-    flex: 1;
-
+    justify-content: space-between;
+    align-items: center;
     img {
         width: 18px;
         height: 18px;
@@ -40,7 +37,7 @@ const Wrap = styled.div`
 `;
 
 const Title = styled.h1`
-  ${({ theme }) => theme.fonts.heading1};
+  ${({ theme }) => theme.fonts.heading3};
   color: ${({ theme }) => theme.colors.gray07};
 `;
 
