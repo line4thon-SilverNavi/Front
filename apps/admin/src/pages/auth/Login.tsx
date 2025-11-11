@@ -23,7 +23,9 @@ const Login = () => {
       return setError(res?.message || "로그인에 실패했습니다.");
     }
 
-    setTokens({ access: res.data.token, refresh: "" });
+    console.log("[before save name]", res.data); // ✅ name 값 확인
+
+    setTokens({ access: res.data.token, refresh: "", name: res.data.name });
     navigate("/");
   };
 
