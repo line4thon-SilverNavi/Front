@@ -11,7 +11,7 @@ import BirthContainer from "@components/mypage/BirthContainer";
 import ToggleButtonGroup from "@core/components/ToggleButtonGroup";
 import TermsModal from "@components/mypage/TermsModal";
 import { getUserDetail } from "@apis/mypage/userDetail";
-import { updateUserInfo } from "@apis/mypage/updateUserInfo";
+import { updateUserInfo, type UpdateUserInfoRequest } from "@apis/mypage/updateUserInfo";
 
 export default function SetUserInfo(){
     const location = useLocation();
@@ -98,7 +98,7 @@ export default function SetUserInfo(){
     const handleSubmitClick = async () => {
         try {
             // 변경된 필드만 추출
-            const updates: any = {};
+            const updates: Partial<UpdateUserInfoRequest> = {};
             
             if (name !== initialData.name) {
                 updates.careTargetName = name || undefined;
