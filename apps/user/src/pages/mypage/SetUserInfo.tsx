@@ -232,8 +232,8 @@ export default function SetUserInfo(){
                 <ToggleButtonGroup
                     label="돌봄 대상자 성별"
                     options={[
-                        { value: "male", label: "남성" },
-                        { value: "female", label: "여성" }
+                        { value: "남성", label: "남성" },
+                        { value: "여성", label: "여성" }
                     ]}
                     value={gender}
                     onChange={setGender}
