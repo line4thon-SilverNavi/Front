@@ -14,6 +14,9 @@ import FinishApplyPage from "@pages/facility/FinishApply";
 import ProgramHome from "@pages/program/ProgramHome";
 import FacilityHome from "@pages/facility/FacilityHome";
 import ProgramDetailPage from "@pages/program/ProgramDetail";
+import SetUserInfo from "@pages/mypage/SetUserInfo";
+import Certify from "@pages/mypage/Certify";
+import ProgramApply from "@pages/program/ProgramApply";
 
 const router = createBrowserRouter([
   {
@@ -26,11 +29,15 @@ const router = createBrowserRouter([
       { path: "program", element: <ProgramHome />},
       { path: "nearfacility", element: <FacilityHome />},
       { path: "program/:programId", element: <ProgramDetailPage />},
+      { path: "program/:programId/apply", element: <ProgramApply />},
       { path: "facility", element: <FacilityMain />},
       { path: "facility/:facilityId", element: <FacilityDetailPage />},
       { path: "facility/:facilityId/apply", element: <FacilityApplyPage />},
       { path: "facility/:facilityId/finish-apply", element: <FinishApplyPage />},
+      { path: "finishapply", element: <FinishApplyPage />},
       { path: "mypage", element: <Mypage /> },
+      { path: "setuser", element: <SetUserInfo /> },
+      { path: "mypage/certify", element: <Certify /> },
       { path: "button", element: <Btn /> },
     ],
   },

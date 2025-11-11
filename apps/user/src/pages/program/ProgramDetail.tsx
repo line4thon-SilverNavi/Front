@@ -30,7 +30,7 @@ export default function ProgramDetailPage() {
     }, [programId]);
 
     const handleApply = () => {
-        navigate('/program/apply', { 
+        navigate(`/program/${programId}/apply`, { 
             state: { 
                 programId,
                 programData: program 

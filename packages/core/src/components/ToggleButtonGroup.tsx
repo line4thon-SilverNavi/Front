@@ -77,7 +77,7 @@ const Label = styled.label<{ $labelTypo: FontKey }>`
 
 const ButtonWrapper = styled.div`
   display: flex;
-  gap: 8px;
+  gap: 24px;
 `;
 
 const ToggleButton = styled.button<{
@@ -107,6 +107,18 @@ const ToggleButton = styled.button<{
 
   &:hover {
     opacity: 0.8;
+  }
+
+  /* 화면 너비가 400px 이하일 때 (버튼이 약 158px 이하가 됨) */
+  @media (max-width: 400px) {
+    ${({ theme }) => theme.fonts.body3};
+    padding: 10px 12px;
+    
+    ${({ $isSelected, theme }) =>
+      $isSelected &&
+      css`
+        ${theme.fonts.body3};
+      `}
   }
 `;
 
