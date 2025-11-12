@@ -9,14 +9,23 @@ export const Field = styled.div`
 `;
 
 export const Label = styled.label`
-  /* ${({ theme }) => theme.fonts.heading3} */
-  color: #6b7280;
+  padding-top: 11px;
+  border-top: 0.993px solid ${({ theme }) => theme.colors.gray03};
+  margin-top: 10px;
+  ${({ theme }) => theme.fonts.heading2}
+  color:  ${({ theme }) => theme.colors.blue01};
+  display: flex;
+  gap: 6px;
+
+  img {
+    width: 24px;
+  }
 `;
 
 export const Helper = styled.div`
-  /* ${({ theme }) => theme.fonts.heading3} */
-  color: #9aa0a6;
-  margin-top: -2px;
+  ${({ theme }) => theme.fonts.heading3}
+  color: ${({ theme }) => theme.colors.gray07};
+  margin-top: 15px;
 `;
 
 export const FileRow = styled.div`

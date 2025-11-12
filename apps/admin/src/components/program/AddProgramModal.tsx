@@ -13,10 +13,13 @@ import {
 } from "@apis/program/createProgram";
 
 import * as S from "./modal.styles";
-import { Field, Label, Helper, FileRow } from "./FormControls";
+import { Field, Label } from "./FormControls";
 import TimeRangeField from "./fields/TimeField";
 import DateField from "./fields/DateField";
 import CategoryModal from "./fields/CategoryModal";
+import UploadCard from "./UploadCard";
+import FileList from "./FileList";
+import ImageThumbGrid from "./ImageThumbGrid";
 type Props = {
   open: boolean;
   onClose: () => void;
@@ -93,15 +96,20 @@ export default function AddProgramModal({
   };
 
   const onPickImages = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const fs = Array.from(e.target.files ?? []).filter((f) =>
-      f.type.startsWith("image/")
-    );
-    const next = [...images, ...fs].slice(0, 5);
-    setImages(next);
-  };
+    const files = Array.from(e.target.files ?? []);
+    const valid = files.filter((f) => {
+      if (!f.type.startsWith("image/")) return false;
+      const ok = f.size <= 5 * 1024 * 1024; // 5MB
+      if (!ok) toast.error(`"${f.name}" 파일이 5MB를 초과합니다.`);
+      return ok;
+    });
 
-  const removeImage = (idx: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== idx));
+    const next = [...images, ...valid].slice(0, 5);
+    if (next.length === images.length && valid.length) {
+      toast.error("이미지는 최대 5장까지 업로드 가능합니다.");
+    }
+    setImages(next);
+    (e.target as HTMLInputElement).value = "";
   };
 
   const validate = (): string | null => {
@@ -115,6 +123,7 @@ export default function AddProgramModal({
       return "정원은 1 이상이어야 합니다.";
     if (!isValidPhone(number)) return "전화번호 형식이 올바르지 않습니다.";
     if (!proposal) return "프로그램 기획서(PDF)는 필수입니다.";
+    if (images.length < 1) return "프로그램 사진은 최소 1장이 필요합니다.";
     if (images.length > 5) return "이미지는 최대 5장까지 업로드 가능합니다.";
     return null;
   };
@@ -345,79 +354,118 @@ export default function AddProgramModal({
             />
 
             <Field>
-              <Label>첨부 서류</Label>
-              <Helper>프로그램 기획서(PDF) — 최대 15MB (필수)</Helper>
-              <FileRow>
-                <Button
-                  type="button"
-                  variant="subtle"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  기획서 선택
-                </Button>
-                <span>{proposal?.name ?? "선택된 파일 없음"}</span>
-                <input
-                  ref={fileInputRef}
-                  type="file"
+              <Label>
+                <img src="/img/program/upload.svg" alt="" aria-hidden />
+                첨부 서류
+              </Label>
+
+              {/* ---------------- 기획서 ---------------- */}
+              <S.UploadSectionTitle>
+                프로그램 기획서 (필수)
+              </S.UploadSectionTitle>
+
+              {!proposal ? (
+                <UploadCard
+                  mainText="클릭하거나 파일을 드래그하여 업로드"
+                  subText="PDF 파일 (최대 15MB)"
                   accept="application/pdf"
-                  hidden
-                  onChange={onPickProposal}
+                  maxSizeMB={15}
+                  required
+                  value={[]}
+                  onChange={(arr) => setProposal(arr[0] ?? null)}
+                  onReject={(msg) => toast.error(msg)}
+                  helperBottom="* 프로그램 목적, 내용, 일정, 강사 소개 등이 포함된 기획서를 PDF로 업로드해주세요"
                 />
-              </FileRow>
+              ) : (
+                <>
+                  <FileList
+                    files={[proposal]}
+                    onRemove={() => setProposal(null)}
+                  />
 
-              <Helper>프로그램 사진 — 최대 5장 (선택)</Helper>
-              <FileRow>
-                <Button
-                  type="button"
-                  variant="subtle"
-                  onClick={() => imgInputRef.current?.click()}
-                >
-                  사진 추가
-                </Button>
-                <span>
-                  {images.length
-                    ? `${images.length}장 선택됨`
-                    : "선택된 사진 없음"}
-                </span>
-                <input
-                  ref={imgInputRef}
-                  type="file"
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="application/pdf"
+                    hidden
+                    onChange={onPickProposal}
+                  />
+                </>
+              )}
+
+              {/* ---------------- 사진 ---------------- */}
+              <S.UploadSectionTitle>프로그램 사진 (필수)</S.UploadSectionTitle>
+
+              {images.length === 0 ? (
+                <UploadCard
+                  mainText="클릭하거나 파일을 드래그하여 업로드"
+                  subText="이미지 파일 (최대 5MB)"
                   accept="image/*"
-                  hidden
                   multiple
-                  onChange={onPickImages}
+                  maxCount={5}
+                  maxSizeMB={5}
+                  required
+                  value={[]}
+                  onChange={setImages}
+                  onReject={(msg) => toast.error(msg)}
+                  helperBottom="* 프로그램 활동 사진, 강사 사진, 포스터 등을 업로드하면 참여율이 높아집니다 (최대 5개)"
                 />
-              </FileRow>
-
-              {images.length > 0 && (
-                <S.ThumbList>
-                  {images.map((f, idx) => (
-                    <S.Thumb key={idx}>
-                      <img src={URL.createObjectURL(f)} alt={`img-${idx}`} />
-                      <button
-                        onClick={() => removeImage(idx)}
-                        aria-label="삭제"
+              ) : (
+                <>
+                  <ImageThumbGrid
+                    files={images}
+                    onRemove={(idx) =>
+                      setImages((prev) => prev.filter((_, i) => i !== idx))
+                    }
+                  />
+                  {images.length < 5 && (
+                    <div style={{ marginTop: 8 }}>
+                      <Button
+                        type="button"
+                        variant="subtle"
+                        onClick={() => imgInputRef.current?.click()}
                       >
-                        ×
-                      </button>
-                    </S.Thumb>
-                  ))}
-                </S.ThumbList>
+                        사진 추가
+                      </Button>
+                    </div>
+                  )}
+                  <input
+                    ref={imgInputRef}
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    multiple
+                    onChange={onPickImages}
+                  />
+                </>
               )}
             </Field>
-
             {err && <S.Error role="alert">{err}</S.Error>}
-
-            <ButtonLayout type="row" gap={12}>
-              <Button tone="gray" variant="subtle" onClick={onClose}>
-                취소
-              </Button>
-              <Button onClick={onSubmit} disabled={busy} aria-busy={busy}>
-                {busy ? "추가 중..." : "추가"}
-              </Button>
-            </ButtonLayout>
           </S.Form>
         </S.Content>
+
+        <S.BtnBar>
+          <ButtonLayout type="row" gap={12}>
+            <Button
+              tone="gray"
+              variant="subtle"
+              onClick={onClose}
+              size="lg"
+              typo="heading2"
+            >
+              취소
+            </Button>
+            <Button
+              onClick={onSubmit}
+              disabled={busy}
+              aria-busy={busy}
+              size="lg"
+              typo="heading2"
+            >
+              {busy ? "추가 중" : "추가"}
+            </Button>
+          </ButtonLayout>
+        </S.BtnBar>
       </S.Sheet>
     </S.Backdrop>
   );

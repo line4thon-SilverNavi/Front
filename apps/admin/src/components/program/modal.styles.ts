@@ -26,6 +26,19 @@ export const Sheet = styled.div`
 
 export const Content = styled.div`
   padding: 18px 24px;
+  flex: 1 1 auto;
+  overflow: auto;
+  padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+`;
+
+export const BtnBar = styled.div`
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  flex: 0 0 auto;
+  background-color: ${({ theme }) => theme.colors.gray01};
+  border-top: 0.636px solid ${({ theme }) => theme.colors.gray04};
+  padding: 24px;
 `;
 
 export const Header = styled.div`
@@ -154,4 +167,14 @@ export const Thumb = styled.li`
     cursor: pointer;
     line-height: 1;
   }
+`;
+
+export const RowGap8 = styled.div`
+  margin-top: 8px;
+`;
+
+export const UploadSectionTitle = styled.h3`
+  ${({ theme }) => theme.fonts.heading3};
+  color: ${({ theme }) => theme.colors.gray07};
+  margin: 24px 0 8px;
 `;
