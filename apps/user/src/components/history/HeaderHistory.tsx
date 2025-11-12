@@ -36,7 +36,7 @@ const Wrapper = styled.div`
 
 const SearchContainer = styled.div`
     position: relative;
-    width: 90%;
+    width: 86%;
 `;
 
 const SearchIcon = styled.img`
