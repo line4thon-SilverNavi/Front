@@ -11,7 +11,7 @@ type Props = {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
-  type?: "text" | "password" | "tel" | "email" | "number";
+  type?: "text" | "password" | "tel" | "email" | "number" | "date";
   autoComplete?: string;
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
   maxLength?: number;
@@ -156,6 +156,14 @@ const Input = styled.input<{
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.gray04};
+  }
+
+  /* 값이 없을 때 글자색을 플레이스홀더 색상으로 변경 */
+  &:not([value=""]) {
+    color: ${({ theme }) => theme.colors.gray07}; /* 값이 있을 때의 색상 */
+  }
+  &[value=""] {
+    color: ${({ theme }) => theme.colors.gray04}; /* 값이 없을 때의 색상 */
   }
 `;
 

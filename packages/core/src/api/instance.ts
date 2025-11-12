@@ -39,7 +39,12 @@ instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("access");
     if (token) headers.Authorization = `Bearer ${token}`;
   }
-  headers["Content-Type"] ??= "application/json";
+  
+  // FormData인 경우 Content-Type을 설정하지 않음 (브라우저가 자동으로 multipart/form-data 설정)
+  if (!(config.data instanceof FormData)) {
+    headers["Content-Type"] ??= "application/json";
+  }
+  
   config.headers = headers;
   return config;
 });

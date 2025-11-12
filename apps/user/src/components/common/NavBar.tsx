@@ -9,7 +9,7 @@ export default function NavBar(){
         const path = location.pathname;
         if (path === "/") return "home";
         if (path.startsWith("/facility")) return "facility";
-        if (path.startsWith("/calendar")) return "calendar";
+        if (path.startsWith("/history")) return "history";
         if (path.startsWith("/mypage")) return "mypage";
         return "home";
     };
@@ -24,19 +24,23 @@ export default function NavBar(){
         <NavBarContainer>
             <MenuBar>
                 <MenuContainer onClick={() => handleMenuClick("/")} $isActive={activeMenu === "home"}>
-                    <img src={activeMenu === "home" ? "/img/navbar/home-blue.png" : "/img/navbar/home-gray.png"}/>
+                    <img src={activeMenu === "home" ? "/img/navbar/home-blue.png" : "/img/navbar/home-gray.png"}
+                    style={{width:"23px", height:"24px"}}/>
                     <MenuText $isActive={activeMenu === "home"}>홈</MenuText>
                 </MenuContainer>
                 <MenuContainer onClick={() => handleMenuClick("/facility")} $isActive={activeMenu === "facility"}>
-                    <img src={activeMenu === "facility" ? "/img/navbar/facility-blue.png" : "/img/navbar/facility-gray.png"} />
+                    <img src={activeMenu === "facility" ? "/img/navbar/facility-blue.png" : "/img/navbar/facility-gray.png"} 
+                    style={{width:"23px", height:"24px"}}/>
                     <MenuText $isActive={activeMenu === "facility"}>시설</MenuText>
                 </MenuContainer>
-                <MenuContainer onClick={() => handleMenuClick("/calendar")} $isActive={activeMenu === "calendar"}>
-                    <img src={activeMenu === "calendar" ? "/img/navbar/calendar-blue.png" : "/img/navbar/calendar-gray.png"}/>
-                    <MenuText $isActive={activeMenu === "calendar"}>캘린더</MenuText>
+                <MenuContainer onClick={() => handleMenuClick("/history")} $isActive={activeMenu === "history"}>
+                    <img src={activeMenu === "history" ? "/img/navbar/history-blue.png" : "/img/navbar/history-gray.png"}
+                    style={{width:"25px", height:"25px"}}/>
+                    <MenuText $isActive={activeMenu === "history"}>내역</MenuText>
                 </MenuContainer>
                 <MenuContainer onClick={() => handleMenuClick("/mypage")} $isActive={activeMenu === "mypage"}>
-                    <img src={activeMenu === "mypage" ? "/img/navbar/mypage-blue.png" : "/img/navbar/mypage-gray.png"}/>
+                    <img src={activeMenu === "mypage" ? "/img/navbar/mypage-blue.png" : "/img/navbar/mypage-gray.png"}
+                    style={{width:"23px", height:"24px"}}/>
                     <MenuText $isActive={activeMenu === "mypage"}>마이</MenuText>
                 </MenuContainer>
             </MenuBar>
@@ -69,11 +73,6 @@ const MenuContainer = styled.div<{ $isActive: boolean }>`
     align-items: center;
     gap: 4px;
     cursor: pointer;
-    
-    img {
-        width: 24px;
-        height: 24px;
-    }
 `;
 
 const MenuText = styled.span<{ $isActive: boolean }>`

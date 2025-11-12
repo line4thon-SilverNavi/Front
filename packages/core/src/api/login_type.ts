@@ -12,6 +12,7 @@ export type LoginResponse = {
   data: {
     token: string;
     careGrade: string | null;
+    name?: string;
   };
 
   message: string;

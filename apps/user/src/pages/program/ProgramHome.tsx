@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import DefaultLayout from "@layouts/DefaultLayout";
+import Header from "@components/common/Header";
+import NavBar from "@components/common/NavBar";
 import * as s from "../Main_styled";
 import ProgramCard from "@components/program/programCard";
 import CardList from "@components/common/CardList";
@@ -34,6 +37,7 @@ const ProgramHome = () => {
     }, []);
 
     return (
+        <DefaultLayout header={<Header />} footer={<NavBar />}>
         <s.HomeWrapper>
 
         <s.SectionTitle>
@@ -81,6 +85,7 @@ const ProgramHome = () => {
 
 
         </s.HomeWrapper>
+        </DefaultLayout>
     );
 };
 

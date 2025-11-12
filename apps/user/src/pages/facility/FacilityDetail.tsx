@@ -1,9 +1,8 @@
 import { Button } from "@core/ui/button";
 import { useParams } from "react-router-dom";
-import * as s from "@components/common/datailPageLayout";
+import * as s from "@layouts/DetailPageLayout";
 import { useEffect, useState } from "react";
-import { getFacilityDetailDummy } from "@apis/dummy/facilityDetailDummy";
-import type { FacilityDetailData } from "@apis/facility/facilityDetail";
+import { getFacilityDetail, type FacilityDetailData } from "@apis/facility/facilityDetail";
 import ApplyingModal from "@components/facility/ApplyingModal";
 import { useFormatDateFull } from "@hooks/program/ProcessingTime";
 
@@ -15,7 +14,7 @@ export default function FacilityDetailPage() {
     useEffect(() => {
         const fetchFacilityDetail = async () => {
             if (facilityId) {
-                const data = await getFacilityDetailDummy(Number(facilityId));
+                const data = await getFacilityDetail(Number(facilityId));
                 setFacility(data);
             }
         };
@@ -36,7 +35,7 @@ export default function FacilityDetailPage() {
 
     return (
         <>
-            {isModalOpen && <ApplyingModal />}
+            {isModalOpen && <ApplyingModal onClose={() => setIsModalOpen(false)} facilityId={Number(facilityId)} facilityName={facility.name} />}
             <s.DetailPageLayout
             image={displayImage}
             category={facility.category}
@@ -88,12 +87,12 @@ export default function FacilityDetailPage() {
                 </s.DetailListSection>
             )}
 
-            {facility.reviews.length > 0 && (
-                <s.DetailListSection>
-                    <s.DetailListTitle className="moreinfo">이용 후기
-                        <p>자세히보기</p>
-                    </s.DetailListTitle>
-                    {facility.reviews.map((review) => (
+            <s.DetailListSection>
+                <s.DetailListTitle className="moreinfo">이용 후기
+                    <p>자세히보기</p>
+                </s.DetailListTitle>
+                {facility.reviews.length > 0 ? (
+                    facility.reviews.map((review) => (
                         <s.ReviewCard key={review.id}>
                             <s.ReviewHeader>
                                 <s.ReviewName>
@@ -104,9 +103,14 @@ export default function FacilityDetailPage() {
                             <s.RatingStar rating={review.rating} />
                             <s.ReviewText>{review.content}</s.ReviewText>
                         </s.ReviewCard>
-                    ))}
-                </s.DetailListSection>
-            )}
+                    ))
+                ) : (
+                    <div style={{ textAlign: "center", padding: "20px 0", color: "#999" }}>
+                        <p>아직 리뷰가 없어요</p>
+                        <p>리뷰를 남겨주세요!</p>
+                    </div>
+                )}
+            </s.DetailListSection>
         </s.DetailPageLayout>
         </>
     );
