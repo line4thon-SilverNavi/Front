@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import AddProgramModal from "@components/program/AddProgramModal";
+import AddProgramModal from "@components/program/AddProgramModal/AddProgramModal";
 
 const AdminProgram = () => {
   const [open, setOpen] = useState(false);
