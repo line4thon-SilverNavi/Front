@@ -11,6 +11,7 @@ import DeleteModal from "@components/program/DeleteModal";
 import toast from "react-hot-toast";
 import { deleteProgram } from "@apis/program/deleteProgram";
 import EditProgramModal from "@components/program/EditProgramModal";
+import AttendanceModal from "@components/program/attendance/AttendanceModal";
 
 type OutletCtx = {
   setHeader: (o: {
@@ -43,6 +44,8 @@ const AdminProgram = () => {
   const [deleting, setDeleting] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
+  const [attOpen, setAttOpen] = useState(false);
+  const [attPid, setAttPid] = useState<number | null>(null);
 
   const description = useMemo(
     () => `${facilityName || "시설명"}에서 운영하는 총 ${total}개의 프로그램`,
@@ -108,7 +111,8 @@ const AdminProgram = () => {
           setEditOpen(true);
         }}
         onApplicantsClick={(id) => {
-          /* 신청자 보기 */
+          setAttPid(id);
+          setAttOpen(true);
         }}
         onDeleteClick={(id) => {
           setDeleteId(id);
@@ -139,6 +143,20 @@ const AdminProgram = () => {
         }}
         busy={deleting}
         onConfirm={handleConfirmDelete}
+      />
+
+      {/* 출석 모달 */}
+      <AttendanceModal
+        open={attOpen}
+        programId={attPid}
+        onClose={() => {
+          setAttOpen(false);
+          setAttPid(null);
+        }}
+        onSaved={async () => {
+          // 필요 시 프로그램 목록 갱신
+          await refetch();
+        }}
       />
 
       <Pagination page={page} totalPages={totalPages} onChange={setPage} />

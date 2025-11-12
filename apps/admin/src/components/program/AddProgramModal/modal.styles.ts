@@ -45,7 +45,84 @@ export const Header = styled.div`
   justify-content: space-between;
   border-bottom: 1px solid ${({ theme }) => theme.colors.gray04};
   padding: 18px 24px;
+
+  .attendDes {
+    ${({ theme }) => theme.fonts.title1};
+    color: ${({ theme }) => theme.colors.gray04};
+  }
 `;
+
+export const HeaderWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.gray04};
+  padding: 18px 24px;
+`;
+
+export const HeaderTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+export const HeaderContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5.49px;
+`;
+
+export const NoticeWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid ${({ theme }) => theme.colors.blue02};
+  background-color: ${({ theme }) => theme.colors.blue03};
+  padding: 15px;
+  margin-top: 14px;
+
+  img {
+    display: block;
+    align-self: flex-start;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    margin-right: 10px;
+  }
+`;
+
+export const NoticeContainer = styled.div`
+  display: flex;
+`;
+
+export const NoticeText = styled.p`
+  p {
+    color: ${({ theme }) => theme.colors.blue01};
+    ${({ theme }) => theme.fonts.heading3};
+  }
+
+  .noticeDes {
+    color: ${({ theme }) => theme.colors.gray05};
+    ${({ theme }) => theme.fonts.body3};
+  }
+
+  .blue {
+    color: ${({ theme }) => theme.colors.blue01};
+    ${({ theme }) => theme.fonts.title3};
+  }
+`;
+
+export const AttendancyCurrent = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 15px;
+  margin-top: 14px;
+  margin-bottom: 16px;
+  background-color: ${({ theme }) => theme.colors.gray02};
+  border-radius: 12px;
+`;
+
+export const SummaryBox = styled.div``;
 
 export const H2 = styled.h2`
   ${({ theme }) => theme.fonts.heading1};
