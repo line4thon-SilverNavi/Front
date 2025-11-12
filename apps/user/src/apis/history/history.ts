@@ -76,8 +76,7 @@ export type ConsultHistoryResponse = {
 
 export async function getConsultHistory() {
     const response = await getResponse<ConsultHistoryResponse>(
-        "/api/consults/list"
+        "/api/consults"
     );
-    console.log("상담 내역 응답:", response);
     return response?.data || null;
 }
