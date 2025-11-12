@@ -3,6 +3,7 @@ import styled from "styled-components";
 import type { ProgramHistoryData } from "@apis/history/history";
 import CardList from "@components/common/CardList";
 import ProgramCard from "@components/program/programCard";
+import { dummyProgramHistory } from "@apis/dummy/historyDummy";
 
 type ScheduleType = "예정" | "완료";
 
@@ -12,6 +13,9 @@ interface ProgramHistoryProps {
 
 export default function ProgramHistory({ historyData }: ProgramHistoryProps) {
     const [scheduleType, setScheduleType] = useState<ScheduleType>("예정");
+    
+    // 더미 데이터 사용
+    const data = dummyProgramHistory;
 
     return (
         <>
@@ -25,7 +29,7 @@ export default function ProgramHistory({ historyData }: ProgramHistoryProps) {
                         style={{width:"16px", height:"16px"}}/>
                         예정
                     </InfoDone>
-                    {historyData?.scheduledCount || 0}개
+                    {data?.scheduledCount || 0}개
                 </ScheduleToggle>
                 <ScheduleToggle
                     $isActive={scheduleType === "완료"}
@@ -33,10 +37,10 @@ export default function ProgramHistory({ historyData }: ProgramHistoryProps) {
                 >
                     <InfoDone>
                         <img src={scheduleType === "완료" ? "/img/history/complete-blue.png" : "/img/history/complete-gray.png"}
-                        style={{width:"16px", height:"16px"}}/>
+                        style={{width:"18px", height:"18px"}}/>
                         완료
                     </InfoDone>
-                    {historyData?.completedCount || 0}개
+                    {data?.completedCount || 0}개
                 </ScheduleToggle>
             </ScheduleToggleContainer>
             
@@ -47,7 +51,7 @@ export default function ProgramHistory({ historyData }: ProgramHistoryProps) {
                         예정된 프로그램
                     </Title>
                     <CardList
-                        items={historyData?.programs.filter(p => p.status === "예정") || []}
+                        items={data?.programs.filter(p => p.status === "예정") || []}
                         renderCard={(program) => (
                             <ProgramCard
                                 key={program.programId}
@@ -77,7 +81,7 @@ export default function ProgramHistory({ historyData }: ProgramHistoryProps) {
                         완료된 프로그램
                     </Title>
                     <CardList
-                        items={historyData?.programs.filter(p => p.status === "완료") || []}
+                        items={data?.programs.filter(p => p.status === "완료") || []}
                         renderCard={(program) => (
                             <ProgramCard
                                 key={program.programId}
@@ -161,4 +165,5 @@ const Title = styled.div`
     color: ${({ theme }) => theme.colors.gray07};
     align-items: center;
     gap: 10px;
+    margin-bottom: 20px;
 `;

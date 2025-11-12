@@ -17,7 +17,7 @@ export const dummyProgramHistory: ProgramHistoryData = {
             currentApplicants: 12,
             capacity: 20,
             fee: "무료",
-            thumbnail: "/img/dummy/program1.jpg",
+            thumbnail: "/img/dummy/program-default.png",
             bookmarked: true,
             status: "예정"
         },
@@ -33,7 +33,7 @@ export const dummyProgramHistory: ProgramHistoryData = {
             currentApplicants: 8,
             capacity: 15,
             fee: "10,000원",
-            thumbnail: "/img/dummy/program2.jpg",
+            thumbnail: "/img/dummy/program-default.png",
             bookmarked: false,
             status: "예정"
         }

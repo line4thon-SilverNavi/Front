@@ -60,13 +60,15 @@ export default function ProgramCard({
 
     return(
         <CardWrapper onClick={handleCardClick}>
-            <BookmarkButtonWrapper onClick={handleBookmarkClick}>
-                <BookmarkButton 
-                    initialBookmarked={bookmarked}
-                    contentId={programId}
-                    type="프로그램"
-                />
-            </BookmarkButtonWrapper>
+            {!done && (
+                <BookmarkButtonWrapper onClick={handleBookmarkClick}>
+                    <BookmarkButton 
+                        initialBookmarked={bookmarked}
+                        contentId={programId}
+                        type="프로그램"
+                    />
+                </BookmarkButtonWrapper>
+            )}
             <CategoryTag>
                 {category}
             </CategoryTag>
@@ -133,7 +135,7 @@ const CategoryTag = styled.div`
 const StatusTag = styled.div<{ $isDone: boolean }>`
     position: absolute;
     top: 0.8rem;
-    right: 3.5rem;
+    right: 0.8rem;
     z-index: 10;
     ${({ theme }) => theme.fonts.title3};
     color: white;
