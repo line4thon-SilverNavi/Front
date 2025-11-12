@@ -1,7 +1,14 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { ADMIN_NAV_ITEMS, type AdminNavKey } from "@constants/admin-nav";
+import { useEffect, useMemo, useRef, useState } from "react";
 import AdminLayout from "./AdminLayout";
+import { ADMIN_NAV_ITEMS, type AdminNavKey } from "@constants/admin-nav";
 import { clearTokens } from "@core/api/auth";
+
+type HeaderOverrides = {
+  title?: React.ReactNode;
+  des?: React.ReactNode;
+  right?: React.ReactNode;
+};
 
 const pathToKey = (pathname: string): AdminNavKey => {
   if (pathname.includes("/requests")) return "requests";
@@ -33,29 +40,39 @@ export default function AdminRouteLayout() {
   const nav = useNavigate();
   const { pathname } = useLocation();
 
-  const activeKey = pathToKey(pathname);
-  const title =
+  const activeKey = useMemo(() => pathToKey(pathname), [pathname]);
+  const baseTitle =
     ADMIN_NAV_ITEMS.find((i) => i.key === activeKey)?.label ?? "관리자";
-  const des = DEFAULT_DES[activeKey] ?? "";
+  const baseDes = DEFAULT_DES[activeKey] ?? "";
+
+  const [overrides, setOverrides] = useState<HeaderOverrides>({});
+  const prevKeyRef = useRef<AdminNavKey | null>(null);
+
+  useEffect(() => {
+    if (prevKeyRef.current && prevKeyRef.current !== activeKey) {
+      setOverrides({});
+    }
+    prevKeyRef.current = activeKey;
+  }, [activeKey]);
 
   const onNavigate = (key: AdminNavKey) => {
     if (key === "logout") {
       clearTokens();
       nav("/login", { replace: true });
-      return;
+    } else {
+      nav(keyToPath[key]);
     }
-    nav(keyToPath[key]);
   };
 
   return (
     <AdminLayout
-      title={title}
-      des={des}
+      title={overrides.title ?? baseTitle}
+      des={overrides.des ?? baseDes}
       activeKey={activeKey}
       onNavigate={onNavigate}
-      right={<span>시설 관리자</span>}
+      right={overrides.right}
     >
-      <Outlet />
+      <Outlet context={{ setHeader: setOverrides }} />
     </AdminLayout>
   );
 }
