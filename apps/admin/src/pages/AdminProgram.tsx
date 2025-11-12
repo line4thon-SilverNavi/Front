@@ -1,10 +1,13 @@
+// src/pages/admin/programs/AdminProgram.tsx
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import styled from "styled-components";
 import AddProgramModal from "@components/program/AddProgramModal/AddProgramModal";
 import ProgramSearchBar from "@components/program/ProgramSearchBar";
+
+import ProgramList from "@components/program/ProgramList";
 import { usePrograms } from "@hooks/programs/usePrograms";
-import ProgramList from "@hooks/programs/ProgramList";
+import Pagination from "@components/program/Pagination";
 
 type OutletCtx = {
   setHeader: (o: {
@@ -22,11 +25,13 @@ const AdminProgram = () => {
     setCategory,
     items,
     total,
+    totalPages,
     loading,
     page,
     setPage,
     refetch,
   } = usePrograms();
+
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
 
@@ -37,8 +42,7 @@ const AdminProgram = () => {
 
   const handleSearchSubmit = useCallback(
     (q: string) => {
-      // TODO: 서버 검색 파라미터 붙일 때 이곳에서 refetch에 반영
-      // 현재는 단순히 refetch만
+      // TODO: 서버 검색 파라미터 붙이면 여기서 refetch(params)
       refetch();
     },
     [refetch]
@@ -67,18 +71,36 @@ const AdminProgram = () => {
         }}
         query={query}
         onQueryChange={setQuery}
-        onSubmit={handleSearchSubmit} // ✅ 안정적인 콜백 전달
+        onSubmit={handleSearchSubmit}
       />
 
-      <ProgramList items={items} loading={loading} />
+      <ProgramList
+        items={items}
+        loading={loading}
+        onItemClick={(id) => {
+          /* 상세로 이동 or 편집 모달 */
+        }}
+        rightSlotOf={(it) => (
+          <Actions>
+            <button
+              onClick={(e) => {
+                e.stopPropagation(); /* 수정 열기 */
+              }}
+            >
+              수정
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation(); /* 삭제 */
+              }}
+            >
+              삭제
+            </button>
+          </Actions>
+        )}
+      />
 
-      <Pager>
-        <button disabled={page <= 1} onClick={() => setPage(page - 1)}>
-          이전
-        </button>
-        <span>{page}</span>
-        <button onClick={() => setPage(page + 1)}>다음</button>
-      </Pager>
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
 
       <AddProgramModal
         open={open}
@@ -95,9 +117,7 @@ const AdminProgram = () => {
 export default AdminProgram;
 
 /* ---------- styles ---------- */
-const Wrap = styled.div`
-  padding: 16px 0 32px;
-`;
+const Wrap = styled.div``;
 const Des = styled.span`
   color: #6b7280;
 `;
@@ -109,35 +129,22 @@ const RightWrap = styled.div`
 const AddBtn = styled.button`
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  border-radius: 10px;
-  border: 1px solid #2f6fed;
-  background: #4f83ff;
-  color: #fff;
-  font-weight: 600;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 15px;
+  background: ${({ theme }) => theme.colors.blue01};
+  color: ${({ theme }) => theme.colors.gray01};
+  ${({ theme }) => theme.fonts.heading3};
   cursor: pointer;
-  transition:
-    transform 0.02s,
-    box-shadow 0.2s,
-    background 0.2s;
-  &:hover {
-    background: #3b76ff;
-    box-shadow: 0 4px 16px rgba(79, 131, 255, 0.25);
-  }
-  &:active {
-    transform: translateY(1px);
-  }
 `;
+
 const Plus = styled.span`
-  font-size: 18px;
+  ${({ theme }) => theme.fonts.heading3};
 `;
-const Pager = styled.div`
-  display: flex;
+
+const Actions = styled.div`
+  display: inline-flex;
   gap: 8px;
-  align-items: center;
-  justify-content: flex-end;
-  margin-top: 12px;
   & > button {
     padding: 6px 10px;
     border: 1px solid #e2e8f0;

@@ -1,7 +1,6 @@
 import { Button, ButtonLayout } from "@core/ui/button";
 import * as S from "./modal.styles";
 import { Field } from "./FormControls";
-import CategoryModal from "./fields/CategoryModal";
 
 import BasicFields from "./sections/BasicFields";
 import ScheduleFields from "./sections/ScheduleFields";
@@ -49,7 +48,7 @@ export default function AddProgramModal({
           </S.Notice>
 
           <S.Form>
-            {/* 1) 프로그램명, 카테고리, 강사명, */}
+            {/* 프로그램명, 카테고리, 강사명, */}
             <BasicFields
               name={f.name}
               setName={f.setName}
@@ -60,16 +59,6 @@ export default function AddProgramModal({
               setCatOpen={f.setCatOpen}
               categories={f.CATS}
               onSelectCategory={f.setCategory}
-            />
-            <CategoryModal
-              open={f.catOpen}
-              value={f.category}
-              options={f.CATS}
-              onSelect={(v) => {
-                f.setCategory(v);
-                f.setCatOpen(false);
-              }}
-              onClose={() => f.setCatOpen(false)}
             />
 
             {/* 일정, 시간 */}
@@ -106,7 +95,7 @@ export default function AddProgramModal({
               setSuppliesText={f.setSuppliesText}
             />
 
-            {/* 6) 기획서, 사진 */}
+            {/* 기획서, 사진 */}
             <Field>
               <FileFields
                 proposal={f.proposal}

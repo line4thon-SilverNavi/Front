@@ -49,7 +49,6 @@ export const TitleContainer = styled.div`
 export const ContentContainer = styled.main`
   display: flex;
   flex-direction: column;
-  gap: 32px;
   padding: 40px 31px;
   overflow: auto;
   padding: 16px clamp(12px, 2vw, 24px) 24px;
