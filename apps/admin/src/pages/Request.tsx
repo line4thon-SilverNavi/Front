@@ -8,6 +8,9 @@ import {
   type ApplicationStatus,
 } from "@apis/request/getApplications";
 import toast from "react-hot-toast";
+import RequestSearchBar, {
+  type StatusFilter,
+} from "@components/request/RequestSearchBar";
 
 type OutletCtx = {
   setHeader: (o: {
@@ -26,6 +29,8 @@ const Request = () => {
     ApplicationStatus | undefined
   >(undefined);
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<StatusFilter>("전체");
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     let alive = true;
@@ -57,6 +62,24 @@ const Request = () => {
     setHeader({ des: <Des>{description}</Des> });
   }, [description, setHeader]);
 
+  //검색
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const res = await getApplications({
+          page: 1,
+          status: status === "전체" ? undefined : status, // API 규격: 전체는 파라미터 미전달
+        });
+        if (!alive) return;
+        // summary, applications, pageInfo 세팅…
+      } catch {}
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [status /*, query 제출 시 트리거 */]);
+
   return (
     <Wrap>
       {/* 상단 요약 카드 */}
@@ -67,7 +90,17 @@ const Request = () => {
         />
       )}
 
-      {loading && <Loading>불러오는 중…</Loading>}
+      <RequestSearchBar
+        status={status}
+        onStatusChange={(s) => {
+          setStatus(s); /* setPage(1) 등 */
+        }}
+        query={query}
+        onQueryChange={setQuery}
+        onSubmit={() => {
+          /* 검색 제출 -> refetch */
+        }}
+      />
     </Wrap>
   );
 };
