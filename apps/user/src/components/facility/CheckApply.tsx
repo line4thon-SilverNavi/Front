@@ -5,10 +5,9 @@ type Props = {
     onClose: () => void;
     onConfirm?: () => void;
     isAlreadyApplied: boolean;
-    facilityName?: string;
 };
 
-export default function CheckApply({ open, onClose, onConfirm, isAlreadyApplied, facilityName }: Props) {
+export default function CheckApply({ open, onClose, onConfirm, isAlreadyApplied }: Props) {
     if (!open) return null;
 
     return (
