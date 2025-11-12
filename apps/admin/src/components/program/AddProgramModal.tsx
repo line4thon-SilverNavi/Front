@@ -17,7 +17,6 @@ import { Field, Label, Helper, FileRow } from "./FormControls";
 import TimeRangeField from "./fields/TimeField";
 import DateField from "./fields/DateField";
 import CategoryModal from "./fields/CategoryModal";
-
 type Props = {
   open: boolean;
   onClose: () => void;
@@ -198,6 +197,7 @@ export default function AddProgramModal({
               labelTypo="heading3"
               inputTypo="body2"
               variant="filled"
+              labelColor="#1A1A1A"
             />
 
             <S.Grid2>
@@ -211,6 +211,9 @@ export default function AddProgramModal({
                   variant="filled"
                   clickable
                   onClickInput={() => setCatOpen(true)}
+                  labelColor="#1A1A1A"
+                  labelTypo="heading3"
+                  inputTypo="body2"
                 />
 
                 {/* 카테고리 선택 모달 */}
@@ -232,6 +235,9 @@ export default function AddProgramModal({
                 value={instructorName}
                 onChange={setInstructorName}
                 variant="filled"
+                labelColor="#1A1A1A"
+                labelTypo="heading3"
+                inputTypo="body2"
               />
             </S.Grid2>
 
@@ -261,6 +267,9 @@ export default function AddProgramModal({
                 prefixIcon={
                   <img src="/img/program/location.svg" alt="" aria-hidden />
                 }
+                labelColor="#1A1A1A"
+                labelTypo="heading3"
+                inputTypo="body2"
               />
 
               <InputContainer
@@ -274,6 +283,9 @@ export default function AddProgramModal({
                 prefixIcon={
                   <img src="/img/program/people.svg" alt="" aria-hidden />
                 }
+                labelColor="#1A1A1A"
+                labelTypo="heading3"
+                inputTypo="body2"
               />
             </S.Grid2>
 
@@ -288,6 +300,9 @@ export default function AddProgramModal({
                 prefixIcon={
                   <img src="/img/program/cost.svg" alt="" aria-hidden />
                 }
+                labelColor="#1A1A1A"
+                labelTypo="heading3"
+                inputTypo="body2"
               />
               <InputContainer
                 label="문의 전화"
@@ -298,6 +313,9 @@ export default function AddProgramModal({
                 autoComplete="tel"
                 variant="filled"
                 inputMode="numeric"
+                labelColor="#1A1A1A"
+                labelTypo="heading3"
+                inputTypo="body2"
               />
             </S.Grid2>
 
@@ -307,16 +325,23 @@ export default function AddProgramModal({
               placeholder="프로그램에 대한 설명을 입력하세요"
               value={description}
               onChange={setDescription}
-              rows={4}
+              labelTypo="heading3"
+              textareaTypo="body2"
+              placeholderTypo="body2"
+              labelColor="#1A1A1A"
+              placeholderColor="#A8A8A8"
             />
 
             {/* 준비물 */}
             <InputContainer
               label="준비물"
-              placeholder="콤마 또는 줄바꿈으로 구분(예: 편한 복장, 운동화, 물)"
+              placeholder="쉼표로 구분 (예: 편한 복장, 운동화, 물)"
               value={suppliesText}
               onChange={setSuppliesText}
               variant="filled"
+              labelColor="#1A1A1A"
+              labelTypo="heading3"
+              inputTypo="body2"
             />
 
             <Field>

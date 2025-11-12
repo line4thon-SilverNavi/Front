@@ -39,6 +39,9 @@ export default function TimeRangeField({
         clickable
         onClickInput={() => setOpen(true)}
         prefixIcon={<img src="/img/program/clock.svg" alt="" aria-hidden />}
+        labelColor="#1A1A1A"
+        labelTypo="heading3"
+        inputTypo="body2"
       />
 
       <TimeRangePickerModal

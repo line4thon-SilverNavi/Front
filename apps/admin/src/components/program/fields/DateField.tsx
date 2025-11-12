@@ -32,6 +32,9 @@ export default function DateField({
         clickable
         onClickInput={openPicker}
         prefixIcon={<img src="/img/program/date.svg" alt="" aria-hidden />}
+        labelColor="#1A1A1A"
+        labelTypo="heading3"
+        inputTypo="body2"
       />
       <Hidden
         ref={hiddenRef}
