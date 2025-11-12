@@ -104,7 +104,7 @@ const TextArea = styled.textarea<{ $textareaTypo: FontKey }>`
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.gray05};
-    ${({ theme }) => theme.fonts.body03};
+    ${({ theme }) => theme.fonts.body3};
   }
 `;
 

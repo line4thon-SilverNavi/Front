@@ -10,6 +10,24 @@ function toK12(hhmm: string) {
   return { meridiem: isAM ? "오전" : "오후", h12: String(h12), mm };
 }
 
+const DOW = ["일", "월", "화", "수", "목", "금", "토"];
+export function formatKDate(dateString: string, withDow = true): string {
+  try {
+    if (!dateString) return "";
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return dateString;
+
+    const month = d.getMonth() + 1;
+    const day = d.getDate();
+    const dow = DOW[d.getDay()];
+
+    return withDow ? `${month}월 ${day}일(${dow})` : `${month}월 ${day}일`;
+  } catch (err) {
+    console.error("날짜 변환 실패:", err);
+    return dateString;
+  }
+}
+
 // "2025-11-10" -> "11월 10일"로 변환
 export function useFormatDate(dateString: string): string {
   try {
@@ -43,6 +61,10 @@ export function useFormatDateFull(dateString: string): string {
 // "10:00","11:30" -> "오전 10:00 - 11:30"
 export function useFormatTime(startTime: string, endTime: string): string {
   try {
+    if (!startTime && !endTime) return "";
+    if (!startTime) return "";
+    if (!endTime) return "";
+
     const s = toK12(startTime);
     const e = toK12(endTime);
     if (!s || !e) return `${startTime} - ${endTime}`;
