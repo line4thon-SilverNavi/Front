@@ -16,6 +16,7 @@ import * as S from "./modal.styles";
 import { Field, Label, Helper, FileRow } from "./FormControls";
 import TimeRangeField from "./fields/TimeField";
 import DateField from "./fields/DateField";
+import CategoryModal from "./fields/CategoryModal";
 
 type Props = {
   open: boolean;
@@ -25,6 +26,10 @@ type Props = {
 };
 
 const CATS: ProgramCategory[] = ["건강", "문화", "치료"];
+
+function isProgramCategory(v: string): v is ProgramCategory {
+  return (CATS as readonly ProgramCategory[]).includes(v as ProgramCategory);
+}
 
 export default function AddProgramModal({
   open,
@@ -36,7 +41,8 @@ export default function AddProgramModal({
   const [err, setErr] = useState<string | null>(null);
 
   const [name, setName] = useState("");
-  const [category, setCategory] = useState<ProgramCategory>("건강");
+  type CategoryValue = ProgramCategory | "";
+  const [category, setCategory] = useState<CategoryValue>("");
   const [instructorName, setInstructorName] = useState("");
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("");
@@ -49,6 +55,7 @@ export default function AddProgramModal({
   const [suppliesText, setSuppliesText] = useState("");
   const [proposal, setProposal] = useState<File | null>(null);
   const [images, setImages] = useState<File[]>([]);
+  const [catOpen, setCatOpen] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const imgInputRef = useRef<HTMLInputElement | null>(null);
@@ -100,7 +107,7 @@ export default function AddProgramModal({
 
   const validate = (): string | null => {
     if (!name.trim()) return "프로그램명을 입력해주세요.";
-    if (!CATS.includes(category)) return "카테고리를 선택해주세요.";
+    if (category === "") return "카테고리를 선택해주세요.";
     if (!isFutureDate(date)) return "일정은 오늘 이후 날짜여야 합니다.";
     if (!isHHmm(startTime) || !isHHmm(endTime))
       return "시간 형식은 HH:mm 입니다.";
@@ -113,9 +120,9 @@ export default function AddProgramModal({
     return null;
   };
 
-  const buildBody = (): CreateProgramReq => ({
+  const buildBody = (cat: ProgramCategory): CreateProgramReq => ({
     name,
-    category,
+    category: cat,
     instructorName: instructorName || null,
     date,
     startTime,
@@ -137,10 +144,15 @@ export default function AddProgramModal({
       return;
     }
 
+    if (!isProgramCategory(category)) {
+      setErr("카테고리를 선택해주세요.");
+      return;
+    }
+
     try {
       setBusy(true);
       setErr(null);
-      const ok = await postCreateProgram(buildBody());
+      const ok = await postCreateProgram(buildBody(category));
       setBusy(false);
 
       if (ok) {
@@ -189,22 +201,30 @@ export default function AddProgramModal({
             />
 
             <S.Grid2>
-              <div>
-                <S.Label>카테고리 *</S.Label>
-                <S.Select
+              <div style={{ position: "relative" }}>
+                <InputContainer
+                  label="카테고리"
+                  required
                   value={category}
-                  onChange={(e) =>
-                    setCategory(e.target.value as ProgramCategory)
-                  }
-                >
-                  {CATS.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </S.Select>
-              </div>
+                  onChange={() => {}}
+                  placeholder="건강"
+                  variant="filled"
+                  clickable
+                  onClickInput={() => setCatOpen(true)}
+                />
 
+                {/* 카테고리 선택 모달 */}
+                <CategoryModal
+                  open={catOpen}
+                  value={category}
+                  options={CATS as ProgramCategory[]}
+                  onSelect={(v) => {
+                    setCategory(v);
+                    setCatOpen(false);
+                  }}
+                  onClose={() => setCatOpen(false)}
+                />
+              </div>
               {/* 강사명 */}
               <InputContainer
                 label="강사명"
