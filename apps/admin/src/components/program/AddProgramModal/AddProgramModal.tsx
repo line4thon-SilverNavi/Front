@@ -10,6 +10,7 @@ import { useAddProgramForm } from "./useAddProgramForm";
 import FeeContactFields from "./sections/FeeContanctFields";
 import DesSupplyFields from "./sections/DesSupplyFields";
 import FileFields from "./sections/FileFields";
+import { useEffect } from "react";
 
 type Props = {
   open: boolean;
@@ -25,14 +26,27 @@ export default function AddProgramModal({
   facilityName,
 }: Props) {
   const f = useAddProgramForm(facilityName);
+
+  useEffect(() => {
+    if (open) f.reset();
+  }, [open, facilityName]);
+
   if (!open) return null;
 
+  const handleClose = () => {
+    onClose();
+  };
+
   return (
-    <S.Backdrop role="dialog" aria-modal="true" onClick={onClose}>
+    <S.Backdrop role="dialog" aria-modal="true" onClick={handleClose}>
       <S.Sheet onClick={(e) => e.stopPropagation()}>
         <S.Header>
           <S.H2>새 프로그램 추가</S.H2>
-          <S.Close onClick={onClose} aria-label="닫기" src="/img/close.svg" />
+          <S.Close
+            onClick={handleClose}
+            aria-label="닫기"
+            src="/img/close.svg"
+          />
         </S.Header>
 
         <S.Content>
@@ -48,7 +62,6 @@ export default function AddProgramModal({
           </S.Notice>
 
           <S.Form>
-            {/* 프로그램명, 카테고리, 강사명, */}
             <BasicFields
               name={f.name}
               setName={f.setName}
@@ -57,11 +70,10 @@ export default function AddProgramModal({
               category={f.category}
               catOpen={f.catOpen}
               setCatOpen={f.setCatOpen}
-              categories={f.CATS}
+              categories={[...f.CATS]}
               onSelectCategory={f.setCategory}
             />
 
-            {/* 일정, 시간 */}
             <ScheduleFields
               date={f.date}
               setDate={f.setDate}
@@ -71,7 +83,6 @@ export default function AddProgramModal({
               setEndTime={f.setEndTime}
             />
 
-            {/* 장소, 정원 */}
             <LocationCapacityFields
               location={f.location}
               setLocation={f.setLocation}
@@ -79,7 +90,6 @@ export default function AddProgramModal({
               setCapacity={f.setCapacity}
             />
 
-            {/* 참가비, 문의전화 */}
             <FeeContactFields
               fee={f.fee}
               setFee={f.setFee}
@@ -87,7 +97,6 @@ export default function AddProgramModal({
               setNumber={f.setNumber}
             />
 
-            {/* 설명, 준비물 */}
             <DesSupplyFields
               description={f.description}
               setDescription={f.setDescription}
@@ -95,7 +104,6 @@ export default function AddProgramModal({
               setSuppliesText={f.setSuppliesText}
             />
 
-            {/* 기획서, 사진 */}
             <Field>
               <FileFields
                 proposal={f.proposal}
@@ -107,25 +115,23 @@ export default function AddProgramModal({
                 fileInputRef={f.fileInputRef}
                 imgInputRef={f.imgInputRef}
               />
-              {f.err && <S.Error role="alert">{f.err}</S.Error>}
             </Field>
           </S.Form>
         </S.Content>
 
-        {/* 취소, 추가 버튼 */}
         <S.BtnBar>
           <ButtonLayout type="row" gap={12}>
             <Button
               tone="gray"
               variant="subtle"
-              onClick={onClose}
+              onClick={handleClose}
               size="lg"
               typo="heading2"
             >
               취소
             </Button>
             <Button
-              onClick={() => f.submit(onSuccess, onClose)}
+              onClick={() => f.submit(onSuccess, handleClose)}
               disabled={f.busy}
               aria-busy={f.busy}
               size="lg"

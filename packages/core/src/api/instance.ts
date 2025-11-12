@@ -1,4 +1,3 @@
-// src/shared/api.ts
 import axios, {
   AxiosError,
   type AxiosRequestHeaders,
@@ -39,12 +38,12 @@ instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("access");
     if (token) headers.Authorization = `Bearer ${token}`;
   }
-  
+
   // FormData인 경우 Content-Type을 설정하지 않음 (브라우저가 자동으로 multipart/form-data 설정)
   if (!(config.data instanceof FormData)) {
     headers["Content-Type"] ??= "application/json";
   }
-  
+
   config.headers = headers;
   return config;
 });
@@ -157,6 +156,16 @@ export const getResponse = async <T>(url: string): Promise<T | null> => {
   } catch (e: unknown) {
     console.error("GET 요청 실패:", e);
     return null;
+  }
+};
+
+export const deleteResponse = async (url: string): Promise<boolean> => {
+  try {
+    await instance.delete(url);
+    return true;
+  } catch (e) {
+    console.error("DELETE 요청 실패:", e);
+    return false;
   }
 };
 

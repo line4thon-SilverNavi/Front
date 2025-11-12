@@ -10,6 +10,7 @@ import Pagination from "@components/program/Pagination";
 import DeleteModal from "@components/program/DeleteModal";
 import toast from "react-hot-toast";
 import { deleteProgram } from "@apis/program/deleteProgram";
+import EditProgramModal from "@components/program/EditProgramModal";
 
 type OutletCtx = {
   setHeader: (o: {
@@ -40,6 +41,8 @@ const AdminProgram = () => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editId, setEditId] = useState<number | null>(null);
 
   const description = useMemo(
     () => `${facilityName || "시설명"}에서 운영하는 총 ${total}개의 프로그램`,
@@ -100,11 +103,9 @@ const AdminProgram = () => {
       <ProgramList
         items={items}
         loading={loading}
-        onItemClick={(id) => {
-          /* 상세 이동 등 */
-        }}
         onEditClick={(id) => {
-          /* 수정 열기 */
+          setEditId(id);
+          setEditOpen(true);
         }}
         onApplicantsClick={(id) => {
           /* 신청자 보기 */
@@ -113,6 +114,20 @@ const AdminProgram = () => {
           setDeleteId(id);
           setDeleteOpen(true);
         }}
+      />
+
+      {/* 수정 모달 */}
+      <EditProgramModal
+        open={editOpen}
+        programId={editId}
+        onClose={() => {
+          setEditOpen(false);
+          setEditId(null);
+        }}
+        onSuccess={async () => {
+          await refetch();
+        }}
+        facilityName={facilityName}
       />
 
       {/* 삭제 모달 */}
@@ -166,15 +181,4 @@ const AddBtn = styled.button`
 
 const Plus = styled.span`
   ${({ theme }) => theme.fonts.heading3};
-`;
-
-const Actions = styled.div`
-  display: inline-flex;
-  gap: 8px;
-  & > button {
-    padding: 6px 10px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    background: #fff;
-  }
 `;
