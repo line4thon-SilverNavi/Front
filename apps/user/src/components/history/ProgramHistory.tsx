@@ -3,7 +3,7 @@ import styled from "styled-components";
 import type { ProgramHistoryData } from "@apis/history/history";
 import CardList from "@components/common/CardList";
 import ProgramCard from "@components/program/programCard";
-import { dummyProgramHistory } from "@apis/dummy/historyDummy";
+// import { dummyProgramHistory } from "@apis/dummy/historyDummy";
 
 type ScheduleType = "예정" | "완료";
 
@@ -14,8 +14,9 @@ interface ProgramHistoryProps {
 export default function ProgramHistory({ historyData }: ProgramHistoryProps) {
     const [scheduleType, setScheduleType] = useState<ScheduleType>("예정");
     
-    // 더미 데이터 사용
-    const data = dummyProgramHistory;
+    // 실제 데이터 사용 (더미 데이터를 사용하려면 아래 줄의 주석을 해제하고 historyData를 dummyProgramHistory로 변경)
+    // const data = dummyProgramHistory;
+    const data = historyData;
 
     return (
         <>
