@@ -26,7 +26,7 @@ export async function postDemoLogin(role: "user" | "admin" = "user") {
 
     if (!res) throw new Error("서버 응답이 없습니다.");
 
-    setTokens({ access: res.data.token, refresh: "" });
+    setTokens({ access: res.data.token, refresh: "", name: res.data.name });
     localStorage.setItem("user_type", role);
 
     return true;
