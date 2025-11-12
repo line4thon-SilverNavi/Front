@@ -6,7 +6,6 @@ import styled from "styled-components";
 
 import {
   getProgramApplications,
-  type AttendanceStatus,
   type ProgramApplicant,
 } from "@apis/program/getApplication";
 import ApplicantList from "./ApplicantList";
@@ -16,15 +15,6 @@ type Props = {
   programId: number | null;
   onClose: () => void;
   onSaved?: () => void;
-};
-
-const fmtPhone = (raw: string) => {
-  // 01011112222 -> 010-1111-2222 / 0212341234 -> 02-1234-1234
-  if (!raw) return "";
-  if (raw.startsWith("02")) {
-    return raw.replace(/(02)(\d{3,4})(\d{4})/, "$1-$2-$3");
-  }
-  return raw.replace(/(\d{3})(\d{3,4})(\d{4})/, "$1-$2-$3");
 };
 
 export default function AttendanceModal({
@@ -37,6 +27,7 @@ export default function AttendanceModal({
   const [saving, setSaving] = useState(false);
   const [applicants, setApplicants] = useState<ProgramApplicant[]>([]);
   const [total, setTotal] = useState(0);
+  const [showNotice, setShowNotice] = useState(true);
 
   useEffect(() => {
     if (!open || !programId) return;
@@ -73,13 +64,13 @@ export default function AttendanceModal({
 
   if (!open) return null;
 
-  const setStatus = (id: number, status: AttendanceStatus) => {
-    setApplicants((list) =>
-      list.map((a) =>
-        a.applicantId === id ? { ...a, attendanceStatus: status } : a
-      )
-    );
-  };
+  // const setStatus = (id: number, status: AttendanceStatus) => {
+  //   setApplicants((list) =>
+  //     list.map((a) =>
+  //       a.applicantId === id ? { ...a, attendanceStatus: status } : a
+  //     )
+  //   );
+  // };
 
   const toggleAttend = (id: number) => {
     setApplicants((list) =>
@@ -134,26 +125,27 @@ export default function AttendanceModal({
             <S.Close src="/img/close.svg" onClick={onClose} />
           </S.HeaderTop>
 
-          <S.NoticeWrapper>
-            <S.NoticeContainer>
-              <img src="/img/program/notice.svg" />
-              <S.NoticeText>
-                <p>혹시 신청자 전부가 보이지 않는다면?</p>
-                <p className="noticeDes">
-                  프로그램 신청 관리에서 승인되신 참가자 명단만 보여드립니다.
-                  <br />
-                  혹여나 아직 대기를 승인하지 않으셨다면{" "}
-                  <span className="blue">"신청 관리"</span>에서 확인해보세요!
-                </p>
-              </S.NoticeText>
-            </S.NoticeContainer>
-            <S.Close
-              src="/img/program/blueClose.svg"
-              onClick={onClose}
-              className="blueClose"
-            />
-          </S.NoticeWrapper>
-
+          {showNotice && (
+            <S.NoticeWrapper>
+              <S.NoticeContainer>
+                <img src="/img/program/notice.svg" />
+                <S.NoticeText>
+                  <p>혹시 신청자 전부가 보이지 않는다면?</p>
+                  <p className="noticeDes">
+                    프로그램 신청 관리에서 승인되신 참가자 명단만 보여드립니다.
+                    <br />
+                    혹여나 아직 대기를 승인하지 않으셨다면{" "}
+                    <span className="blue">"신청 관리"</span>에서 확인해보세요!
+                  </p>
+                </S.NoticeText>
+              </S.NoticeContainer>
+              <S.Close
+                src="/img/program/blueClose.svg"
+                onClick={() => setShowNotice(false)}
+                className="blueClose"
+              />
+            </S.NoticeWrapper>
+          )}
           <S.AttendancyCurrent>
             <SummaryBox label="총 참가자" value={`${total}명`} />
             <SummaryBox label="출석 인원" value={`${attendanceCount}명`} />
@@ -161,17 +153,13 @@ export default function AttendanceModal({
           </S.AttendancyCurrent>
 
           <ButtonLayout type="row" gap={12}>
-            <Button
-              // onClick={handleAttend}
-              size="lg"
-              typo="heading3"
-            >
+            <Button onClick={checkAll} size="lg" typo="heading3">
               전체 출석 체크
             </Button>
             <Button
               tone="gray"
               variant="subtle"
-              // onClick={handleNoAttend}
+              onClick={uncheckAll}
               size="lg"
               typo="heading3"
             >

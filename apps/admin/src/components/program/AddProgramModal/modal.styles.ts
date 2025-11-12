@@ -94,7 +94,7 @@ export const NoticeContainer = styled.div`
   display: flex;
 `;
 
-export const NoticeText = styled.p`
+export const NoticeText = styled.div`
   p {
     color: ${({ theme }) => theme.colors.blue01};
     ${({ theme }) => theme.fonts.heading3};
