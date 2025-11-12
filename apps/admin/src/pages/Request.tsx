@@ -4,6 +4,7 @@ import styled from "styled-components";
 import RequestSummaryCards from "@components/request/RequestSummaryCards";
 import {
   getApplications,
+  type ApplicationItem,
   type ApplicationsSummary,
   type ApplicationStatus,
 } from "@apis/request/getApplications";
@@ -11,6 +12,7 @@ import toast from "react-hot-toast";
 import RequestSearchBar, {
   type StatusFilter,
 } from "@components/request/RequestSearchBar";
+import ApplicationList from "@components/request/ApplicationList";
 
 type OutletCtx = {
   setHeader: (o: {
@@ -31,6 +33,7 @@ const Request = () => {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<StatusFilter>("전체");
   const [query, setQuery] = useState("");
+  const [items, setItems] = useState<ApplicationItem[]>([]);
 
   useEffect(() => {
     let alive = true;
@@ -67,18 +70,22 @@ const Request = () => {
     let alive = true;
     (async () => {
       try {
+        setLoading(true);
         const res = await getApplications({
           page: 1,
-          status: status === "전체" ? undefined : status, // API 규격: 전체는 파라미터 미전달
+          status: status === "전체" ? undefined : status,
         });
         if (!alive) return;
-        // summary, applications, pageInfo 세팅…
-      } catch {}
+        setItems(res.applications);
+        // pageInfo로 Pagination도 세팅 가능
+      } finally {
+        setLoading(false);
+      }
     })();
     return () => {
       alive = false;
     };
-  }, [status /*, query 제출 시 트리거 */]);
+  }, [status /* query 제출 시 */]);
 
   return (
     <Wrap>
@@ -99,6 +106,17 @@ const Request = () => {
         onQueryChange={setQuery}
         onSubmit={() => {
           /* 검색 제출 -> refetch */
+        }}
+      />
+
+      <ApplicationList
+        items={items}
+        loading={loading}
+        onManageClick={(id) => {
+          /* 상세/모달 열기 */
+        }}
+        onRowClick={(id) => {
+          /* 행 클릭 액션(선택) */
         }}
       />
     </Wrap>
