@@ -98,7 +98,7 @@ const ToggleButton = styled.button<{
         background: ${theme.colors.blue02};
         color: ${theme.colors.blue01};
         border: 1px solid ${({ theme }) => theme.colors.blue01};
-        ${({ theme}) => theme.fonts.title01};
+        ${({ theme}) => theme.fonts.title1};
         `
       : css`
           background: ${theme.colors.gray02};
