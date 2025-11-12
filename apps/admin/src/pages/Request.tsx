@@ -77,7 +77,6 @@ const Request = () => {
         });
         if (!alive) return;
         setItems(res.applications);
-        // pageInfo로 Pagination도 세팅 가능
       } finally {
         setLoading(false);
       }
@@ -85,7 +84,7 @@ const Request = () => {
     return () => {
       alive = false;
     };
-  }, [status /* query 제출 시 */]);
+  }, [status]);
 
   return (
     <Wrap>
@@ -100,13 +99,11 @@ const Request = () => {
       <RequestSearchBar
         status={status}
         onStatusChange={(s) => {
-          setStatus(s); /* setPage(1) 등 */
+          setStatus(s);
         }}
         query={query}
         onQueryChange={setQuery}
-        onSubmit={() => {
-          /* 검색 제출 -> refetch */
-        }}
+        onSubmit={() => {}}
       />
 
       <ApplicationList
@@ -114,9 +111,6 @@ const Request = () => {
         loading={loading}
         onManageClick={(id) => {
           /* 상세/모달 열기 */
-        }}
-        onRowClick={(id) => {
-          /* 행 클릭 액션(선택) */
         }}
       />
     </Wrap>
@@ -135,8 +129,4 @@ const Des = styled.p`
   color: ${({ theme }) => theme.colors.gray05};
   font-size: 20px;
   font-weight: 400;
-`;
-
-const Loading = styled.div`
-  color: ${({ theme }) => theme.colors.gray05};
 `;

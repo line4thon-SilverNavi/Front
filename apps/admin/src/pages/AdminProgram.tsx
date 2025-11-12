@@ -3,7 +3,6 @@ import { useOutletContext } from "react-router-dom";
 import styled from "styled-components";
 import AddProgramModal from "@components/program/AddProgramModal/AddProgramModal";
 import ProgramSearchBar from "@components/program/ProgramSearchBar";
-
 import ProgramList from "@components/program/ProgramList";
 import { usePrograms } from "@hooks/programs/usePrograms";
 import Pagination from "@components/program/Pagination";
@@ -12,6 +11,8 @@ import toast from "react-hot-toast";
 import { deleteProgram } from "@apis/program/deleteProgram";
 import EditProgramModal from "@components/program/EditProgramModal";
 import AttendanceModal from "@components/program/attendance/AttendanceModal";
+import type { ProgramItem } from "@apis/program/getPrograms";
+import type { ProgramDetail } from "@apis/program/types";
 
 type OutletCtx = {
   setHeader: (o: {
@@ -24,6 +25,7 @@ type OutletCtx = {
 
 const AdminProgram = () => {
   const { setHeader, facilityName } = useOutletContext<OutletCtx>();
+
   const {
     category,
     setCategory,
@@ -36,6 +38,9 @@ const AdminProgram = () => {
     refetch,
     removeById,
   } = usePrograms();
+
+  const [localItems, setLocalItems] = useState<ProgramItem[] | null>(null);
+  const visibleItems = localItems ?? items;
 
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -54,7 +59,7 @@ const AdminProgram = () => {
 
   const handleSearchSubmit = useCallback(
     (q: string) => {
-      // TODO: 서버 검색 파라미터 붙이면 여기서 refetch(params)
+      // TODO: 검색 파라미터 연결
       refetch();
     },
     [refetch]
@@ -66,6 +71,9 @@ const AdminProgram = () => {
       setDeleting(true);
       await deleteProgram(deleteId);
       removeById(deleteId);
+      setLocalItems((prev) =>
+        prev ? prev.filter((it) => it.programId !== deleteId) : prev
+      );
       toast.success("삭제되었습니다.");
     } catch {
       toast.error("삭제 중 오류가 발생했습니다.");
@@ -90,6 +98,40 @@ const AdminProgram = () => {
     });
   }, [description, setHeader]);
 
+  const mergeDetailIntoItem = useCallback(
+    (prev: ProgramItem, d: ProgramDetail): ProgramItem => {
+      return {
+        programId: prev.programId,
+        programName: d.name ?? prev.programName,
+        category: (d.category as ProgramItem["category"]) ?? prev.category,
+        date: d.date ?? prev.date,
+        dayOfWeek: prev.dayOfWeek,
+        startTime: d.startTime ?? prev.startTime,
+        endTime: d.endTime ?? prev.endTime,
+        location: (d.location ?? prev.location) || "",
+        currentApplicants: prev.currentApplicants,
+        capacity: d.capacity ?? prev.capacity ?? null,
+        fee: d.fee ?? prev.fee ?? "",
+      };
+    },
+    []
+  );
+
+  const handleEditSuccess = useCallback(
+    (updated: ProgramDetail) => {
+      if (!editId) return;
+
+      setLocalItems((prev) => {
+        const base = prev ?? items;
+        const next = base.map((it) =>
+          it.programId === editId ? mergeDetailIntoItem(it, updated) : it
+        );
+        return next;
+      });
+    },
+    [editId, items, mergeDetailIntoItem]
+  );
+
   return (
     <Wrap>
       <ProgramSearchBar
@@ -97,6 +139,7 @@ const AdminProgram = () => {
         onCategoryChange={(c) => {
           setCategory(c);
           setPage(1);
+          setLocalItems(null);
         }}
         query={query}
         onQueryChange={setQuery}
@@ -104,7 +147,7 @@ const AdminProgram = () => {
       />
 
       <ProgramList
-        items={items}
+        items={visibleItems}
         loading={loading}
         onEditClick={(id) => {
           setEditId(id);
@@ -128,9 +171,7 @@ const AdminProgram = () => {
           setEditOpen(false);
           setEditId(null);
         }}
-        onSuccess={async () => {
-          await refetch();
-        }}
+        onSuccess={handleEditSuccess}
         facilityName={facilityName}
       />
 
@@ -154,12 +195,18 @@ const AdminProgram = () => {
           setAttPid(null);
         }}
         onSaved={async () => {
-          // 필요 시 프로그램 목록 갱신
-          await refetch();
+          // 프로그램 목록 갱신
         }}
       />
 
-      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        onChange={(p) => {
+          setPage(p);
+          setLocalItems(null);
+        }}
+      />
 
       <AddProgramModal
         open={open}
@@ -167,6 +214,7 @@ const AdminProgram = () => {
         onSuccess={async () => {
           setOpen(false);
           await refetch();
+          setLocalItems(null);
         }}
       />
     </Wrap>
@@ -196,7 +244,6 @@ const AddBtn = styled.button`
   ${({ theme }) => theme.fonts.heading3};
   cursor: pointer;
 `;
-
 const Plus = styled.span`
   ${({ theme }) => theme.fonts.heading3};
 `;

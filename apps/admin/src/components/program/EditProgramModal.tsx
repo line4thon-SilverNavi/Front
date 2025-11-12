@@ -24,17 +24,16 @@ import FileFields from "./AddProgramModal/sections/FileFields";
 type Props = {
   open: boolean;
   onClose: () => void;
-  onSuccess?: () => void;
+  /** ✅ 낙관적 업데이트: patch 결과 ProgramDetail을 넘겨준다 */
+  onSuccess?: (updated: ProgramDetail) => void;
   programId: number | null;
   facilityName?: string;
 };
 
 const jsonEq = (a: unknown, b: unknown) =>
   JSON.stringify(a) === JSON.stringify(b);
-
 const trim = (s: string) => s.trim();
 
-// 문자열: 변경 없으면 null(유지), 비우면 ""(제거) 가능 필드에만 적용
 function diffString(
   nextRaw: string,
   prevRaw: string | null | undefined,
@@ -42,12 +41,10 @@ function diffString(
 ): string | null {
   const next = trim(nextRaw);
   const prev = trim(prevRaw ?? "");
-  if (next === prev) return null; // 유지
-  if (removable && next === "") return ""; // 제거
-  return next; // 변경 반영
+  if (next === prev) return null;
+  if (removable && next === "") return "";
+  return next;
 }
-
-// 날짜/시간: 변경 없으면 null(유지)
 function diffYMD(next: string, prev: string | null | undefined): string | null {
   if ((prev ?? "") === next) return null;
   return next;
@@ -56,7 +53,6 @@ function diffHM(next: string, prev: string | null | undefined): string | null {
   if ((prev ?? "") === next) return null;
   return next;
 }
-
 function diffCategory(
   next: string,
   prev: string | null | undefined
@@ -64,7 +60,6 @@ function diffCategory(
   if ((prev ?? "") === next) return null;
   return isProgramCategory(next) ? next : null;
 }
-
 function diffCapacity(
   next: number | "",
   prev: number | null | undefined
@@ -72,27 +67,25 @@ function diffCapacity(
   const prevStr = prev == null ? "" : String(prev);
   const nextStr = next === "" ? "" : String(next);
   if (nextStr === prevStr) return null;
-  if (next === "") return -1;
+  if (next === "") return -1; // 제거 규칙
   const n = Number(next);
   if (!Number.isFinite(n)) return null;
   return Math.max(1, n);
 }
-
 function diffList(
   next: string[],
   prev: string[] | null | undefined
 ): string[] | null {
   const p = prev ?? [];
-  if (jsonEq(next, p)) return null; // 유지
-  if (next.length === 0) return []; // 제거
-  return next; // 변경
+  if (jsonEq(next, p)) return null;
+  if (next.length === 0) return [];
+  return next;
 }
-
-/* ------------------------------------------------------------------ */
 
 export default function EditProgramModal({
   open,
   onClose,
+  onSuccess,
   programId,
   facilityName,
 }: Props) {
@@ -104,6 +97,7 @@ export default function EditProgramModal({
 
   useEffect(() => {
     if (open) f.reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   // 상세 로드
@@ -145,6 +139,7 @@ export default function EditProgramModal({
     return () => {
       alive = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, programId]);
 
   /* ---------- 로컬 검증 ---------- */
@@ -154,7 +149,6 @@ export default function EditProgramModal({
     if (!f.name || !f.startTime || !f.endTime || !f.date) return false;
     if (f.startTime > f.endTime) return false;
 
-    // 날짜는 "바뀐 경우"에만 현재보다 뒤인지 검증
     if (prev && f.date !== prev.date) {
       const today = new Date();
       const d = new Date(f.date + "T00:00:00");
@@ -166,12 +160,10 @@ export default function EditProgramModal({
       if (d <= todayYMD) return false;
     }
 
-    // 전화번호는 입력이 있을 때만 검사 (비우면 제거 규칙으로 처리)
     if (f.number.trim() && !/^\d{2,3}-\d{3,4}-\d{4}$/.test(f.number)) {
       return false;
     }
 
-    // 카테고리 유효성
     if (!isProgramCategory(f.category)) return false;
 
     return true;
@@ -187,7 +179,6 @@ export default function EditProgramModal({
 
   if (!open) return null;
 
-  // PATCH
   function buildPayload(): PatchProgramPayload {
     const prev = originalRef.current!;
     const suppliesArr = f.suppliesText
@@ -196,49 +187,33 @@ export default function EditProgramModal({
       .filter(Boolean);
 
     return {
-      // name: 제거 규칙 없음 → 변경 없으면 null, 변경 시 값
       name: f.name === prev.name ? null : f.name.trim(),
-
-      // category: 변경 없으면 null, 변경 시 유효하면 값
       category: diffCategory(f.category, prev.category),
-
-      // 문자열들: 변경 없으면 null, 비우면 ""(제거)
       instructorName: diffString(f.instructorName, prev.instructorName, true),
       date: diffYMD(f.date, prev.date),
       startTime: diffHM(f.startTime, prev.startTime),
       endTime: diffHM(f.endTime, prev.endTime),
       location: diffString(f.location, prev.location, true),
-
-      // capacity: 변경 없으면 null, 빈칸("") -> -1(제거), 숫자는 최소 1
       capacity: diffCapacity(f.capacity, prev.capacity),
-
       fee: diffString(f.fee, prev.fee, true),
       number: diffString(f.number, prev.number, true),
       description: diffString(f.description, prev.description, true),
-
-      // supplies: 변경 없으면 null, 빈 → [] (제거)
       supplies: diffList(suppliesArr, prev.supplies),
-
-      // 파일/이미지: 선택 시에만 전송
-      proposal: f.proposal ?? null, // 새 PDF 선택 시에만 append
+      proposal: f.proposal ?? null,
       newImages: f.images && f.images.length ? f.images : undefined,
-
-      // TODO: api 확인 필요
-      // isDeleteProposal: f.deleteProposal ?? false,
-      // existingImageUrls: f.existingImageUrls,
+      // isDeleteProposal / existingImageUrls 필요 시 추가
     } as PatchProgramPayload;
   }
 
   const handleSubmit = async () => {
     if (!programId) return;
-    if (!isValid) {
-      toast.error("필수값 또는 형식을 확인해주세요.");
-      return;
-    }
+    if (!isValid) return toast.error("필수값 또는 형식을 확인해주세요.");
 
     try {
       setSaving(true);
-      await patchProgram(programId, buildPayload());
+      const updated = await patchProgram(programId, buildPayload());
+      // ✅ 부모로 결과 전달 → 낙관적 리스트 치환
+      onSuccess?.(updated);
       onClose();
       toast.success("수정되었습니다.");
     } catch (e: any) {
@@ -318,10 +293,6 @@ export default function EditProgramModal({
                 onPickImages={f.onPickImages}
                 fileInputRef={f.fileInputRef}
                 imgInputRef={f.imgInputRef}
-                // existingImageUrls={f.existingImageUrls}
-                // setExistingImageUrls={f.setExistingImageUrls}
-                // deleteProposal={f.deleteProposal}
-                // setDeleteProposal={f.setDeleteProposal}
               />
             </Field>
           </S.Form>
