@@ -4,7 +4,7 @@ import { Button } from "@core/ui/button";
 import styled from "styled-components";
 import InputContainer from "@core/components/inputContainer";
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import RelationSelectModal from "@components/auth/RelationSelectModal";
 import {
     relationLabel,
@@ -19,7 +19,6 @@ import { getUserDetail } from "@apis/mypage/userDetail";
 import { updateUserInfo } from "@apis/mypage/updateUserInfo";
 
 export default function SetUserInfo() {
-  const location = useLocation();
   const navigate = useNavigate();
 
   //  입력폼 필드
@@ -90,15 +89,6 @@ export default function SetUserInfo() {
 
     fetchUserDetail();
   }, []);
-
-  // Certify 페이지에서 돌아올 때 careGrade 받기
-  useEffect(() => {
-    if (location.state?.careGrade) {
-      setGrade(location.state.careGrade);
-      // state 정리 (뒤로가기 시 중복 적용 방지)
-      window.history.replaceState({}, document.title);
-    }
-  }, [location]);
 
   const handleSubmitClick = async () => {
     try {
@@ -229,8 +219,8 @@ export default function SetUserInfo() {
         <InputContainer
           label="돌봄 대상자 요양등급"
           value={grade}
-          onChange={() => {}}
-          placeholder={grade ? grade : "인증서를 촬영해주세요"}
+          onChange={setGrade}
+          placeholder="인증서를 촬영해주세요"
           helperText=""
           clickable
           onClickInput={handleCertiftClick}

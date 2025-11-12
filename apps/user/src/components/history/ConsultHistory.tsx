@@ -172,7 +172,7 @@ const EmptyState = styled.div`
     }
 `;
 
-const EmptyText = styled.p`
+const EmptyText = styled.div`
     ${({ theme }) => theme.fonts.title1};
     color: ${({ theme }) => theme.colors.gray07};
     margin: 0;

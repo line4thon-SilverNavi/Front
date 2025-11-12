@@ -4,6 +4,7 @@ import { useFormatDate, useFormatTime } from "@hooks/program/ProcessingTime";
 import * as s from "@layouts/DetailPageLayout";
 import { getProgramDetail, type ProgramDetailData } from "@apis/program/programDetail";
 import { getProgramDetailDummy } from "@apis/dummy/programDetailDummy";
+import { getProgramHistory } from "@apis/history/history";
 import { useEffect, useState } from "react";
 
 export default function ProgramDetailPage() {
@@ -11,6 +12,7 @@ export default function ProgramDetailPage() {
     const location = useLocation();
     const { programId } = useParams<{ programId: string }>();
     const [program, setProgram] = useState<ProgramDetailData | null>(null);
+    const [isAlreadyApplied, setIsAlreadyApplied] = useState(false);
     
     // location.state에서 가져오기
     const cardInfo = location.state as {
@@ -39,6 +41,24 @@ export default function ProgramDetailPage() {
             }
         };
         fetchProgramDetail();
+    }, [programId]);
+
+    // 신청 여부 확인
+    useEffect(() => {
+        const checkApplicationStatus = async () => {
+            try {
+                const history = await getProgramHistory();
+                if (history && programId) {
+                    const alreadyApplied = history.programs.some(
+                        (p) => p.programId === Number(programId)
+                    );
+                    setIsAlreadyApplied(alreadyApplied);
+                }
+            } catch (error) {
+                console.log("신청 내역 확인 실패:", error);
+            }
+        };
+        checkApplicationStatus();
     }, [programId]);
 
     const handleApply = () => {
@@ -75,8 +95,15 @@ export default function ProgramDetailPage() {
                 type: "프로그램",
             }}
             footer={
-                <Button tone="blue" radius="pill" size="lg" fullWidth onClick={handleApply}>
-                    신청하기
+                <Button 
+                    tone="blue" 
+                    radius="pill" 
+                    size="lg" 
+                    fullWidth 
+                    onClick={handleApply}
+                    disabled={isAlreadyApplied}
+                >
+                    {isAlreadyApplied ? "신청 완료" : "신청하기"}
                 </Button>
             }
         >

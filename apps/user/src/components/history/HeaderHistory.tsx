@@ -37,6 +37,11 @@ const Wrapper = styled.div`
 const SearchContainer = styled.div`
     position: relative;
     width: 86%;
+    
+    input::placeholder {
+        font-size: 14px !important;
+        color: ${({ theme }) => theme.colors.gray04};
+    }
 `;
 
 const SearchIcon = styled.img`
