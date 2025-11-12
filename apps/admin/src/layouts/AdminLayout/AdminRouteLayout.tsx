@@ -46,7 +46,28 @@ export default function AdminRouteLayout() {
   const baseDes = DEFAULT_DES[activeKey] ?? "";
 
   const [overrides, setOverrides] = useState<HeaderOverrides>({});
+  const [facilityName, setFacilityName] = useState<string>("");
   const prevKeyRef = useRef<AdminNavKey | null>(null);
+
+  useEffect(() => {
+    const init = () => setFacilityName(localStorage.getItem("name") ?? "");
+    init();
+
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "name") setFacilityName(e.newValue ?? "");
+    };
+    const onAuthUpdate = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { name?: string };
+      if (detail?.name !== undefined) setFacilityName(detail.name ?? "");
+    };
+
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("auth:update", onAuthUpdate);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("auth:update", onAuthUpdate);
+    };
+  }, []);
 
   useEffect(() => {
     if (prevKeyRef.current && prevKeyRef.current !== activeKey) {
@@ -72,7 +93,7 @@ export default function AdminRouteLayout() {
       onNavigate={onNavigate}
       right={overrides.right}
     >
-      <Outlet context={{ setHeader: setOverrides }} />
+      <Outlet context={{ setHeader: setOverrides, facilityName }} />
     </AdminLayout>
   );
 }

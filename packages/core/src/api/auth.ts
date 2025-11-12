@@ -11,12 +11,10 @@ export function setTokens({
 }) {
   localStorage.setItem("access", access);
   localStorage.setItem("refresh", refresh);
-  if (careGrade) {
-    localStorage.setItem("careGrade", careGrade);
-  }
-  if (name) {
-    localStorage.setItem("careGrade", name);
-  }
+  if (careGrade) localStorage.setItem("careGrade", careGrade);
+  if (name) localStorage.setItem("name", name);
+
+  window.dispatchEvent(new CustomEvent("auth:update", { detail: { name } }));
 }
 
 export function clearTokens() {

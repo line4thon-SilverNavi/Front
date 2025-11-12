@@ -9,11 +9,11 @@ type OutletCtx = {
     des?: React.ReactNode;
     right?: React.ReactNode;
   }) => void;
+  facilityName: string;
 };
 
 const AdminProgram = () => {
-  const { setHeader } = useOutletContext<OutletCtx>();
-  const [facilityName, setFacilityName] = useState("행복노인요양원");
+  const { setHeader, facilityName } = useOutletContext<OutletCtx>();
   const [programCount, setProgramCount] = useState<number>(6);
   const [open, setOpen] = useState(false);
   const description = useMemo(
