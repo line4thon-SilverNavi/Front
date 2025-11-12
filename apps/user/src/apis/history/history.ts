@@ -41,3 +41,42 @@ export async function getProgramHistory() {
     );
     return response?.data || null;
 }
+
+// ------------------------------ 
+
+// 시설 상담 내역 항목
+export type ConsultHistoryItem = {
+    id: number;
+    facilityName: string;
+    consultCategory: "일반상담" | "시설상담";
+    consultType: "대면" | "비대면" | null;
+    consultStatus: "대기중" | "확인됨" | "완료";
+    content: string;
+    createdAt: string;
+};
+
+// 시설 상담 내역 데이터
+export type ConsultHistoryData = {
+    totalCount: number;
+    waitingCount: number;
+    confirmedCount: number;
+    completedCount: number;
+    consults: ConsultHistoryItem[];
+};
+
+// 시설 상담 내역 응답 타입
+export type ConsultHistoryResponse = {
+    isSuccess: boolean;
+    timestamp: string;
+    code: string;
+    httpStatus: number;
+    message: string;
+    data: ConsultHistoryData;
+};
+
+export async function getConsultHistory() {
+    const response = await getResponse<ConsultHistoryResponse>(
+        "/api/consults/list"
+    );
+    return response?.data || null;
+}
