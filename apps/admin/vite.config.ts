@@ -14,6 +14,7 @@ export default defineConfig({
       "@apis": path.resolve(__dirname, "./src/apis"),
       "@core": path.resolve(__dirname, "../../packages/core/src"),
       "@constants": path.resolve(__dirname, "./src/constants"),
+      "@shared": path.resolve(__dirname, "./src/shared"),
     },
     dedupe: ["react", "react-dom", "styled-components"],
   },
