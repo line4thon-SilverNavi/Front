@@ -25,7 +25,7 @@ export default function Mypage () {
     fetchUserData();
   }, []);
 
-  const isSelf = userData?.relationRole === "본인";
+  const isSelf = userData?.relation === "본인";
 
   return(
     <DefaultLayout 
@@ -57,13 +57,13 @@ export default function Mypage () {
         {isSelf ? (
           <S.ProfileContainer>
           <S.Profile>
-              <S.ProfileIcon>{userData?.guardianName?.[0] || "-"}</S.ProfileIcon>
+              <S.ProfileIcon>{userData?.careTargetName?.[0] || "-"}</S.ProfileIcon>
               <S.ProfileInfo>
                 <S.NameContainer>
-                <S.ProfileName>{userData?.guardianName || "-"}님</S.ProfileName>
+                <S.ProfileName>{userData?.careTargetName || "-"}님</S.ProfileName>
                 <S.ProfileRole>본인</S.ProfileRole>
                 </S.NameContainer>
-                <S.ProfilePhone>{addHyphen(userData?.guardianPhone || "-")}</S.ProfilePhone>
+                <S.ProfilePhone>{addHyphen(userData?.careTargetPhone || "-")}</S.ProfilePhone>
               </S.ProfileInfo>
           </S.Profile>
           </S.ProfileContainer>
@@ -74,7 +74,7 @@ export default function Mypage () {
               <S.ProfileInfo>
                 <S.NameContainer>
                 <S.ProfileName>{userData?.guardianName || "-"}님</S.ProfileName>
-                <S.ProfileRole>{userData?.relationRole || "보호자"}</S.ProfileRole>
+                <S.ProfileRole>{userData?.relation || "보호자"}</S.ProfileRole>
                 </S.NameContainer>
                 <S.ProfilePhone>{addHyphen(userData?.guardianPhone || "")}</S.ProfilePhone>
               </S.ProfileInfo>
@@ -91,7 +91,7 @@ export default function Mypage () {
                   </S.CareTargetItem>
                   <S.CareTargetItem>
                     <S.CareTargetLabel>관계</S.CareTargetLabel>
-                    <S.CareTargetValue>{userData?.relationRole || "-"}</S.CareTargetValue>
+                    <S.CareTargetValue>{userData?.relation || "-"}</S.CareTargetValue>
                   </S.CareTargetItem>
                   <S.CareTargetItem>
                     <S.CareTargetLabel>생년월일</S.CareTargetLabel>

@@ -1,7 +1,7 @@
 import DefaultLayout from "@layouts/DefaultLayout";
 import styled, { keyframes } from "styled-components";
 import CommonHeader from "@components/common/CommonHeader";
-import { Button } from "core/ui/button";
+import { Button } from "@core/ui/button";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { postOcr } from "@apis/mypage/ocr";

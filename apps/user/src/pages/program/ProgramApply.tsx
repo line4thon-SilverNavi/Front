@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import DefaultLayout from "@layouts/DefaultLayout";
 import CommonHeader from "@components/common/CommonHeader";
-import { Button } from "core/ui/button";
+import { Button } from "@core/ui/button";
 import styled from "styled-components";
 import InputContainer from "@core/components/inputContainer";
 import TextAreaContainer from "@core/components/TextAreaContainer";

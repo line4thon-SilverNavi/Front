@@ -1,12 +1,16 @@
 import DefaultLayout from "@layouts/DefaultLayout";
 import CommonHeader from "@components/common/CommonHeader";
-import { Button } from "core/ui/button";
+import { Button } from "@core/ui/button";
 import styled from "styled-components";
 import InputContainer from "@core/components/inputContainer";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import RelationSelectModal from "@components/auth/RelationSelectModal";
-import { relationLabel, relationToApi, type RelationCode } from "@constants/relation";
+import {
+    relationLabel,
+    relationToApi,
+    type RelationCode,
+} from "@constants/relation";
 import BirthContainer from "@components/mypage/BirthContainer";
 import ToggleButtonGroup from "@core/components/ToggleButtonGroup";
 import TermsModal from "@components/mypage/TermsModal";
@@ -50,7 +54,7 @@ export default function SetUserInfo(){
                 if (data) {
                     const careTargetName = data.careTargetName || "";
                     const careTargetPhone = data.careTargetPhone || "";
-                    const relationRole = data.relation as RelationCode || "";
+                    const relationRole = data.relationRole as RelationCode || "";
                     const careTargetBirth = data.careTargetBirth || "";
                     const careGrade = data.careGrade || "";
                     const careTargetGender = data.careTargetGender || "";

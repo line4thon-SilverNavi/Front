@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { Button } from "core/ui/button";
+import { Button } from "@core/ui/button";
 
 export default function FinishApply() {
     const location = useLocation();

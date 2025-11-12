@@ -250,7 +250,6 @@ export default function FacilityApplyPage() {
                 onClose={() => setCheckModalOpen(false)}
                 onConfirm={onSubmit}
                 isAlreadyApplied={isAlreadyApplied}
-                facilityName={facilityName}
             />
         </DefaultLayout>
     );

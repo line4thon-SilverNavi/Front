@@ -13,7 +13,6 @@ export type MypageResponse = {
     hasCareTarget: boolean;
 
     careTargetPhone: string | null;
-    careGrade: string | null;
 
 };
 
