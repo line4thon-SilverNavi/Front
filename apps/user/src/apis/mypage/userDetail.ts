@@ -2,15 +2,13 @@ import { getResponse } from "@core/api/instance";
 
 export type UserDetailResponse = {
     guardianName: string;
-    relation: string;
     guardianPhone: string;
     careTargetName: string;
+    careTargetPhone: string;
     careTargetBirth: string;
     careTargetGender: string;
-    bookmarkCount: number;
-    consultCount: number;
-    reviewCount: number;
-    hasCareTarget: boolean;
+    relationRole: string;
+    careGrade: string;
 };
 
 export async function getUserDetail() {

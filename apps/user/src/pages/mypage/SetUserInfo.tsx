@@ -50,7 +50,7 @@ export default function SetUserInfo(){
                 if (data) {
                     const careTargetName = data.careTargetName || "";
                     const careTargetPhone = data.careTargetPhone || "";
-                    const relationRole = data.relationRole as RelationCode || "";
+                    const relationRole = data.relation as RelationCode || "";
                     const careTargetBirth = data.careTargetBirth || "";
                     const careGrade = data.careGrade || "";
                     const careTargetGender = data.careTargetGender || "";

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 
 type Props = {
@@ -10,6 +10,18 @@ export default function BirthContainer({ value, onChange }: Props) {
     const [year, setYear] = useState("");
     const [month, setMonth] = useState("");
     const [date, setDate] = useState("");
+
+    // value prop이 변경되면 year, month, date 업데이트
+    useEffect(() => {
+        if (value) {
+            const parts = value.split('-');
+            if (parts.length === 3) {
+                setYear(parts[0]);
+                setMonth(parts[1]);
+                setDate(parts[2]);
+            }
+        }
+    }, [value]);
 
     const handleDateChange = (newYear: string, newMonth: string, newDate: string) => {
         if (newYear && newMonth && newDate) {
@@ -121,6 +133,7 @@ const Input = styled.input`
     }
     &[type=number] {
         -moz-appearance: textfield;
+        appearance: textfield;
     }
 `;
 
