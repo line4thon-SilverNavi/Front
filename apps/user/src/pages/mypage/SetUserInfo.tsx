@@ -15,7 +15,7 @@ import BirthContainer from "@components/mypage/BirthContainer";
 import ToggleButtonGroup from "@core/components/ToggleButtonGroup";
 import TermsModal from "@components/mypage/TermsModal";
 import { getUserDetail } from "@apis/mypage/userDetail";
-import { updateUserInfo, type UpdateUserInfoRequest } from "@apis/mypage/updateUserInfo";
+import { updateUserInfo } from "@apis/mypage/updateUserInfo";
 
 export default function SetUserInfo() {
   const location = useLocation();
