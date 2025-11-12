@@ -32,7 +32,7 @@ export default function Certify() {
       if (response?.isSuccess) {
         const careGrade = response.data.careGrade;
 
-        navigate("/mypage/set-user-info", {
+        navigate("/setuser", {
           state: { careGrade },
           replace: true,
         });

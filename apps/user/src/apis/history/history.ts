@@ -57,7 +57,7 @@ export type ConsultHistoryItem = {
 
 // 시설 상담 내역 데이터
 export type ConsultHistoryData = {
-    totalCount: number;
+    totalCount: number | 0;
     waitingCount: number;
     confirmedCount: number;
     completedCount: number;
@@ -78,5 +78,6 @@ export async function getConsultHistory() {
     const response = await getResponse<ConsultHistoryResponse>(
         "/api/consults/list"
     );
+    console.log("상담 내역 응답:", response);
     return response?.data || null;
 }

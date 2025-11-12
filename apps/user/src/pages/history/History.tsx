@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { getProgramHistory, type ProgramHistoryData } from "@apis/history/history";
 import ProgramHistory from "@components/history/ProgramHistory";
+import ConsultHistory from "@components/history/ConsultHistory";
 
 type TabType = "신청 목록" | "상담 내역";
 
@@ -45,7 +46,7 @@ export default function History(){
                     <ProgramHistory historyData={historyData} />
                 ) : (
                     <>
-                    
+                    <ConsultHistory />
                     </>
                 )}
             </ContentContainer>

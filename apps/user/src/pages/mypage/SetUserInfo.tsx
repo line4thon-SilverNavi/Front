@@ -9,6 +9,7 @@ import RelationSelectModal from "@components/auth/RelationSelectModal";
 import {
     relationLabel,
     relationToApi,
+    relationFromApi,
     type RelationCode,
 } from "@constants/relation";
 import BirthContainer from "@components/mypage/BirthContainer";
@@ -54,7 +55,7 @@ export default function SetUserInfo() {
         if (data) {
           const careTargetName = data.careTargetName || "";
           const careTargetPhone = data.careTargetPhone || "";
-          const relationRole = (data.relationRole as RelationCode) || "";
+          const relationRole = relationFromApi(data.relationRole) || "";
           const careTargetBirth = data.careTargetBirth || "";
           const careGrade = data.careGrade || "";
           const careTargetGender = data.careTargetGender || "";
@@ -150,6 +151,8 @@ export default function SetUserInfo() {
           guardianName,
           guardianPhone,
         });
+        // 저장 후 뒤로가기
+        navigate(-1);
       } else {
         alert(response?.message || "저장에 실패했습니다.");
       }
@@ -166,7 +169,7 @@ export default function SetUserInfo() {
   const handleTermsConfirm = () => {
     setTermsOpen(false);
     // 약관 확인 후 Certify 페이지로 이동
-    navigate("/mypage/certify");
+    navigate("/certify");
   };
 
   return (
@@ -236,8 +239,8 @@ export default function SetUserInfo() {
         <ToggleButtonGroup
           label="돌봄 대상자 성별"
           options={[
-            { value: "male", label: "남성" },
-            { value: "female", label: "여성" },
+            { value: "남성", label: "남성" },
+            { value: "여성", label: "여성" },
           ]}
           value={gender}
           onChange={setGender}

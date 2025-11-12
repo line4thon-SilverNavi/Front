@@ -12,7 +12,7 @@ import { getProgramList, type ProgramListResponse } from "@apis/program/programL
 import { dummyFacilityData } from "@apis/dummy/facilityDummy";
 import { dummyProgramData } from "@apis/dummy/programDummy";
 import { patchLocation } from "@apis/home/patchLocation";
-import { Button } from "@core/ui/button/Button";
+import CategoryMap from "@components/common/CategoryMap";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -107,21 +107,11 @@ const Home = () => {
       </s.MoreInfo>
       </s.SectionTitle>
       
-      <s.CategoryButtons>
-        {categories.map((category) => (
-          <Button
-            key={category}
-            tone={selectedCategory === category ? "blue" : "gray"}
-            variant={selectedCategory === category ? "subtle" : "subtle"}
-            size="sm"
-            radius="sm"
-            typo={selectedCategory === category ? "label1" : "label2"}
-            onClick={() => setSelectedCategory(category)}
-          >
-            {category}
-          </Button>
-        ))}
-      </s.CategoryButtons>
+      <CategoryMap 
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onCategoryChange={setSelectedCategory}
+      />
 
       <CardList
         items={filteredPrograms}

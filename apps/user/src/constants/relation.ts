@@ -21,3 +21,15 @@ export const relationToApi = (code?: RelationCode): "본인" | "배우자" | "�
   };
   return mapping[code];
 };
+
+// API에서 받은 한글을 코드로 변환
+export const relationFromApi = (apiValue?: string): RelationCode | undefined => {
+  if (!apiValue) return undefined;
+  const mapping: Record<string, RelationCode> = {
+    "본인": "parent",
+    "배우자": "spouse",
+    "자녀": "child",
+    "형제/자매": "sibling",
+  };
+  return mapping[apiValue];
+};
