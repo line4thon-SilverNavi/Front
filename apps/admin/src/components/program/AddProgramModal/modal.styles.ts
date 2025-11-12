@@ -1,7 +1,5 @@
 import styled from "styled-components";
 
-/** 레이아웃/비주얼 전용 스타일 파일 */
-
 export const Backdrop = styled.div`
   position: fixed;
   inset: 0;
@@ -120,13 +118,11 @@ export const Flex = styled.div`
 `;
 
 export const Span = styled.span`
-  /* ${({ theme }) => theme.fonts.heading3} */
   color: #6b7280;
 `;
 
 export const Error = styled.div`
-  /* ${({ theme }) => theme.fonts.heading3} */
-  color: #c62828;
+  color: ${({ theme }) => theme.colors.signal};
 `;
 
 export const ThumbList = styled.ul`

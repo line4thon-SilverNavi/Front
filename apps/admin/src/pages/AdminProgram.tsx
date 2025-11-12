@@ -1,4 +1,3 @@
-// src/pages/admin/programs/AdminProgram.tsx
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import styled from "styled-components";
@@ -8,6 +7,9 @@ import ProgramSearchBar from "@components/program/ProgramSearchBar";
 import ProgramList from "@components/program/ProgramList";
 import { usePrograms } from "@hooks/programs/usePrograms";
 import Pagination from "@components/program/Pagination";
+import DeleteModal from "@components/program/DeleteModal";
+import toast from "react-hot-toast";
+import { deleteProgram } from "@apis/program/deleteProgram";
 
 type OutletCtx = {
   setHeader: (o: {
@@ -30,10 +32,14 @@ const AdminProgram = () => {
     page,
     setPage,
     refetch,
+    removeById,
   } = usePrograms();
 
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const description = useMemo(
     () => `${facilityName || "시설명"}에서 운영하는 총 ${total}개의 프로그램`,
@@ -47,6 +53,23 @@ const AdminProgram = () => {
     },
     [refetch]
   );
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!deleteId) return;
+    try {
+      setDeleting(true);
+      await deleteProgram(deleteId);
+      removeById(deleteId);
+      toast.success("삭제되었습니다.");
+    } catch {
+      toast.error("삭제 중 오류가 발생했습니다.");
+      return;
+    } finally {
+      setDeleting(false);
+      setDeleteOpen(false);
+      setDeleteId(null);
+    }
+  }, [deleteId, removeById]);
 
   useLayoutEffect(() => {
     setHeader({
@@ -78,26 +101,29 @@ const AdminProgram = () => {
         items={items}
         loading={loading}
         onItemClick={(id) => {
-          /* 상세로 이동 or 편집 모달 */
+          /* 상세 이동 등 */
         }}
-        rightSlotOf={(it) => (
-          <Actions>
-            <button
-              onClick={(e) => {
-                e.stopPropagation(); /* 수정 열기 */
-              }}
-            >
-              수정
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation(); /* 삭제 */
-              }}
-            >
-              삭제
-            </button>
-          </Actions>
-        )}
+        onEditClick={(id) => {
+          /* 수정 열기 */
+        }}
+        onApplicantsClick={(id) => {
+          /* 신청자 보기 */
+        }}
+        onDeleteClick={(id) => {
+          setDeleteId(id);
+          setDeleteOpen(true);
+        }}
+      />
+
+      {/* 삭제 모달 */}
+      <DeleteModal
+        open={deleteOpen}
+        onClose={() => {
+          setDeleteOpen(false);
+          setDeleteId(null);
+        }}
+        busy={deleting}
+        onConfirm={handleConfirmDelete}
       />
 
       <Pagination page={page} totalPages={totalPages} onChange={setPage} />

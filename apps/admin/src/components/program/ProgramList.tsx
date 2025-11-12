@@ -6,10 +6,20 @@ type Props = {
   items: ProgramItem[];
   loading?: boolean;
   onItemClick?: (id: number) => void;
+  onEditClick?: (id: number) => void;
+  onDeleteClick?: (id: number) => void;
+  onApplicantsClick?: (id: number) => void;
   rightSlotOf?: (item: ProgramItem) => React.ReactNode;
 };
 
-export default function ProgramList({ items, loading, onItemClick }: Props) {
+export default function ProgramList({
+  items,
+  loading,
+  onItemClick,
+  onEditClick,
+  onDeleteClick,
+  onApplicantsClick,
+}: Props) {
   return (
     <Wrap>
       <Header>
@@ -30,6 +40,9 @@ export default function ProgramList({ items, loading, onItemClick }: Props) {
               key={it.programId}
               item={it}
               onClick={onItemClick}
+              onEditClick={onEditClick}
+              onDeleteClick={onDeleteClick}
+              onApplicantsClick={onApplicantsClick}
             />
           ))}
         </Body>

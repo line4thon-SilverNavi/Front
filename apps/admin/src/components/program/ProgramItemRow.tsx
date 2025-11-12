@@ -4,10 +4,19 @@ import { formatKDate, useFormatTime } from "@core/hooks/ProcessingTime";
 
 type Props = {
   item: ProgramItem;
+  onEditClick?: (id: number) => void;
   onClick?: (id: number) => void;
+  onDeleteClick?: (id: number) => void;
+  onApplicantsClick?: (id: number) => void;
 };
 
-export default function ProgramItemRow({ item, onClick }: Props) {
+export default function ProgramItemRow({
+  item,
+  onClick,
+  onEditClick,
+  onDeleteClick,
+  onApplicantsClick,
+}: Props) {
   const {
     programId,
     programName,
@@ -78,9 +87,21 @@ export default function ProgramItemRow({ item, onClick }: Props) {
       {/* 관리 */}
       <Cell $align="center" onClick={(e) => e.stopPropagation()}>
         <CellContainer>
-          <img src="/img/program/patch.svg" />
-          <img src="/img/program/delete.svg" />
-          <img src="/img/program/application.svg" />
+          <img
+            src="/img/program/patch.svg"
+            role="button"
+            onClick={() => onEditClick?.(programId)}
+          />
+          <img
+            src="/img/program/delete.svg"
+            role="button"
+            onClick={() => onDeleteClick?.(programId)}
+          />
+          <img
+            src="/img/program/application.svg"
+            role="button"
+            onClick={() => onApplicantsClick?.(programId)}
+          />
         </CellContainer>
       </Cell>
     </Row6>
