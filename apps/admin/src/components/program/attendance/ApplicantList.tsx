@@ -40,8 +40,8 @@ function ApplicantItem({
   const checked = attendanceStatus === "출석";
 
   return (
-    <Item role="listitem" $checked={checked}>
-      <CheckButton aria-pressed={checked} $checked={checked} onClick={onToggle}>
+    <Item role="listitem" $checked={checked} onClick={onToggle}>
+      <CheckButton aria-pressed={checked} $checked={checked}>
         <img
           src={checked ? checkImg : noCheckImg}
           alt={checked ? "출석됨" : "미출석"}
@@ -96,6 +96,8 @@ const Item = styled.div<{ $checked: boolean }>`
     $checked
       ? `1.496px solid ${theme.colors.blue01}`
       : `1.496px solid #F0F0F0`};
+
+  cursor: pointer;
 `;
 
 const CheckButton = styled.button<{ $checked: boolean }>`

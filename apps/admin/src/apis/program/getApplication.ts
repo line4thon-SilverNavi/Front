@@ -39,9 +39,5 @@ export type ProgramApplicationsRes = {
 export async function getProgramApplications(
   programId: number
 ): Promise<ProgramApplicationsRes> {
-  console.log(`[MOCK] getProgramApplications(${programId})`);
-
-  // 실제 API 호출 대신 dummyData 리턴
-  await new Promise((r) => setTimeout(r, 400)); // 로딩 시뮬레이션
   return dummyData;
 }
