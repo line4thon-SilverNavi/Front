@@ -16,6 +16,9 @@ type Props = {
   maxLength?: number;
   labelTypo?: FontKey;
   textareaTypo?: FontKey;
+  placeholderTypo?: FontKey;
+  labelColor?: string;
+  placeholderColor?: string;
 };
 
 export default function TextAreaContainer({
@@ -30,12 +33,15 @@ export default function TextAreaContainer({
   maxLength,
   labelTypo = "body1",
   textareaTypo = "body3",
+  placeholderTypo = "body3",
+  labelColor,
+  placeholderColor,
 }: Props) {
   const id = useId();
 
   return (
     <Field>
-      <Label htmlFor={id} $labelTypo={labelTypo}>
+      <Label htmlFor={id} $labelTypo={labelTypo} $labelColor={labelColor}>
         {label} {required && <em aria-hidden>*</em>}
       </Label>
 
@@ -49,6 +55,8 @@ export default function TextAreaContainer({
           maxLength={maxLength}
           aria-invalid={!!errorText}
           $textareaTypo={textareaTypo}
+          $phTypo={placeholderTypo}
+          $phColor={placeholderColor}
         />
       </TextAreaWrapper>
 
@@ -67,12 +75,17 @@ const Field = styled.div`
   gap: 8px;
 `;
 
-const Label = styled.label<{ $labelTypo: FontKey }>`
+const Label = styled.label<{
+  $labelTypo: FontKey;
+  $labelColor?: string;
+  $markColor?: string;
+}>`
   ${({ theme, $labelTypo }) => theme.fonts[$labelTypo]};
-  color: ${({ theme }) => theme.colors.gray05};
+  color: ${({ theme, $labelColor }) => $labelColor ?? theme.colors.gray05};
   margin-bottom: 10px;
+
   em {
-    color: ${({ theme }) => theme.colors.alert};
+    color: ${({ theme, $markColor }) => $markColor ?? theme.colors.alert};
     font-style: normal;
     margin-left: 2px;
   }
@@ -92,7 +105,11 @@ const TextAreaWrapper = styled.div<{ $error: boolean }>`
   }
 `;
 
-const TextArea = styled.textarea<{ $textareaTypo: FontKey }>`
+const TextArea = styled.textarea<{
+  $textareaTypo: FontKey;
+  $phTypo: FontKey;
+  $phColor?: string;
+}>`
   flex: 1;
   border: 0;
   outline: 0;
@@ -103,8 +120,8 @@ const TextArea = styled.textarea<{ $textareaTypo: FontKey }>`
   min-height: 100px;
 
   &::placeholder {
-    color: ${({ theme }) => theme.colors.gray05};
-    ${({ theme }) => theme.fonts.body3};
+    color: ${({ theme, $phColor }) => $phColor ?? theme.colors.gray05};
+    ${({ theme, $phTypo }) => theme.fonts[$phTypo]};
   }
 `;
 

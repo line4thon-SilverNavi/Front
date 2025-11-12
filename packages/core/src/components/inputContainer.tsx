@@ -1,4 +1,4 @@
-import { ReactNode, useId, useState } from "react";
+import { useId, useState } from "react";
 import styled, { css } from "styled-components";
 import openIcon from "../assets/img/auth/open.png";
 import closeIcon from "../assets/img/auth/close.png";
@@ -28,6 +28,7 @@ type Props = {
   height?: string;
   variant?: "underline" | "filled";
   prefixIcon?: React.ReactNode;
+  labelColor?: string;
 };
 
 export default function InputContainer({
@@ -51,6 +52,7 @@ export default function InputContainer({
   width,
   height,
   prefixIcon,
+  labelColor,
 }: Props) {
   const id = useId();
   const [show, setShow] = useState(false);
@@ -67,7 +69,7 @@ export default function InputContainer({
 
   return (
     <Field>
-      <Label htmlFor={id} $labelTypo={labelTypo}>
+      <Label htmlFor={id} $labelTypo={labelTypo} $labelColor={labelColor}>
         {label} {required && <em aria-hidden>*</em>}
       </Label>
 
@@ -122,11 +124,11 @@ const Field = styled.div`
   width: 100%;
 `;
 
-const Label = styled.label<{ $labelTypo: FontKey }>`
+const Label = styled.label<{ $labelTypo: FontKey; $labelColor?: string }>`
   ${({ theme, $labelTypo }) => theme.fonts[$labelTypo]};
-  color: ${({ theme }) => theme.colors.gray05};
+  color: ${({ theme, $labelColor }) => $labelColor ?? theme.colors.gray05};
   em {
-    color: ${({ theme }) => theme.colors.alert};
+    color: ${({ theme }) => theme.colors.signal};
     font-style: normal;
     margin-left: 2px;
   }
