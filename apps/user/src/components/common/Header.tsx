@@ -10,7 +10,7 @@ export default function Header(){
     return(
         <HeaderContainer>
             <UserLocationInfo>
-                {error ? "위치를 불러올 수 없습니다" : address || "위치 정보 로딩 중..."}
+                {error ? "서경대학교" : address || "위치 정보 로딩 중..."}
             </UserLocationInfo>
             <ButtonContainer>
                 <img src={"/img/header/search.png"} style={{height:"22px"}}/>

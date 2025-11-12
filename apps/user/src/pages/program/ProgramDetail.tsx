@@ -2,8 +2,8 @@ import { Button } from "@core/ui/button";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useFormatDate, useFormatTime } from "@hooks/program/ProcessingTime";
 import * as s from "@layouts/DetailPageLayout";
+import { getProgramDetail, type ProgramDetailData } from "@apis/program/programDetail";
 import { getProgramDetailDummy } from "@apis/dummy/programDetailDummy";
-import type { ProgramDetailData } from "@apis/program/programDetail";
 import { useEffect, useState } from "react";
 
 export default function ProgramDetailPage() {
@@ -22,8 +22,20 @@ export default function ProgramDetailPage() {
     useEffect(() => {
         const fetchProgramDetail = async () => {
             if (programId) {
-                const data = await getProgramDetailDummy(Number(programId));
-                setProgram(data);
+                try {
+                    console.log('API 호출 시도:', programId);
+                    const data = await getProgramDetail(Number(programId));
+                    console.log('API 응답:', data);
+                    if (data) {
+                        setProgram(data);
+                    } else {
+                        throw new Error('데이터가 null입니다');
+                    }
+                } catch (error) {
+                    console.warn('실제 API 호출 실패, 더미 데이터 사용:', error);
+                    const dummyData = await getProgramDetailDummy(Number(programId));
+                    setProgram(dummyData);
+                }
             }
         };
         fetchProgramDetail();

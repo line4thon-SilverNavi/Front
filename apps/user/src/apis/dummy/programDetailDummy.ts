@@ -24,11 +24,14 @@ export const programDetailDummy: ProgramDetailData = {
 };
 
 // 더미 API 함수
-export async function getProgramDetailDummy(_programId: number): Promise<ProgramDetailData> {
-    // 실제로는 _programId에 따라 다른 데이터를 반환할 수 있음
+export async function getProgramDetailDummy(programId: number): Promise<ProgramDetailData> {
+    // programId에 맞춰 데이터 반환
     return new Promise((resolve) => {
         setTimeout(() => {
-            resolve(programDetailDummy);
+            resolve({
+                ...programDetailDummy,
+                programId: programId // 요청한 ID로 변경
+            });
         });
     });
 }

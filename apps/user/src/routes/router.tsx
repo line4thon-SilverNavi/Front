@@ -17,6 +17,7 @@ import ProgramDetailPage from "@pages/program/ProgramDetail";
 import SetUserInfo from "@pages/mypage/SetUserInfo";
 import Certify from "@pages/mypage/Certify";
 import ProgramApply from "@pages/program/ProgramApply";
+import History from "@pages/history/History";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
       { path: "mypage", element: <Mypage /> },
       { path: "setuser", element: <SetUserInfo /> },
       { path: "mypage/certify", element: <Certify /> },
+      { path: "history", element: <History /> },
       { path: "button", element: <Btn /> },
     ],
   },
