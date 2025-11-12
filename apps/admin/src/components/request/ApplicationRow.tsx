@@ -1,6 +1,7 @@
 import type { ApplicationItem } from "@apis/request/getApplications";
 import { Row, Cell } from "@components/common/GridTable";
 import styled from "styled-components";
+import StatusBadge from "./StatusBadge";
 
 const fmtPhone = (raw: string) => {
   const digits = raw?.replace(/\D/g, "") || "";
@@ -36,7 +37,7 @@ export default function ApplicationRow({
       <Cell $align="center">{applicantName}</Cell>
       <Cell $align="center">{fmtPhone(phone)}</Cell>
       <Cell $align="center">
-        <Status $s={status}>{status}</Status>
+        <StatusBadge status={status as "대기중" | "승인" | "거부"} />
       </Cell>
       <Cell $align="center" onClick={(e) => e.stopPropagation()}>
         <IconBtn
@@ -61,17 +62,6 @@ const ProgName = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-`;
-
-const Status = styled.span<{ $s: "대기중" | "승인" | "거부" }>`
-  ${({ theme }) => theme.fonts.body3};
-  font-weight: 700;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: ${({ $s }) =>
-    $s === "승인" ? "#e7f2ff" : $s === "대기중" ? "#fff7e6" : "#ffecec"};
-  color: ${({ $s }) =>
-    $s === "승인" ? "#3b82f6" : $s === "대기중" ? "#f59e0b" : "#ef4444"};
 `;
 
 const IconBtn = styled.button`
