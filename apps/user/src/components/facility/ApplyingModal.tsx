@@ -3,6 +3,7 @@ import { Button } from "@core/ui/button";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as s from "@layouts/DetailPageLayout";
+import { getUserDetail } from "@apis/mypage/userDetail";
 
 type ApplyingModalProps = {
     onClose: () => void;
@@ -11,25 +12,21 @@ type ApplyingModalProps = {
 };
 
 export default function ApplyingModal({ onClose, facilityId, facilityName }: ApplyingModalProps) {
-    // 🔧 테스트용: 이 값을 변경해서 각 케이스 UI 확인하기
-    // null, "1등급", "2등급", "3등급", "4등급", "5등급", "인지지원등급"
-    const TEST_CARE_GRADE = ""; // ← 여기를 수정하세요!
-    //-----나중엔 삭제--------
-    
     const navigate = useNavigate();
     const [careGrade, setCareGrade] = useState<string | null>(null);
 
     useEffect(() => {
-        // ----테스트 모드: TEST_CARE_GRADE 사용----
-        if (TEST_CARE_GRADE !== null) {
-            setCareGrade(TEST_CARE_GRADE);
-            return;
-        }
-        ///// ---나중엔 삭제----
-        
-        // 실제 모드: 로컬스토리지에서 careGrade 가져오기
-        const savedCareGrade = localStorage.getItem("careGrade");
-        setCareGrade(savedCareGrade);
+        const fetchUserDetail = async () => {
+            try {
+                const userDetail = await getUserDetail();
+                setCareGrade(userDetail?.careGrade || null);
+            } catch (error) {
+                console.error("요양등급 정보를 불러오는데 실패했습니다:", error);
+                setCareGrade(null);
+            }
+        };
+
+        fetchUserDetail();
     }, []);
 
     // 등급 타입 분류 함수
@@ -166,7 +163,7 @@ export default function ApplyingModal({ onClose, facilityId, facilityName }: App
 
                     {gradeType === 'unregistered' && (
                         <Button variant="solid" typo="title3" tone="blue" radius="pill" size="sm" 
-                        onClick={onClose} style={{width:"70%"}}>
+                        onClick={() => navigate('/setuser')} style={{width:"70%"}}>
                             <img src="/img/apply/camera.png" style={{width:"18px", height:"18px"}}/>
                             요양등급 등록하기
                         </Button>

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import BookmarkButton from "@components/common/BookmarkButton";
-import { useFormatDate, useFormatTime } from "@hooks/program/ProcessingTime";
+import { useFormatDate, useFormatTime } from "@core/hooks/ProcessingTime";
 import { useNavigate } from "react-router-dom";
 
 type ProgramCardProps = {
