@@ -37,12 +37,6 @@ export default function Search(){
         navigate(`/search/result?keyword=${encodeURIComponent(keyword)}`);
     };
 
-    const handleDeleteKeyword = (keyword: string) => {
-        const updated = recentSearches.filter(k => k !== keyword);
-        setRecentSearches(updated);
-        localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
-    };
-
     const handleClearAll = () => {
         setRecentSearches([]);
         localStorage.removeItem(RECENT_SEARCHES_KEY);
@@ -65,7 +59,7 @@ export default function Search(){
                         {recentSearches.length === 0 ? (
                             <EmptyMessage>최근 검색어가 없습니다.</EmptyMessage>
                         ) : (
-                            recentSearches.map((keyword, index) => (
+                            recentSearches.map((keyword) => (
                                     <RecentTag onClick={() => handleKeywordClick(keyword)}>
                                         {keyword}
                                     </RecentTag>
@@ -147,6 +141,9 @@ const EmptyMessage = styled.div`
     color: ${({ theme }) => theme.colors.gray04};
     text-align: center;
     padding: 1rem 0;
+    display: flex;
+    width: 100%;
+    justify-content: center;
 `;
 
 const KeywordItem = styled.div`
