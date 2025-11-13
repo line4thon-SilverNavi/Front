@@ -14,8 +14,8 @@ export type ProgramDetail = {
   number: string | null;
   description: string | null;
   supplies: string[] | null;
-  proposalUrl?: string | null;
-  imageUrls?: string[] | null;
+  proposal: string | null;
+  images: string[] | null;
 };
 
 export type PatchProgramPayload = {
@@ -39,12 +39,8 @@ export type PatchProgramPayload = {
   existingImageUrls?: string[] | null;
 };
 
-// 공통 응답 래퍼
 export type ApiEnvelope<T> = {
   isSuccess: boolean;
-  timestamp: string;
-  code: string;
-  httpStatus: number;
   message: string;
   data: T;
 };

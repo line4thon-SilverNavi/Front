@@ -5,6 +5,7 @@ import {
 import type { ConsultItem } from "@apis/consult/getConsult";
 import ConsultRow from "./CounselRow";
 import type { ConsultCategory } from "@apis/consult/getConsultDetail";
+import styled from "styled-components";
 
 type Props = {
   items: ConsultItem[];
@@ -29,10 +30,19 @@ export default function ConsultList({
   onManageClick,
   onRowClick,
 }: Props) {
+  const hasData = (items?.length ?? 0) > 0;
+
+  if (loading) {
+    return <Empty>조회 중입니다.</Empty>;
+  }
+
+  if (!hasData) {
+    return <Empty>상담 내역이 없습니다.</Empty>;
+  }
   return (
     <EntityTableList<ConsultItem>
       items={items}
-      loading={loading}
+      loading={false}
       cols="90px 1fr 120px 1fr 160px 100px"
       columns={COLUMNS}
       renderRow={(it) => (
@@ -46,3 +56,12 @@ export default function ConsultList({
     />
   );
 }
+
+const Empty = styled.div`
+  padding: 28px;
+  text-align: center;
+  color: #64748b;
+  background: ${({ theme }) => theme.colors.gray01};
+  border-radius: 12px;
+  border: 0.636px solid ${({ theme }) => theme.colors.gray03};
+`;

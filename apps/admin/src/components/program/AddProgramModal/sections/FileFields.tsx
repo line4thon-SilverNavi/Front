@@ -1,5 +1,3 @@
-//기획서, 사진 업로드
-
 import { Button } from "@core/ui/button";
 import UploadCard from "../uploads/UploadCard";
 import FileList from "../uploads/FileList";
@@ -17,6 +15,10 @@ type Props = {
   onPickImages: (e: React.ChangeEvent<HTMLInputElement>) => void;
   fileInputRef: React.RefObject<HTMLInputElement | null>;
   imgInputRef: React.RefObject<HTMLInputElement | null>;
+  existingProposalUrl?: string | null;
+  onDeleteExistingProposal?: () => void;
+  existingImages?: string[];
+  onDeleteExistingImage?: (url: string) => void;
 };
 
 export default function FileFields({
@@ -28,7 +30,23 @@ export default function FileFields({
   onPickImages,
   fileInputRef,
   imgInputRef,
+  existingProposalUrl,
+  onDeleteExistingProposal,
+  existingImages = [],
+  onDeleteExistingImage,
 }: Props) {
+  const hasExistingProposal = !!existingProposalUrl;
+  const hasExistingImages = existingImages.length > 0;
+
+  const extractFileName = (url: string) => {
+    try {
+      const parts = url.split("/");
+      return decodeURIComponent(parts[parts.length - 1]);
+    } catch {
+      return url;
+    }
+  };
+
   return (
     <div>
       <Label>
@@ -36,8 +54,41 @@ export default function FileFields({
         첨부 서류
       </Label>
 
+      {/* --------- 기획서 --------- */}
       <S.UploadSectionTitle>프로그램 기획서 (필수)</S.UploadSectionTitle>
-      {!proposal ? (
+
+      {proposal ? (
+        <>
+          <FileList files={[proposal]} onRemove={() => setProposal(null)} />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/pdf"
+            hidden
+            onChange={onPickProposal}
+          />
+        </>
+      ) : hasExistingProposal ? (
+        <div style={{ marginBottom: 12 }}>
+          <FileList
+            files={[
+              {
+                name: extractFileName(existingProposalUrl!),
+              } as any,
+            ]}
+            onRemove={() => {
+              onDeleteExistingProposal?.();
+            }}
+          />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/pdf"
+            hidden
+            onChange={onPickProposal}
+          />
+        </div>
+      ) : (
         <UploadCard
           mainText="클릭하거나 파일을 드래그하여 업로드"
           subText="PDF 파일 (최대 15MB)"
@@ -49,20 +100,19 @@ export default function FileFields({
           onReject={(msg) => toast.error(msg)}
           helperBottom="* 프로그램 목적, 내용, 일정, 강사 소개 등이 포함된 기획서를 PDF로 업로드해주세요"
         />
-      ) : (
-        <>
-          <FileList files={[proposal]} onRemove={() => setProposal(null)} />
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="application/pdf"
-            hidden
-            onChange={onPickProposal}
-          />
-        </>
       )}
 
       <S.UploadSectionTitle>프로그램 사진 (필수)</S.UploadSectionTitle>
+
+      {hasExistingImages && (
+        <div style={{ marginBottom: 12 }}>
+          <ImageThumbGrid
+            urls={existingImages}
+            onRemoveUrl={(url) => onDeleteExistingImage?.(url)}
+          />
+        </div>
+      )}
+
       {images.length === 0 ? (
         <UploadCard
           mainText="클릭하거나 파일을 드래그하여 업로드"
@@ -71,17 +121,18 @@ export default function FileFields({
           multiple
           maxCount={5}
           maxSizeMB={5}
-          required
+          required={!hasExistingImages}
           value={[]}
-          onChange={setImages}
+          onChange={(arr) => setImages(arr)}
           onReject={(msg) => toast.error(msg)}
-          helperBottom="* 프로그램 활동 사진, 강사 사진, 포스터 등을 업로드하면 참여율이 높아집니다 (최대 5개)"
         />
       ) : (
         <>
           <ImageThumbGrid
             files={images}
-            onRemove={(idx) => setImages(images.filter((_, i) => i !== idx))}
+            onRemoveFile={(idx) =>
+              setImages(images.filter((_, i) => i !== idx))
+            }
           />
           {images.length < 5 && (
             <div style={{ marginTop: 8 }}>

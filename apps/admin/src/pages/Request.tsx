@@ -21,6 +21,7 @@ import RequestSearchBar, {
 import ApplicationList from "@components/request/ApplicationList";
 import ApplicationDetailModal from "@components/request/ApplicationDetailModal";
 import RejectApplicationModal from "@components/request/RejectApplicationModal";
+import { searchRequests } from "@apis/request/searchRequests";
 
 type OutletCtx = {
   setHeader: (o: {
@@ -42,6 +43,7 @@ const Request = () => {
   const [status, setStatus] = useState<StatusFilter>("전체");
   const [query, setQuery] = useState("");
   const [items, setItems] = useState<ApplicationItem[]>([]);
+  const [localItems, setLocalItems] = useState<ApplicationItem[] | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailId, setDetailId] = useState<number | null>(null);
   const [rejectTarget, setRejectTarget] = useState<{
@@ -80,7 +82,6 @@ const Request = () => {
     setHeader({ des: <Des>{description}</Des> });
   }, [description, setHeader]);
 
-  //검색
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -100,6 +101,27 @@ const Request = () => {
       alive = false;
     };
   }, [status]);
+
+  // 검색
+  const handleSearchSubmit = useCallback(async (raw: string) => {
+    const keyword = raw.trim();
+    setQuery(raw);
+
+    if (!keyword) {
+      setLocalItems(null);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const result = await searchRequests(keyword);
+      setLocalItems(result);
+    } catch (e: any) {
+      toast.error(e?.message || "신청 검색에 실패했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   //모달 열기
 
@@ -144,10 +166,10 @@ const Request = () => {
         }}
         query={query}
         onQueryChange={setQuery}
-        onSubmit={() => {}}
+        onSubmit={handleSearchSubmit}
       />
       <ApplicationList
-        items={items}
+        items={localItems ?? items}
         loading={loading}
         onManageClick={handleManageClick}
       />

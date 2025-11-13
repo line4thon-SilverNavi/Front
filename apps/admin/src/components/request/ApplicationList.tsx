@@ -4,6 +4,7 @@ import {
 } from "@components/common/EntityTableList";
 import ApplicationRow from "./ApplicationRow";
 import type { ApplicationItem } from "@apis/request/getApplications";
+import styled from "styled-components";
 
 type Props = {
   items: ApplicationItem[];
@@ -27,6 +28,16 @@ export default function ApplicationList({
   onManageClick,
   onRowClick,
 }: Props) {
+  const hasData = (items?.length ?? 0) > 0;
+
+  if (loading) {
+    return <Empty>조회 중입니다.</Empty>;
+  }
+
+  if (!hasData) {
+    return <Empty>신청 내역이 없습니다.</Empty>;
+  }
+
   return (
     <EntityTableList<ApplicationItem>
       items={items}
@@ -44,3 +55,12 @@ export default function ApplicationList({
     />
   );
 }
+
+const Empty = styled.div`
+  padding: 28px;
+  text-align: center;
+  color: #64748b;
+  background: ${({ theme }) => theme.colors.gray01};
+  border-radius: 12px;
+  border: 0.636px solid ${({ theme }) => theme.colors.gray03};
+`;

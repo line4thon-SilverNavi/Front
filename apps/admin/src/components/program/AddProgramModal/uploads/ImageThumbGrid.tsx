@@ -1,30 +1,59 @@
 import styled from "styled-components";
 
 type Props = {
-  files: File[];
-  onRemove: (idx: number) => void;
+  files?: File[];
+  urls?: string[];
+  onRemoveFile?: (idx: number) => void;
+  onRemoveUrl?: (url: string) => void;
 };
 
-export default function ImageThumbGrid({ files, onRemove }: Props) {
-  if (!files.length) return null;
+export default function ImageThumbGrid({
+  files = [],
+  urls = [],
+  onRemoveFile,
+  onRemoveUrl,
+}: Props) {
+  const hasFiles = files.length > 0;
+  const hasUrls = urls.length > 0;
+
+  if (!hasFiles && !hasUrls) return null;
+
   return (
     <Grid role="list">
       {files.map((f, i) => {
         const src = URL.createObjectURL(f);
         return (
-          <Item key={`${f.name}-${f.size}-${i}`} role="listitem">
-            <img src={src} />
+          <Item key={`file-${f.name}-${f.size}-${i}`} role="listitem">
+            <img src={src} alt={f.name} />
+            {onRemoveFile && (
+              <button
+                type="button"
+                aria-label={`${f.name} 삭제`}
+                onClick={() => onRemoveFile(i)}
+                className="del"
+              >
+                ×
+              </button>
+            )}
+          </Item>
+        );
+      })}
+
+      {urls.map((url, i) => (
+        <Item key={`url-${url}-${i}`} role="listitem">
+          <img src={url} alt={`기존 이미지 ${i + 1}`} />
+          {onRemoveUrl && (
             <button
               type="button"
-              aria-label={`${f.name} 삭제`}
-              onClick={() => onRemove(i)}
+              aria-label={`이미지 ${i + 1} 삭제`}
+              onClick={() => onRemoveUrl(url)}
               className="del"
             >
               ×
             </button>
-          </Item>
-        );
-      })}
+          )}
+        </Item>
+      ))}
     </Grid>
   );
 }
@@ -32,9 +61,14 @@ export default function ImageThumbGrid({ files, onRemove }: Props) {
 const Grid = styled.div`
   margin-top: 12px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 `;
+
 const Item = styled.div`
   position: relative;
   border-radius: 10px;

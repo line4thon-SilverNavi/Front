@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import toast from "react-hot-toast";
 
@@ -17,6 +17,7 @@ import RequestSearchBar, {
 } from "@components/request/RequestSearchBar";
 import ConsultList from "@components/counsel/CounselList";
 import ConsultDetailModal from "@components/counsel/CounselDetailModal";
+import { searchConsults } from "@apis/consult/searchConsults";
 
 const DEFAULT_SUMMARY: CounselSummary = {
   totalCount: 0,
@@ -44,6 +45,11 @@ const Consult = () => {
 
   // 검색어
   const [query, setQuery] = useState("");
+  const [searching, setSearching] = useState(false);
+
+  const [localConsults, setLocalConsults] = useState<ConsultItem[] | null>(
+    null
+  );
 
   useEffect(() => {
     (async () => {
@@ -72,6 +78,28 @@ const Consult = () => {
   }, [page, statusFilter, query]);
 
   const STATUS_OPTIONS: StatusFilter[] = ["전체", "대기중", "확인됨", "완료"];
+
+  const handleSearchSubmit = useCallback(async (raw: string) => {
+    const keyword = raw.trim();
+    setQuery(raw);
+
+    if (!keyword) {
+      setLocalConsults(null);
+      setPage(1);
+      return;
+    }
+
+    try {
+      setSearching(true);
+      const result = await searchConsults(keyword);
+      setLocalConsults(result);
+      setPage(1);
+    } catch (e: any) {
+      toast.error(e?.message || "상담 검색에 실패했습니다.");
+    } finally {
+      setSearching(false);
+    }
+  }, []);
 
   /* ---------- 모달 열기 / 닫기 ---------- */
 
@@ -112,6 +140,8 @@ const Consult = () => {
 
   return (
     <PageWrapper>
+      {/* 상태 요약 카드 */}
+      <CounselStatusCard summary={summary} />
       <RequestSearchBar
         status={statusFilter}
         onStatusChange={(s) => {
@@ -123,27 +153,22 @@ const Consult = () => {
           setQuery(q);
           setPage(1);
         }}
+        onSubmit={handleSearchSubmit}
         placeholder="이름, 연락처로 검색"
         statusOptions={STATUS_OPTIONS}
       />
 
-      {/* 상태 요약 카드 */}
-      <CounselStatusCard summary={summary} />
-
       {/* 상담 리스트 영역 */}
       <ListWrapper aria-busy={loading}>
         <ConsultList
-          items={consults}
-          loading={loading}
-          // 상세보기(관리) 클릭 시 모달 오픈
+          items={localConsults ?? consults}
+          loading={loading || searching}
           onManageClick={(id, category) => openDetail(id, category)}
-          // 필요하면 onRowClick에서도 openDetail 호출 가능
-          // onRowClick={(id, category) => openDetail(id, category)}
         />
       </ListWrapper>
 
       {/* 페이지네이션 */}
-      {pageInfo && pageInfo.totalPages > 1 && (
+      {!localConsults && pageInfo && pageInfo.totalPages > 1 && (
         <PaginationBar>
           <button
             disabled={page <= 1}
