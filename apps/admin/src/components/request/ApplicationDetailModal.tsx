@@ -159,6 +159,7 @@ export default function ApplicationDetailModal({
               iconSrc="/img/request/calendar.svg"
               label="요양등급"
               value={careGrade}
+              valueColor="#409EE3"
             />
             {!isSelf && careName && (
               <>

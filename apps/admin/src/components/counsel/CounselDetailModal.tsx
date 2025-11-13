@@ -282,6 +282,7 @@ export default function ConsultDetailModal({
             />
             <DetailInfoField
               iconSrc="/img/request/star.svg"
+              valueColor="#409EE3"
               label="요양등급"
               value={grade}
             />
@@ -311,6 +312,7 @@ export default function ConsultDetailModal({
             />
             <DetailInfoField
               iconSrc="/img/request/type.svg"
+              valueColor="#409EE3"
               label="문의 유형"
               value={
                 consultType
