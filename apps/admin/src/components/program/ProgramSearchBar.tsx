@@ -108,7 +108,7 @@ export default function ProgramSearchBar({
 }
 
 /* ---------------- styles ---------------- */
-const Bar = styled.div`
+export const Bar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -120,7 +120,7 @@ const Bar = styled.div`
   background: ${({ theme }) => theme.colors.gray01};
 `;
 
-const Left = styled.div`
+export const Left = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
@@ -133,14 +133,14 @@ const Left = styled.div`
   background-color: #f5f5f5;
 `;
 
-const SearchIcon = styled.svg`
+export const SearchIcon = styled.svg`
   width: 18px;
   height: 18px;
   color: #64748b;
   flex: 0 0 auto;
 `;
 
-const Input = styled.input`
+export const Input = styled.input`
   border: 0;
   outline: 0;
   width: 100%;
@@ -151,14 +151,14 @@ const Input = styled.input`
   }
 `;
 
-const Right = styled.div`
+export const Right = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
   flex: 0 0 auto;
 `;
 
-const Chip = styled.button<{ $active?: boolean }>`
+export const Chip = styled.button<{ $active?: boolean }>`
   appearance: none;
   border: 1px solid #e2e8f0;
   background: #f5f5f5;
@@ -176,6 +176,6 @@ const Chip = styled.button<{ $active?: boolean }>`
     `}
 `;
 
-const Addon = styled.div`
+export const Addon = styled.div`
   margin-left: 4px;
 `;

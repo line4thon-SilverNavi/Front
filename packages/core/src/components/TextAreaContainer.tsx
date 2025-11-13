@@ -61,7 +61,11 @@ export default function TextAreaContainer({
       </TextAreaWrapper>
 
       {(helperText || errorText) && (
-        <Desc id={`${id}-desc`} $error={!!errorText}>
+        <Desc
+          id={`${id}-desc`}
+          $error={!!errorText}
+          $info={!!helperText && !errorText}
+        >
           {errorText ?? helperText}
         </Desc>
       )}
@@ -125,14 +129,25 @@ const TextArea = styled.textarea<{
   }
 `;
 
-const Desc = styled.p<{ $error: boolean }>`
+const Desc = styled.p<{ $error?: boolean; $info?: boolean }>`
   ${({ theme }) => theme.fonts.caption};
-  ${({ $error, theme }) =>
-    $error
-      ? css`
-          color: ${theme.colors.alert};
-        `
-      : css`
-          color: ${theme.colors.gray04};
-        `}
+
+  ${({ $error, $info, theme }) => {
+    if ($error) {
+      return css`
+        color: ${theme.colors.alert};
+      `;
+    }
+
+    if ($info) {
+      return css`
+        color: ${theme.colors.gray05};
+        ${theme.fonts.label2};
+      `;
+    }
+
+    return css`
+      color: ${theme.colors.gray04};
+    `;
+  }}
 `;
