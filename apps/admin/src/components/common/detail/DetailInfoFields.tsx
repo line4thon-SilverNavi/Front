@@ -5,12 +5,14 @@ export type DetailInfoFieldProps = {
   label: string;
   value: React.ReactNode;
   hint?: React.ReactNode;
+  valueColor?: string;
 };
 
 export function DetailInfoField({
   iconSrc,
   label,
   value,
+  valueColor,
 }: DetailInfoFieldProps) {
   return (
     <FieldBox>
@@ -21,7 +23,7 @@ export function DetailInfoField({
       </IconCol>
       <TextCol>
         <Label>{label}</Label>
-        <Value>{value}</Value>
+        <Value $color={valueColor}>{value}</Value>
       </TextCol>
     </FieldBox>
   );
@@ -77,10 +79,9 @@ const TextCol = styled.div`
 const Label = styled.div`
   ${({ theme }) => theme.fonts.label2};
   color: ${({ theme }) => theme.colors.gray05};
-  margin-bottom: 4px;
 `;
 
-const Value = styled.div`
+const Value = styled.div<{ $color?: string }>`
   ${({ theme }) => theme.fonts.title1};
-  color: ${({ theme }) => theme.colors.gray07};
+  color: ${({ theme, $color }) => $color ?? theme.colors.gray07};
 `;

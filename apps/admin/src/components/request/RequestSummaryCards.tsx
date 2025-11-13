@@ -15,7 +15,7 @@ export default function RequestSummaryCards({ summary }: Props) {
 
   return (
     <Wrap>
-      <Card status="대기중">
+      <Card $status="대기중">
         <Head>
           <img src="/img/request/waiting.svg" />
           <Title>대기중</Title>
@@ -23,7 +23,7 @@ export default function RequestSummaryCards({ summary }: Props) {
         <Count>{pendingCount}</Count>
       </Card>
 
-      <Card status="승인">
+      <Card $status="승인">
         <Head>
           <img src="/img/request/approve.svg" />
           <Title>승인</Title>
@@ -31,7 +31,7 @@ export default function RequestSummaryCards({ summary }: Props) {
         <Count>{approvedCount}</Count>
       </Card>
 
-      <Card status="거부">
+      <Card $status="거부">
         <Head>
           <img src="/img/request/deny.svg" />
           <Title>거부</Title>
@@ -48,9 +48,9 @@ const Wrap = styled.div`
   gap: 12px;
 `;
 
-const Card = styled.div<{ status: StatusType }>`
-  ${({ status }) => {
-    const s = STATUS_STYLE_MAP[status];
+const Card = styled.div<{ $status: StatusType }>`
+  ${({ $status }) => {
+    const s = STATUS_STYLE_MAP[$status];
     return css`
       padding: 20px;
       border-radius: 12px;

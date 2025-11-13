@@ -76,8 +76,8 @@ export default function AdminLayout({
         <ContentContainer id="main-content" role="main" tabIndex={-1}>
           <HeaderRow>
             <TitleContainer>
-              <p className="title">{title}</p>
-              <p className="des">{des}</p>
+              <div className="title">{title}</div>
+              <div className="des">{des}</div>
             </TitleContainer>
 
             {right && <RightBox>{right}</RightBox>}

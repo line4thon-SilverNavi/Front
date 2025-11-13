@@ -1,310 +1,483 @@
-// import { useEffect, useState } from "react";
-// import styled from "styled-components";
-// import * as S from "@components/program/AddProgramModal/modal.styles";
-// import { Button, ButtonLayout } from "@core/ui/button";
-// import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
+import styled, { css } from "styled-components";
+import * as S from "@components/program/AddProgramModal/modal.styles";
+import RequestModalShell from "@components/request/RequestModalShell";
+import toast from "react-hot-toast";
+import { formatKDateTimeFull } from "@core/hooks/ProcessingTime";
+import { Button, ButtonLayout } from "@core/ui/button";
 
-// import {
-//   CounselStatusBadge,
-//   type CounselStatus,
-// } from "@components/CounselStatusBadge";
+import {
+  DetailInfoField,
+  DetailInfoFieldGrid,
+} from "@components/common/detail/DetailInfoFields";
 
-// type Props = {
-//   open: boolean;
-//   counselId: number | null;
-//   onClose: () => void;
-//   onStatusChange?: (s: CounselStatus) => void;
-// };
+import {
+  getConsultDetail,
+  type ConsultDetail,
+  type ConsultCategory,
+  type ConsultStatus,
+} from "@apis/consult/getConsultDetail";
+import { fmtPhone } from "@hooks/useFmtPhone";
+import {
+  patchConsultReply,
+  type ConfirmedTime,
+  type ConsultStatusForPatch,
+} from "@apis/consult/patchConsultReply";
 
-// const fmtPhone = (raw: string | null | undefined) => {
-//   if (!raw) return "";
-//   const digits = raw.replace(/\D/g, "");
-//   if (digits.startsWith("02"))
-//     return digits.replace(/(02)(\d{3,4})(\d{4})/, "$1-$2-$3");
-//   return digits.replace(/(\d{3})(\d{3,4})(\d{4})/, "$1-$2-$3");
-// };
+import ConsultReplyField, { type ConsultReplyValue } from "./CounselReplyField";
+import TextAreaContainer from "@core/components/TextareaContainer";
+import { postConsultReply } from "@apis/consult/postReply";
+import ConsultStatusField from "./ConsultStatusField";
+import { STATUS_STYLE_MAP } from "@components/common/status/statusMap";
 
-// const fmtDateTime = (iso: string) => {
-//   if (!iso) return "";
-//   const d = new Date(iso);
-//   if (Number.isNaN(d.getTime())) return iso;
-//   const yy = d.getFullYear();
-//   const mm = String(d.getMonth() + 1).padStart(2, "0");
-//   const dd = String(d.getDate()).padStart(2, "0");
-//   const hh = String(d.getHours()).padStart(2, "0");
-//   const mi = String(d.getMinutes()).padStart(2, "0");
-//   return `${yy}-${mm}-${dd} ${hh}:${mi}`;
-// };
+type Props = {
+  open: boolean;
+  consultId: number | null;
+  category: ConsultCategory | null;
+  onClose: () => void;
+  onStatusChange?: (s: ConsultStatus) => void;
+};
 
-// export default function CounselDetailModal({
-//   open,
-//   counselId,
-//   onClose,
-//   onStatusChange,
-// }: Props) {
-//   const [loading, setLoading] = useState(false);
-//   // const [detail, setDetail] = useState<CounselDetail | null>(null);
+export default function ConsultDetailModal({
+  open,
+  consultId,
+  category,
+  onClose,
+  onStatusChange,
+}: Props) {
+  const [loading, setLoading] = useState(false);
+  const [detail, setDetail] = useState<ConsultDetail | null>(null);
 
-//   useEffect(() => {
-//     if (!open || !counselId) return;
-//     let alive = true;
+  // 상담 확정 일시(날짜 + 시간대)
+  const [reply, setReply] = useState<ConsultReplyValue>({
+    confirmedDate: "",
+    confirmedTime: "",
+    status: "대기중",
+  });
+  const [initialReply, setInitialReply] = useState<ConsultReplyValue | null>(
+    null
+  );
 
-//     (async () => {
-//       try {
-//         setLoading(true);
-//         const data = await getCounselDetail(counselId);
-//         if (!alive) return;
-//         setDetail(data);
-//       } catch (e: any) {
-//         toast.error(e?.message || "상담 상세 정보를 불러오지 못했습니다.");
-//         onClose();
-//       } finally {
-//         setLoading(false);
-//       }
-//     })();
+  // 상태 전환
+  const [statusToChange, setStatusToChange] =
+    useState<ConsultStatusForPatch>("대기중");
 
-//     return () => {
-//       alive = false;
-//     };
-//   }, [open, counselId, onClose]);
+  // 답변 및 거부 사유
+  const [description, setDescription] = useState("");
+  const [initialDescription, setInitialDescription] = useState("");
 
-//   if (!open) return null;
+  const [saving, setSaving] = useState(false);
 
-//   if (!detail) {
-//     return (
-//       <S.Backdrop role="dialog" aria-modal="true" onClick={onClose}>
-//         <S.Sheet onClick={(e) => e.stopPropagation()}>
-//           <S.Header>
-//             <S.H2>상담 상세 정보</S.H2>
-//             <S.Close onClick={onClose} src="/img/close.svg" />
-//           </S.Header>
-//           <S.Content aria-busy="true">
-//             <p>불러오는 중</p>
-//           </S.Content>
-//         </S.Sheet>
-//       </S.Backdrop>
-//     );
-//   }
+  useEffect(() => {
+    if (!open || !consultId || !category) return;
+    let alive = true;
 
-//   const {
-//     appliedAt,
-//     counselType,
-//     status,
-//     applicantName,
-//     applicantPhone,
-//     birth,
-//     age,
-//     careGrade,
-//     careName,
-//     carePhone,
-//     hopeDate,
-//     questionType,
-//     content,
-//     fixedDate,
-//     statusChangeLabel,
-//   } = detail;
+    (async () => {
+      try {
+        setLoading(true);
+        const data = await getConsultDetail(consultId, category);
+        if (!alive) return;
+        setDetail(data);
 
-//   const isSelf = !careName && !carePhone;
+        //확정 날짜, 시간
+        const baseDate = data.confirmedDate ?? data.hopeDate ?? "";
+        const baseTime =
+          (data.confirmedTime as ConfirmedTime | null) ??
+          ("" as ConfirmedTime | "");
 
-//   const handleReject = () => {
-//     // TODO: 거부 API 연동
-//     onStatusChange?.("거부");
-//     toast.success("상담이 거부 처리되었습니다. (더미)");
-//     onClose();
-//   };
+        const baseStatus: ConsultStatusForPatch =
+          (data.consultStatus as ConsultStatusForPatch) ??
+          ((data.status as ConsultStatusForPatch) || "대기중");
 
-//   const handleApprove = () => {
-//     // TODO: 승인/확인 API 연동
-//     onStatusChange?.("확인됨");
-//     toast.success("상담이 승인(확인) 처리되었습니다. (더미)");
-//     onClose();
-//   };
+        const initial: ConsultReplyValue = {
+          confirmedDate: baseDate,
+          confirmedTime: baseTime,
+          status: baseStatus,
+        };
 
-//   return (
-//     <S.Backdrop role="dialog" aria-modal="true" onClick={onClose}>
-//       <S.Sheet onClick={(e) => e.stopPropagation()}>
-//         <S.Header>
-//           <S.H2>상담 상세 정보</S.H2>
-//           <S.Close onClick={onClose} src="/img/close.svg" />
-//         </S.Header>
+        setReply(initial);
+        setInitialReply(initial);
+        setDescription("");
+        setInitialDescription("");
 
-//         <S.Content aria-busy={loading}>
-//           {/* 상단 요약 영역 (상단 타이틀 줄) */}
-//           <TopSummary>
-//             <TopRow1>
-//               <ApplyDate>{fmtDateTime(appliedAt)}</ApplyDate>
-//               <TypeTag>{counselType}</TypeTag>
-//               <StatusTop>
-//                 <CounselStatusBadge status={status} />
-//               </StatusTop>
-//             </TopRow1>
-//           </TopSummary>
+        setStatusToChange(baseStatus);
+      } catch (e: any) {
+        toast.error(e?.message || "상담 상세 정보를 불러오지 못했습니다.");
+        onClose();
+      } finally {
+        setLoading(false);
+      }
+    })();
 
-//           {/* 신청자 정보 */}
-//           <Section>
-//             <SectionTitle>신청자 정보</SectionTitle>
+    return () => {
+      alive = false;
+    };
+  }, [open, consultId, category, onClose]);
 
-//             <TwoCol>
-//               <FieldBox>
-//                 <Label>이름</Label>
-//                 <Value>{applicantName}</Value>
-//               </FieldBox>
-//               <FieldBox>
-//                 <Label>연락처</Label>
-//                 <Value>{fmtPhone(applicantPhone)}</Value>
-//               </FieldBox>
-//             </TwoCol>
+  if (!open) return null;
 
-//             <TwoCol>
-//               <FieldBox>
-//                 <Label>생년월일</Label>
-//                 <Value>
-//                   {birth} ({age}세)
-//                 </Value>
-//               </FieldBox>
-//               <FieldBox>
-//                 <Label>요양등급</Label>
-//                 <Value>{careGrade}</Value>
-//               </FieldBox>
-//             </TwoCol>
+  if (!detail) {
+    return (
+      <RequestModalShell open={open} onClose={onClose}>
+        <S.Header>
+          <S.H2>상담 상세 정보</S.H2>
+          <S.Close onClick={onClose} src="/img/close.svg" />
+        </S.Header>
+        <S.Content aria-busy="true">
+          <p>불러오는 중</p>
+        </S.Content>
+      </RequestModalShell>
+    );
+  }
 
-//             {!isSelf && (
-//               <TwoCol>
-//                 <FieldBox>
-//                   <Label>보호자 이름</Label>
-//                   <Value>{careName}</Value>
-//                 </FieldBox>
-//                 <FieldBox>
-//                   <Label>보호자 연락처</Label>
-//                   <Value>{fmtPhone(carePhone)}</Value>
-//                 </FieldBox>
-//               </TwoCol>
-//             )}
-//           </Section>
+  const {
+    consultCategory,
+    status,
+    appliedAt,
+    name,
+    phone,
+    birthDate,
+    age,
+    grade,
+    careName,
+    carePhone,
+    hopeDate,
+    hopeTime,
+    consultType,
+    inquiryContent,
+  } = detail;
 
-//           {/* 상담 정보 */}
-//           <Section>
-//             <SectionTitle>상담 정보</SectionTitle>
+  const isSelf = !careName && !carePhone;
+  const hopeDateTime =
+    hopeDate && hopeTime ? `${hopeDate} ${hopeTime}` : (hopeDate ?? "");
 
-//             <TwoCol>
-//               <FieldBox>
-//                 <Label>희망 상담 일시</Label>
-//                 <Value>{hopeDate}</Value>
-//               </FieldBox>
-//               <FieldBox>
-//                 <Label>문의유형</Label>
-//                 <Value>{questionType}</Value>
-//               </FieldBox>
-//             </TwoCol>
+  const isCompleted = status == "완료";
 
-//             <FieldBox full>
-//               <Label>문의 내용</Label>
-//               <TextAreaReadOnly>{content || "없음"}</TextAreaReadOnly>
-//             </FieldBox>
-//           </Section>
+  /* ---------- 변경 여부 판단 ---------- */
 
-//           {/* 문의 답변 */}
-//           <Section>
-//             <SectionTitle>문의 답변</SectionTitle>
+  const trimmedDesc = description.trim();
 
-//             <TwoCol>
-//               <FieldBox>
-//                 <Label>상담 확정 일시</Label>
-//                 <Value>{fixedDate || "미정"}</Value>
-//               </FieldBox>
-//               <FieldBox>
-//                 <Label>상태전환</Label>
-//                 <Value>{statusChangeLabel || "—"}</Value>
-//               </FieldBox>
-//             </TwoCol>
-//           </Section>
-//         </S.Content>
+  const hasReplyChanged =
+    !!initialReply &&
+    (initialReply.confirmedDate !== reply.confirmedDate ||
+      initialReply.confirmedTime !== reply.confirmedTime ||
+      initialReply.status !== reply.status);
 
-//         <S.BtnBar>
-//           <ButtonLayout type="row" gap={12}>
-//             <Button
-//               tone="gray"
-//               variant="outline"
-//               size="lg"
-//               typo="heading2"
-//               onClick={handleReject}
-//             >
-//               거부
-//             </Button>
-//             <Button size="lg" typo="heading2" onClick={handleApprove}>
-//               승인
-//             </Button>
-//           </ButtonLayout>
-//         </S.BtnBar>
-//       </S.Sheet>
-//     </S.Backdrop>
-//   );
-// }
+  const hasDescriptionChanged =
+    trimmedDesc !== initialDescription.trim() && trimmedDesc.length > 0;
 
-// /* ---------- styled ---------- */
+  /* ---------- PATCH + POST ---------- */
 
-// const TopSummary = styled.div`
-//   margin-bottom: 24px;
-// `;
+  const runSave = async (nextStatus: ConsultStatusForPatch) => {
+    if (isCompleted) return;
+    if (!consultId || !category) {
+      toast.error("상담 정보를 찾을 수 없습니다.");
+      return;
+    }
 
-// const TopRow1 = styled.div`
-//   display: flex;
-//   align-items: center;
-//   gap: 12px;
-// `;
+    if (nextStatus !== "거부") {
+      if (!reply.confirmedDate || !reply.confirmedTime) {
+        toast.error("상담 확정 일시를 입력해주세요.");
+        return;
+      }
+    }
 
-// const ApplyDate = styled.span`
-//   ${({ theme }) => theme.fonts.body3};
-//   color: ${({ theme }) => theme.colors.gray05};
-// `;
+    try {
+      setSaving(true);
 
-// const TypeTag = styled.span`
-//   ${({ theme }) => theme.fonts.body3};
-//   color: ${({ theme }) => theme.colors.blue01};
-// `;
+      const tasks: Promise<any>[] = [];
 
-// const StatusTop = styled.div`
-//   margin-left: auto;
-// `;
+      // 1) 확정 일시 + 상태 전환 PATCH
+      if (hasReplyChanged || nextStatus === "거부") {
+        const baseDate =
+          reply.confirmedDate || hopeDate || appliedAt.slice(0, 10);
+        const timeForPatch = reply.confirmedTime || ("오전" as ConfirmedTime);
 
-// const Section = styled.section`
-//   margin-bottom: 24px;
-// `;
+        tasks.push(
+          patchConsultReply(consultId, category, {
+            confirmedDate: baseDate,
+            confirmedTime: timeForPatch,
+            consultStatus: nextStatus,
+          })
+        );
+      }
 
-// const SectionTitle = styled.h3`
-//   ${({ theme }) => theme.fonts.title2};
-//   color: ${({ theme }) => theme.colors.gray07};
-//   margin-bottom: 12px;
-// `;
+      // 2) 상담 답변 POST (내용이 있는 경우만)
+      if (hasDescriptionChanged) {
+        tasks.push(
+          postConsultReply({
+            consultId,
+            category,
+            content: trimmedDesc,
+          })
+        );
+      }
 
-// const TwoCol = styled.div`
-//   display: grid;
-//   grid-template-columns: repeat(2, minmax(0, 1fr));
-//   gap: 12px 16px;
-//   margin-bottom: 8px;
-// `;
+      if (tasks.length === 0) {
+        toast("변경된 내용이 없습니다.");
+        return;
+      }
 
-// const FieldBox = styled.div<{ full?: boolean }>`
-//   grid-column: ${({ full }) => (full ? "1 / -1" : "auto")};
-//   padding: 12px 14px;
-//   border-radius: 10px;
-//   background: ${({ theme }) => theme.colors.gray01};
-// `;
+      await Promise.all(tasks);
 
-// const Label = styled.div`
-//   ${({ theme }) => theme.fonts.caption};
-//   color: ${({ theme }) => theme.colors.gray05};
-//   margin-bottom: 4px;
-// `;
+      if (nextStatus === "거부") {
+        toast.success("상담이 거부 처리되었습니다.");
+        onStatusChange?.("거부");
+      } else {
+        toast.success("상담 정보가 저장되었습니다.");
+        onStatusChange?.(nextStatus as ConsultStatus);
+      }
 
-// const Value = styled.div`
-//   ${({ theme }) => theme.fonts.body2};
-//   color: ${({ theme }) => theme.colors.gray07};
-// `;
+      onClose();
+    } catch (e: any) {
+      toast.error(e?.message || "상담 정보 저장 중 오류가 발생했습니다.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
-// const TextAreaReadOnly = styled.div`
-//   ${({ theme }) => theme.fonts.body2};
-//   color: ${({ theme }) => theme.colors.gray07};
-//   white-space: pre-wrap;
-//   min-height: 60px;
-// `;
+  // 승인 버튼
+  const handleApprove = async () => {
+    await runSave(statusToChange);
+  };
+
+  // 거부 버튼
+  const handleReject = async () => {
+    await runSave("거부");
+  };
+
+  return (
+    <RequestModalShell open={open} onClose={onClose}>
+      <StickyHeader>
+        <div>
+          <HeaderMeta>
+            <S.H2>상담 상세 정보</S.H2>
+            <CategoryBadge>{consultCategory}</CategoryBadge>
+            <StatusBadge $status={status}>{status}</StatusBadge>
+          </HeaderMeta>
+          <span className="time">{formatKDateTimeFull(appliedAt)} 신청</span>
+        </div>
+        <S.Close onClick={onClose} src="/img/close.svg" />
+      </StickyHeader>
+
+      <ScrollArea>
+        <S.DetailContent aria-busy={loading}>
+          {/* 신청자 정보 */}
+          <SectionTitle>신청자 정보</SectionTitle>
+          <DetailInfoFieldGrid>
+            <DetailInfoField
+              iconSrc="/img/request/user.svg"
+              label="이름"
+              value={name}
+            />
+            <DetailInfoField
+              iconSrc="/img/request/phone.svg"
+              label="연락처"
+              value={fmtPhone(phone)}
+            />
+            <DetailInfoField
+              iconSrc="/img/request/calendar.svg"
+              label="생년월일"
+              value={`${birthDate} (${age}세)`}
+            />
+            <DetailInfoField
+              iconSrc="/img/request/star.svg"
+              valueColor="#409EE3"
+              label="요양등급"
+              value={grade}
+            />
+            {!isSelf && careName && (
+              <>
+                <DetailInfoField
+                  iconSrc="/img/request/user.svg"
+                  label="보호자 이름"
+                  value={careName}
+                />
+                <DetailInfoField
+                  iconSrc="/img/request/phone.svg"
+                  label="보호자 연락처"
+                  value={fmtPhone(carePhone ?? "")}
+                />
+              </>
+            )}
+          </DetailInfoFieldGrid>
+
+          {/* 상담 정보 */}
+          <SectionTitle style={{ marginTop: 30 }}>상담 정보</SectionTitle>
+          <DetailInfoFieldGrid>
+            <DetailInfoField
+              iconSrc="/img/request/calendar.svg"
+              label="희망 상담 일시"
+              value={hopeDateTime || "-"}
+            />
+            <DetailInfoField
+              iconSrc="/img/request/type.svg"
+              valueColor="#409EE3"
+              label="문의 유형"
+              value={
+                consultType
+                  ? `${consultCategory} - ${consultType}`
+                  : `${consultCategory}`
+              }
+            />
+          </DetailInfoFieldGrid>
+
+          <FieldBlock style={{ marginTop: 25 }}>
+            <FieldLabel>문의 내용</FieldLabel>
+            <p>{inquiryContent || "문의 내용이 없습니다."}</p>
+          </FieldBlock>
+
+          {/* 문의 답변 / 확정 일시 / 상태 전환 */}
+          <SectionTitle style={{ marginTop: 30 }}>문의 답변</SectionTitle>
+
+          <DetailInfoFieldGrid>
+            <ConsultReplyField
+              value={reply}
+              onChange={setReply}
+              readOnly={isCompleted}
+            />
+
+            <ConsultStatusField
+              value={reply.status}
+              readOnly={isCompleted}
+              onChange={(next) => {
+                setReply((prev) => ({
+                  ...prev,
+                  status: next,
+                }));
+                setStatusToChange(next);
+              }}
+            />
+          </DetailInfoFieldGrid>
+
+          <div style={{ marginTop: 24 }}>
+            <TextAreaContainer
+              label="답변 및 거부 사유"
+              placeholder="답변 혹은 거부 사유를 작성해주세요."
+              value={description}
+              onChange={setDescription}
+              labelTypo="heading3"
+              textareaTypo="body2"
+              placeholderTypo="body2"
+              labelColor="#1A1A1A"
+              placeholderColor="#A8A8A8"
+              readOnly={isCompleted}
+              readOnlyEmptyText="작성되지 않았습니다."
+            />
+          </div>
+        </S.DetailContent>
+      </ScrollArea>
+
+      {!isCompleted && (
+        <S.BtnBar>
+          <ButtonLayout type="row" gap={12}>
+            <Button
+              tone="red"
+              variant="outline"
+              size="lg"
+              typo="heading3"
+              onClick={handleReject}
+              disabled={saving}
+              leftIcon={
+                <img src="/img/request/deny.svg" width={20} height={20} />
+              }
+            >
+              거부
+            </Button>
+            <Button
+              size="lg"
+              typo="heading3"
+              onClick={handleApprove}
+              disabled={saving}
+              leftIcon={
+                <img
+                  src="/img/request/approve-white.svg"
+                  width={20}
+                  height={20}
+                />
+              }
+            >
+              승인
+            </Button>
+          </ButtonLayout>
+        </S.BtnBar>
+      )}
+    </RequestModalShell>
+  );
+}
+
+const SectionTitle = styled.h3`
+  ${({ theme }) => theme.fonts.heading3};
+  color: ${({ theme }) => theme.colors.gray07};
+  margin-bottom: 8px;
+`;
+
+const FieldBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: ${({ theme }) => theme.colors.gray02};
+  ${({ theme }) => theme.fonts.label2};
+  padding: 16px;
+  border-radius: 10px;
+  gap: 8px;
+
+  p {
+    color: ${({ theme }) => theme.colors.gray07};
+    ${({ theme }) => theme.fonts.body2};
+  }
+`;
+
+const FieldLabel = styled.h1`
+  ${({ theme }) => theme.fonts.label2};
+  color: ${({ theme }) => theme.colors.gray05};
+`;
+
+const ScrollArea = styled.div`
+  max-height: 70vh;
+  overflow-y: auto;
+`;
+
+const StickyHeader = styled(S.Header)`
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .time {
+    ${({ theme }) => theme.fonts.body3};
+    color: ${({ theme }) => theme.colors.gray06};
+  }
+`;
+
+const HeaderMeta = styled.div`
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const CategoryBadge = styled.span`
+  padding: 5px 10px;
+  border-radius: 25100200px;
+  ${({ theme }) => theme.fonts.title3};
+  background: ${({ theme }) => theme.colors.blue03};
+  color: ${({ theme }) => theme.colors.blue01};
+`;
+
+const StatusBadge = styled.span<{ $status: ConsultStatus }>`
+  padding: 5px 10px;
+  border-radius: 25100200px;
+  ${({ theme }) => theme.fonts.title3};
+
+  ${({ $status }) => {
+    const s = STATUS_STYLE_MAP[$status];
+    return css`
+      color: ${s.color};
+      background: ${s.bg};
+    `;
+  }}
+`;

@@ -1,24 +1,28 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import toast from "react-hot-toast";
+
 import type { CounselSummary } from "@components/counsel/StatusCard";
 import {
   getConsultManagement,
   type ConsultItem,
   type ConsultStatus,
 } from "@apis/consult/getConsult";
+import type { ConsultCategory } from "@apis/consult/getConsultDetail";
+
 import type { PageInfo } from "@apis/program/getPrograms";
 import CounselStatusCard from "@components/counsel/StatusCard";
 import RequestSearchBar, {
   type StatusFilter,
 } from "@components/request/RequestSearchBar";
 import ConsultList from "@components/counsel/CounselList";
+import ConsultDetailModal from "@components/counsel/CounselDetailModal";
 
 const DEFAULT_SUMMARY: CounselSummary = {
   totalCount: 0,
   pendingCount: 0,
   completedCount: 0,
-  canceledCount: 0,
+  approvedCount: 0,
 };
 
 const Consult = () => {
@@ -31,6 +35,12 @@ const Consult = () => {
   );
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+
+  // 상세 모달 관련 state
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedCategory, setSelectedCategory] =
+    useState<ConsultCategory | null>(null);
 
   // 검색어
   const [query, setQuery] = useState("");
@@ -49,7 +59,7 @@ const Consult = () => {
           totalCount: data.summary.totalCount,
           pendingCount: data.summary.pendingCount,
           completedCount: data.summary.completedCount,
-          canceledCount: 0,
+          approvedCount: data.summary.approvedCount,
         });
         setConsults(data.consults);
         setPageInfo(data.pageInfo);
@@ -63,15 +73,51 @@ const Consult = () => {
 
   const STATUS_OPTIONS: StatusFilter[] = ["전체", "대기중", "확인됨", "완료"];
 
+  /* ---------- 모달 열기 / 닫기 ---------- */
+
+  const openDetail = (id: number, category: ConsultCategory) => {
+    setSelectedId(id);
+    setSelectedCategory(category);
+    setDetailOpen(true);
+  };
+
+  const closeDetail = () => {
+    setDetailOpen(false);
+    setSelectedId(null);
+    setSelectedCategory(null);
+  };
+
+  /* ---------- 모달에서 상태 변경 시 리스트/요약 반영 ---------- */
+
+  const handleModalStatusChange = (next: ConsultStatus) => {
+    if (!selectedId) return;
+
+    setConsults((prev) => {
+      const nextConsults = prev.map((c) =>
+        c.consultId === selectedId ? { ...c, status: next } : c
+      );
+
+      // 요약도 즉시 재계산해서 카드에 반영
+      const nextSummary: CounselSummary = {
+        totalCount: nextConsults.length,
+        pendingCount: nextConsults.filter((c) => c.status === "대기중").length,
+        completedCount: nextConsults.filter((c) => c.status === "완료").length,
+        approvedCount: nextConsults.filter((c) => c.status === "확인됨").length,
+      };
+      setSummary(nextSummary);
+
+      return nextConsults;
+    });
+  };
+
   return (
     <PageWrapper>
-      <HeaderRow>
-        <h1>상담 관리</h1>
-      </HeaderRow>
-
       <RequestSearchBar
         status={statusFilter}
-        onStatusChange={(s) => setStatusFilter(s as ConsultStatus | "전체")}
+        onStatusChange={(s) => {
+          setStatusFilter(s as ConsultStatus | "전체");
+          setPage(1);
+        }}
         query={query}
         onQueryChange={(q) => {
           setQuery(q);
@@ -89,9 +135,10 @@ const Consult = () => {
         <ConsultList
           items={consults}
           loading={loading}
-          onManageClick={(id) => {
-            console.log("관리 버튼 클릭:", id);
-          }}
+          // 상세보기(관리) 클릭 시 모달 오픈
+          onManageClick={(id, category) => openDetail(id, category)}
+          // 필요하면 onRowClick에서도 openDetail 호출 가능
+          // onRowClick={(id, category) => openDetail(id, category)}
         />
       </ListWrapper>
 
@@ -115,11 +162,21 @@ const Consult = () => {
           </button>
         </PaginationBar>
       )}
+
+      <ConsultDetailModal
+        open={detailOpen}
+        consultId={selectedId}
+        category={selectedCategory}
+        onClose={closeDetail}
+        onStatusChange={handleModalStatusChange}
+      />
     </PageWrapper>
   );
 };
 
 export default Consult;
+
+/* ---------- styles ---------- */
 
 const PageWrapper = styled.div`
   display: flex;
@@ -127,64 +184,11 @@ const PageWrapper = styled.div`
   gap: 24px;
 `;
 
-const HeaderRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  h1 {
-    ${({ theme }) => theme.fonts.heading2};
-    color: ${({ theme }) => theme.colors.gray07};
-  }
-`;
-
 const ListWrapper = styled.div`
   margin-top: 8px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-`;
-
-const Row = styled.div`
-  padding: 16px 18px;
-  border-radius: 10px;
-  background: ${({ theme }) => theme.colors.gray01};
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-
-  .name {
-    ${({ theme }) => theme.fonts.title2};
-    color: ${({ theme }) => theme.colors.gray07};
-  }
-
-  .relation {
-    ${({ theme }) => theme.fonts.body3};
-    color: ${({ theme }) => theme.colors.gray05};
-  }
-
-  .meta {
-    ${({ theme }) => theme.fonts.caption};
-    color: ${({ theme }) => theme.colors.gray05};
-    margin-top: 4px;
-  }
-
-  .phone {
-    ${({ theme }) => theme.fonts.body2};
-    color: ${({ theme }) => theme.colors.gray06};
-    text-align: right;
-  }
-`;
-
-const StatusBadge = styled.span`
-  margin-top: 4px;
-  display: inline-flex;
-  padding: 4px 10px;
-  border-radius: 999px;
-  ${({ theme }) => theme.fonts.caption};
-  background: ${({ theme }) => theme.colors.gray02};
-  color: ${({ theme }) => theme.colors.gray06};
 `;
 
 const PaginationBar = styled.div`
@@ -205,11 +209,4 @@ const PaginationBar = styled.div`
       cursor: default;
     }
   }
-`;
-
-const EmptyText = styled.p`
-  ${({ theme }) => theme.fonts.body3};
-  color: ${({ theme }) => theme.colors.gray05};
-  padding: 16px;
-  text-align: center;
 `;

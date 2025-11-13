@@ -4,7 +4,7 @@ import * as s from "@layouts/DetailPageLayout";
 import { useEffect, useState } from "react";
 import { getFacilityDetail, type FacilityDetailData } from "@apis/facility/facilityDetail";
 import ApplyingModal from "@components/facility/ApplyingModal";
-import { useFormatDateFull } from "@hooks/program/ProcessingTime";
+import { useFormatDateFull } from "@core/hooks/ProcessingTime";
 
 export default function FacilityDetailPage() {
     const { facilityId } = useParams<{ facilityId: string }>();

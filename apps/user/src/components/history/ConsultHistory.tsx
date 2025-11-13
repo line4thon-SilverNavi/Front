@@ -3,7 +3,7 @@ import styled from "styled-components";
 import type { ConsultHistoryData } from "@apis/history/history";
 import { getConsultHistory } from "@apis/history/history";
 import CategoryMap from "@components/common/CategoryMap";
-import { useFormatDate } from "@hooks/program/ProcessingTime";
+import { useFormatDate } from "@core/hooks/ProcessingTime";
 
 
 export default function ConsultHistory(){
@@ -172,7 +172,7 @@ const EmptyState = styled.div`
     }
 `;
 
-const EmptyText = styled.div`
+const EmptyText = styled.p`
     ${({ theme }) => theme.fonts.title1};
     color: ${({ theme }) => theme.colors.gray07};
     margin: 0;

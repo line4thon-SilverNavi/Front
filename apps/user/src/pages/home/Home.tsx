@@ -86,7 +86,7 @@ const Home = () => {
     <DefaultLayout header={<Header />} footer={<NavBar />}>
       <s.HomeWrapper>
         <s.SectionTitle>내 주변 최신 소식</s.SectionTitle>
-      <s.News>
+      <s.News onClick={() => navigate("/program")}>
         <s.NewsTitle>
           <span style={{fontSize:"0.85rem"}}>🎉</span> 신규 프로그램 안내
         </s.NewsTitle>

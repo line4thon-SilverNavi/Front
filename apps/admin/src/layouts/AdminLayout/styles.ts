@@ -31,6 +31,7 @@ export const TitleContainer = styled.div`
   flex-direction: column;
   gap: 12px;
   margin-top: 2rem;
+
   .title {
     color: ${({ theme }) => theme.colors.gray07};
     font-size: 38px;

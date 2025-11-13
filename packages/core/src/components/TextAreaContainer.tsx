@@ -19,6 +19,8 @@ type Props = {
   placeholderTypo?: FontKey;
   labelColor?: string;
   placeholderColor?: string;
+  readOnly?: boolean;
+  readOnlyEmptyText?: string;
 };
 
 export default function TextAreaContainer({
@@ -35,9 +37,36 @@ export default function TextAreaContainer({
   textareaTypo = "body3",
   placeholderTypo = "body3",
   labelColor,
+  readOnly,
   placeholderColor,
+  readOnlyEmptyText = "작성되지 않았습니다.",
 }: Props) {
   const id = useId();
+  const trimmed = value.trim();
+
+  if (readOnly) {
+    return (
+      <Field>
+        <Label htmlFor={id} $labelTypo={labelTypo} $labelColor={labelColor}>
+          {label} {required && <em aria-hidden>*</em>}
+        </Label>
+
+        <ReadOnlyBox aria-readonly="true">
+          {trimmed !== "" ? trimmed : readOnlyEmptyText}
+        </ReadOnlyBox>
+
+        {(helperText || errorText) && (
+          <Desc
+            id={`${id}-desc`}
+            $error={!!errorText}
+            $info={!!helperText && !errorText}
+          >
+            {errorText ?? helperText}
+          </Desc>
+        )}
+      </Field>
+    );
+  }
 
   return (
     <Field>
@@ -127,6 +156,17 @@ const TextArea = styled.textarea<{
     color: ${({ theme, $phColor }) => $phColor ?? theme.colors.gray05};
     ${({ theme, $phTypo }) => theme.fonts[$phTypo]};
   }
+`;
+
+// 완료(readOnly)일 때
+const ReadOnlyBox = styled.div`
+  border-radius: 10px;
+  background: ${({ theme }) => theme.colors.gray02};
+  padding: 14px 16px;
+  min-height: 100px;
+  ${({ theme }) => theme.fonts.body2};
+  color: ${({ theme }) => theme.colors.gray07};
+  white-space: pre-wrap;
 `;
 
 const Desc = styled.p<{ $error?: boolean; $info?: boolean }>`
