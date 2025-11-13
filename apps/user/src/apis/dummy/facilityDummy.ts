@@ -23,7 +23,7 @@ export const dummyFacilityData: FacilityListResponse[] = [
     operatingHours: "평일 09:00 - 18:00",
     phoneNumber: "02-123-4567",
     category: "복지관",
-    bookmarked: false,
+    bookmarked: true,
   },
   {
     facilityId: 3,
