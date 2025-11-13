@@ -4,8 +4,8 @@ import { CounselStatusItem } from "./StatusItem";
 export type CounselSummary = {
   totalCount: number;
   pendingCount: number;
+  approvedCount: number;
   completedCount: number;
-  canceledCount: number;
 };
 
 type Props = {
@@ -15,13 +15,21 @@ type Props = {
 export default function CounselStatusCard({ summary }: Props) {
   const theme = useTheme();
 
-  const { totalCount, pendingCount, completedCount, canceledCount } = summary;
+  const { totalCount, pendingCount, completedCount, approvedCount } = summary;
 
   const stats = [
     { label: "전체 상담", value: totalCount, color: theme.colors.gray07 },
     { label: "대기중", value: pendingCount, color: "#FFA726" },
-    { label: "완료", value: completedCount, color: theme.colors.blue01 },
-    { label: "취소", value: canceledCount, color: theme.colors.alert },
+    {
+      label: "확인됨",
+      value: approvedCount,
+      color: theme.colors.blue01,
+    },
+    {
+      label: "완료",
+      value: completedCount,
+      color: theme.colors.alert,
+    },
   ];
 
   return (

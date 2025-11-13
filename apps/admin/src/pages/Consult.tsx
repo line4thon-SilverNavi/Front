@@ -1,4 +1,3 @@
-// src/pages/consult/Consult.tsx
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import toast from "react-hot-toast";
@@ -23,7 +22,7 @@ const DEFAULT_SUMMARY: CounselSummary = {
   totalCount: 0,
   pendingCount: 0,
   completedCount: 0,
-  canceledCount: 0,
+  approvedCount: 0,
 };
 
 const Consult = () => {
@@ -60,7 +59,7 @@ const Consult = () => {
           totalCount: data.summary.totalCount,
           pendingCount: data.summary.pendingCount,
           completedCount: data.summary.completedCount,
-          canceledCount: 0, // BE 요약에는 거부 카운트가 없어서 0으로
+          approvedCount: data.summary.approvedCount,
         });
         setConsults(data.consults);
         setPageInfo(data.pageInfo);
@@ -103,7 +102,7 @@ const Consult = () => {
         totalCount: nextConsults.length,
         pendingCount: nextConsults.filter((c) => c.status === "대기중").length,
         completedCount: nextConsults.filter((c) => c.status === "완료").length,
-        canceledCount: nextConsults.filter((c) => c.status === "거부").length,
+        approvedCount: nextConsults.filter((c) => c.status === "확인됨").length,
       };
       setSummary(nextSummary);
 

@@ -42,7 +42,7 @@ type ApiEnvelope<T> = {
 type GetConsultManagementParams = {
   page?: number;
   status?: ConsultStatus | "전체";
-  keyword?: string; // 검색어
+  keyword?: string;
 };
 
 export async function getConsultManagement(params: GetConsultManagementParams) {
