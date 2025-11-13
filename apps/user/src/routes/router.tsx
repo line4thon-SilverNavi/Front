@@ -24,6 +24,7 @@ import SearchResult from "@pages/search/SearchResult";
 import Bookmark from "@pages/mypage/Bookmark";
 import Review from "@pages/facility/Review";
 import PostReview from "@pages/facility/PostReview";
+import AllReview from "@pages/facility/AllReview";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
       { path: "facility/:facilityId/apply", element: <FacilityApplyPage />},
       { path: "facility/:facilityId/finish-apply", element: <FinishApplyPage />},
       { path: "facility/:facilityId/review", element: <Review />},
+      { path: "facility/:facilityId/review/allreview", element: <AllReview />},
       { path: "facility/:facilityId/review/postreview", element: <PostReview />},
       { path: "finishapply", element: <FinishApplyPage />},
       { path: "mypage", element: <Mypage /> },

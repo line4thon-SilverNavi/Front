@@ -3,16 +3,15 @@ import CommonHeader from "@components/common/CommonHeader";
 import styled from "styled-components";
 import NavBar from "@components/common/NavBar";
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getFacilityDetail, type ReviewRes } from "@apis/facility/facilityDetail";
 import ReviewCard from "@components/facility/ReviewCard";
 import CardList from "@components/common/CardList";
 
-export default function Review(){
+export default function AllReview(){
     const { facilityId } = useParams<{ facilityId: string }>();
     const [reviews, setReviews] = useState<ReviewRes[]>([]);
     const [averageRating, setAverageRating] = useState(0);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchReviews = async () => {
@@ -50,18 +49,6 @@ export default function Review(){
     return(
         <DefaultLayout header={<CommonHeader title="이용 후기"/>} footer={<NavBar />}>
             <Container>
-                <DoReview>
-                    방문 후기를 남겨주세요!
-                    <Stars onClick={() => navigate("postreview")}>
-                        <img src="/img/detail-page/star-empty.png"/>
-                        <img src="/img/detail-page/star-empty.png"/>
-                        <img src="/img/detail-page/star-empty.png"/>
-                        <img src="/img/detail-page/star-empty.png"/>
-                        <img src="/img/detail-page/star-empty.png"/>
-                    </Stars>
-                </DoReview>
-                <Divider />
-                
                 {reviews.length === 0 ? (
                     <EmptyState>아직 작성된 리뷰가 없습니다.</EmptyState>
                 ) : (
@@ -73,9 +60,6 @@ export default function Review(){
                                     {renderStars()}
                                 </StarsContainer>
                             </Left>
-                            <ReviewCount onClick={() => navigate("allreview")}>
-                                후기 {reviews.length} <img src="/img/review/arrow.png"/>
-                            </ReviewCount>
                         </RatingSection>
                         <CardList 
                             items={reviews}
@@ -101,7 +85,8 @@ const RatingSection = styled.div`
     padding: 0 1rem;
     background: ${({ theme }) => theme.colors.gray01};
     border-radius: 12px;
-    margin-bottom: 1.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
     justify-content: space-between;
 `;
 
@@ -157,17 +142,6 @@ const FilledStar = styled.div<{ $fillPercentage: number }>`
     }
 `;
 
-const ReviewCount = styled.div`
-    ${({ theme }) => theme.fonts.body3};
-    color: ${({ theme }) => theme.colors.gray05};
-    align-items: center;
-    display: flex;
-    gap: 6px;
-    img{
-        width: 4px;
-        height: 8px;
-    }
-`;
 
 const EmptyState = styled.div`
     display: flex;
@@ -187,22 +161,4 @@ const DoReview  = styled.div`
     gap: 1.2rem;
     ${({ theme }) => theme.fonts.title2};
     color: ${({ theme }) => theme.colors.gray07};
-`;
-
-const Stars = styled.div`
-    display: flex;
-    gap: 0.75rem;
-    
-    img {
-        width: 40px;
-        height: 40px;
-        cursor: pointer;
-    }
-`;
-
-const Divider = styled.div`
-    width: calc(100% + 2rem);
-    height: 9px;
-    background: ${({ theme }) => theme.colors.gray02};
-    margin: 0 -1rem 1.5rem -1rem;
 `;
