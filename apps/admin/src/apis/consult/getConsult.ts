@@ -2,13 +2,6 @@ import { getResponse } from "@core/api/instance";
 
 export type ConsultStatus = "대기중" | "확인됨" | "완료" | "거부";
 
-export type ConsultSummary = {
-  totalCount: number;
-  pendingCount: number;
-  approvedCount: number;
-  completedCount: number;
-};
-
 export type ConsultItem = {
   consultId: number;
   consultDate: string;
@@ -17,6 +10,13 @@ export type ConsultItem = {
   relationRole: string | null;
   phone: string;
   status: ConsultStatus;
+};
+
+export type ConsultSummary = {
+  totalCount: number;
+  pendingCount: number;
+  approvedCount: number;
+  completedCount: number;
 };
 
 export type PageInfo = {
@@ -34,18 +34,14 @@ type ConsultManagementData = {
 
 type ApiEnvelope<T> = {
   isSuccess: boolean;
-  timestamp: string;
-  code: string;
-  httpStatus: number;
   message: string;
   data: T;
 };
 
-export type ConsultManagementRes = ApiEnvelope<ConsultManagementData>;
-
 type GetConsultManagementParams = {
   page?: number;
   status?: ConsultStatus | "전체";
+  keyword?: string; // 검색어
 };
 
 export async function getConsultManagement(params: GetConsultManagementParams) {
@@ -57,17 +53,21 @@ export async function getConsultManagement(params: GetConsultManagementParams) {
     query.set("status", params.status);
   }
 
+  const trimmed = params.keyword?.trim();
+  if (trimmed) {
+    query.set("keyword", trimmed);
+  }
+
   const qs = query.toString();
   const url = qs
     ? `/api/consults/management?${qs}`
     : `/api/consults/management`;
 
-  const res = await getResponse<ConsultManagementRes>(url);
+  const res = await getResponse<ApiEnvelope<ConsultManagementData>>(url);
 
   if (!res) {
     throw new Error("상담 관리 정보를 불러오지 못했습니다.");
   }
-
   if (!res.isSuccess) {
     throw new Error(res.message || "상담 관리 API 호출에 실패했습니다.");
   }

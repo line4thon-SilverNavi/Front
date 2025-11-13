@@ -11,7 +11,7 @@ export function CounselStatusItem({ label, value, color }: ItemProps) {
     <CardContainer $color={color}>
       <p className="label">{label}</p>
       <p>
-        <span className="total">{value}</span>건
+        <span className="value">{value}</span>건
       </p>
     </CardContainer>
   );
@@ -19,11 +19,14 @@ export function CounselStatusItem({ label, value, color }: ItemProps) {
 
 const CardContainer = styled.div<{ $color: string }>`
   display: flex;
+  flex-direction: column;
   padding: 24px;
   gap: 5px;
+  width: 240px;
+  height: 126px;
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.colors.gray03};
-  background-color: 1px solid ${({ theme }) => theme.colors.gray01};
+  background-color: ${({ theme }) => theme.colors.gray01};
 
   .label {
     ${({ theme }) => theme.fonts.title2};
@@ -39,5 +42,6 @@ const CardContainer = styled.div<{ $color: string }>`
     font-size: 32px;
     font-style: normal;
     font-weight: 700;
+    margin-right: 5px;
   }
 `;

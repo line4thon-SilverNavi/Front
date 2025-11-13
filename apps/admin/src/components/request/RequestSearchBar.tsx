@@ -9,7 +9,13 @@ import {
   SearchIcon,
 } from "../program/ProgramSearchBar";
 
-export type StatusFilter = "전체" | "대기중" | "승인" | "거부";
+export type StatusFilter =
+  | "전체"
+  | "대기중"
+  | "승인"
+  | "거부"
+  | "확인됨"
+  | "완료";
 
 type Props = {
   status: StatusFilter;
@@ -22,9 +28,11 @@ type Props = {
   debounceMs?: number;
   placeholder?: string;
   rightAddon?: React.ReactNode;
+
+  statusOptions?: StatusFilter[];
 };
 
-const STATUSES: StatusFilter[] = ["전체", "대기중", "승인", "거부"];
+const DEFAULT_STATUSES: StatusFilter[] = ["전체", "대기중", "승인", "거부"];
 
 export default function RequestSearchBar({
   status,
@@ -35,6 +43,7 @@ export default function RequestSearchBar({
   debounceMs = 300,
   placeholder = "프로그램 검색...",
   rightAddon,
+  statusOptions,
 }: Props) {
   const [local, setLocal] = useState(query);
   const tRef = useRef<number | null>(null);
@@ -59,7 +68,10 @@ export default function RequestSearchBar({
     };
   }, [local, debounceMs]);
 
-  const chips = useMemo(() => STATUSES, []);
+  const chips = useMemo(
+    () => statusOptions ?? DEFAULT_STATUSES,
+    [statusOptions]
+  );
 
   return (
     <Bar role="search" aria-label="신청 검색 및 상태 필터">
