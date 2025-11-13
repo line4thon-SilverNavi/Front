@@ -2,10 +2,11 @@ import DefaultLayout from "@layouts/DefaultLayout";
 import CommonHeader from "@components/common/CommonHeader";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { getNotificationList, type NotificationResponse } from "@apis/notification/notilist";
+import { type NotificationResponse } from "@apis/notification/notilist";
 import CardList from "@components/common/CardList";
 import NotiCard from "@components/notification/NotiCard";
 import { notificationDummyData } from "@apis/dummy/notificationDummy";
+import { postReadNotification } from "@apis/notification/readnoti";
 
 export default function Notification(){
     const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
@@ -17,6 +18,14 @@ export default function Notification(){
                 // 더미 데이터 사용
                 const data = notificationDummyData;
                 setNotifications(data);
+                
+                // isRead가 false인 알림들에 대해 읽음 처리
+                const unreadNotifications = data.filter(noti => !noti.isRead);
+                await Promise.all(
+                    unreadNotifications.map(noti => 
+                        postReadNotification(noti.notificationId)
+                    )
+                );
             } catch (error) {
                 console.error("알림 목록을 불러오는데 실패했습니다:", error);
             }
@@ -65,6 +74,7 @@ const EmptyState = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    margin-top: 8rem;
     padding: 4rem 1rem;
     gap: 1rem;
     img{

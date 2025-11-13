@@ -57,13 +57,6 @@ const CardWrapper = styled.div<{ $isRead: boolean }>`
     border-radius: 8px;
     border: 1.5px solid ${({ $isRead, theme }) => $isRead ? theme.colors.gray03 : theme.colors.blue01};
     gap: 1rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    
-    &:hover {
-        background: #f5f5f5;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
 `;
 
 

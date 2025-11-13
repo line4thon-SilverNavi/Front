@@ -1,13 +1,24 @@
 import styled from "styled-components";
 import { useFetchAddress } from "@hooks/UserLocation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getNotificationCount } from "@apis/notification/countnoti";
 
 export default function Header(){
     const { address, error } = useFetchAddress();
-    const [ noti, _setNoti] = useState(false);     // _setNoti 추후 알림기능 백과 연동 후 사용
+    const [noti, setNoti] = useState(false);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const fetchNotificationCount = async () => {
+            const count = await getNotificationCount();
+            if (count && count > 0) {
+                setNoti(true);
+            }
+        };
+
+        fetchNotificationCount();
+    }, []);
 
     return(
         <HeaderContainer>
