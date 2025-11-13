@@ -1,4 +1,3 @@
-import { dummyData } from "@apis/dummy/applicant";
 import { getResponse } from "@core/api/instance";
 
 export type AttendanceStatus = "출석" | "결석" | null;
@@ -17,27 +16,27 @@ export type ProgramApplicationsRes = {
   summary: {
     totalApplicants: number;
     attendanceCount: number;
-    attendanceRate: number; // 0~1
+    attendanceRate: number;
   };
   applicants: ProgramApplicant[];
 };
 
-// export async function getProgramApplications(
-//   programId: number
-// ): Promise<ProgramApplicationsRes> {
-//   const res = await getResponse<{
-//     isSuccess: boolean;
-//     data: ProgramApplicationsRes;
-//     message?: string;
-//   }>(`/api/programs/${programId}/applications`);
-//   if (!res?.isSuccess) {
-//     throw new Error(res?.message || "신청자 정보를 불러오지 못했습니다.");
-//   }
-//   return res.data;
-// }
+type RawApiResponse = {
+  isSuccess: boolean;
+  message?: string;
+  data: ProgramApplicationsRes;
+};
 
 export async function getProgramApplications(
   programId: number
 ): Promise<ProgramApplicationsRes> {
-  return dummyData;
+  const res = await getResponse<RawApiResponse>(
+    `/api/programs/${programId}/applications`
+  );
+
+  if (!res?.isSuccess || !res.data) {
+    throw new Error(res?.message || "신청자 정보를 불러오지 못했습니다.");
+  }
+
+  return res.data;
 }
