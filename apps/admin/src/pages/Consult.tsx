@@ -1,4 +1,3 @@
-// src/pages/consult/Consult.tsx
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import toast from "react-hot-toast";
@@ -13,6 +12,7 @@ import CounselStatusCard from "@components/counsel/StatusCard";
 import RequestSearchBar, {
   type StatusFilter,
 } from "@components/request/RequestSearchBar";
+import ConsultList from "@components/counsel/CounselList";
 
 const DEFAULT_SUMMARY: CounselSummary = {
   totalCount: 0,
@@ -86,29 +86,13 @@ const Consult = () => {
 
       {/* 상담 리스트 영역 */}
       <ListWrapper aria-busy={loading}>
-        {consults.length === 0 && !loading && (
-          <EmptyText>조회된 상담이 없습니다.</EmptyText>
-        )}
-
-        {consults.map((c) => (
-          <Row key={c.consultId}>
-            <div className="left">
-              <p className="name">
-                {c.name}{" "}
-                {c.relationRole && (
-                  <span className="relation">({c.relationRole})</span>
-                )}
-              </p>
-              <p className="meta">
-                {c.consultDate} · {c.consultCategory}
-              </p>
-            </div>
-            <div className="right">
-              <p className="phone">{c.phone}</p>
-              <StatusBadge>{c.status}</StatusBadge>
-            </div>
-          </Row>
-        ))}
+        <ConsultList
+          items={consults}
+          loading={loading}
+          onManageClick={(id) => {
+            console.log("관리 버튼 클릭:", id);
+          }}
+        />
       </ListWrapper>
 
       {/* 페이지네이션 */}
@@ -136,8 +120,6 @@ const Consult = () => {
 };
 
 export default Consult;
-
-/* ---------- styles ---------- */
 
 const PageWrapper = styled.div`
   display: flex;
