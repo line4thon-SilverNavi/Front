@@ -21,7 +21,7 @@ export default function FinishApply() {
   };
 
   const handleViewConsults = () => {
-    navigate("/mypage/consults");
+    navigate("/history");
   };
 
   return (

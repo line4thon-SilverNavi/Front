@@ -33,6 +33,7 @@
       "@constants/*": ["src/constants/*"],
       "@hooks/*": ["src/hooks/*"],
       "@pages/*": ["src/pages/*"],
+      "@shared/*": ["src/shared/*"],
       "@layouts/*": ["src/layouts/*"],
       "@interfaces/*": ["src/lib/interfaces/*"],
       "@routes/*": ["src/routes/*"],

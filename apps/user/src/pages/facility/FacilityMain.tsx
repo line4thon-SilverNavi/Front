@@ -7,7 +7,7 @@ import FacilityCard from "@components/facility/facilityCard";
 import CardList from "@components/common/CardList";
 import { getFacilityList, type FacilityListResponse } from "@apis/facility/facilityList";
 import { dummyFacilityData } from "@apis/dummy/facilityDummy";
-import { Button } from "@core/ui/button/Button";
+import CategoryMap from "@components/common/CategoryMap";
 
 const FacilityMain = () => {
     const [facilities, setFacilities] = useState<FacilityListResponse[]>(dummyFacilityData);
@@ -86,21 +86,11 @@ const FacilityMain = () => {
             </s.SortContainer>
         </s.Selecting>
         
-        <s.CategoryButtons>
-            {categories.map((category) => (
-            <Button
-                key={category}
-                tone={selectedCategory === category ? "blue" : "gray"}
-                variant={selectedCategory === category ? "subtle" : "subtle"}
-                size="sm"
-                radius="sm"
-                typo={selectedCategory === category ? "label1" : "label2"}
-                onClick={() => setSelectedCategory(category)}
-                >
-                        {category}
-            </Button>
-            ))}
-        </s.CategoryButtons>
+        <CategoryMap 
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+        />
 
         <CardList
             items={sortedFacilities}

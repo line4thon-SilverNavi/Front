@@ -24,7 +24,7 @@ const Login = () => {
     }
 
     setTokens({ access: res.data.token, refresh: "", name: res.data.name });
-    navigate("/");
+    navigate("/programs");
   };
 
   const handleDemoLogin = async () => {

@@ -3,14 +3,15 @@ import { Shell, Main, ContentContainer, TitleContainer } from "./styles";
 import type { AdminNavKey } from "@constants/admin-nav";
 import Sidebar from "@components/layout/Sidebar/Sidebar";
 import Topbar from "@components/layout/Topbar/Topbar";
+import styled from "styled-components";
 
 type AdminLayoutProps = {
   activeKey: AdminNavKey;
   onNavigate: (key: AdminNavKey) => void;
   right?: React.ReactNode;
   children: React.ReactNode;
-  title: string;
-  des: string;
+  title: React.ReactNode;
+  des: React.ReactNode;
 };
 
 export default function AdminLayout({
@@ -36,6 +37,7 @@ export default function AdminLayout({
       if (e.key === "name") setFacilityName(e.newValue ?? "");
     };
     window.addEventListener("storage", onStorage);
+
     const onAuthUpdate = (e: Event) => {
       const detail = (e as CustomEvent).detail as { name?: string };
       if (detail?.name !== undefined) setFacilityName(detail.name ?? "");
@@ -68,17 +70,44 @@ export default function AdminLayout({
           name={facilityName || "시설명"}
           sidebarOpen={open}
           onToggleSidebar={() => setOpen((v) => !v)}
-          right={right}
+          right={"시설 관리자"}
         />
 
         <ContentContainer id="main-content" role="main" tabIndex={-1}>
-          <TitleContainer>
-            <p className="title">{title}</p>
-            <p className="des">{des}</p>
-          </TitleContainer>
+          <HeaderRow>
+            <TitleContainer>
+              <p className="title">{title}</p>
+              <p className="des">{des}</p>
+            </TitleContainer>
+
+            {right && <RightBox>{right}</RightBox>}
+          </HeaderRow>
+
           {children}
         </ContentContainer>
       </Main>
     </Shell>
   );
 }
+
+/* ---------- styles ---------- */
+const HeaderRow = styled.div`
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 32px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+  }
+`;
+
+const RightBox = styled.div`
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+`;

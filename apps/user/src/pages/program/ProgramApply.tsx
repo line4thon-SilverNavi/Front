@@ -10,7 +10,7 @@ import ToggleButtonGroup from "@core/components/ToggleButtonGroup";
 import { getUserDetail } from "@apis/mypage/userDetail";
 import CompleteProfile from "@components/program/CompleteProfile";
 import RelationSelectModal from "@components/auth/RelationSelectModal";
-import { relationLabel, type RelationCode } from "@constants/relation";
+import { relationLabel, relationFromApi, type RelationCode } from "@constants/relation";
 import BirthContainer from "@components/mypage/BirthContainer";
 import TermsModal from "@components/mypage/TermsModal";
 import { postProgramApply } from "@apis/program/programApply";
@@ -50,7 +50,17 @@ export default function ProgramApply() {
           return;
         }
 
-        // null 값이 있는지 확인
+        // 폼에 값 채우기 (있는 값만)
+        if (userDetail.careTargetName) setName(userDetail.careTargetName);
+        if (userDetail.relationRole) setRelation(relationFromApi(userDetail.relationRole) || null);
+        if (userDetail.careTargetPhone) setPhone(userDetail.careTargetPhone);
+        if (userDetail.careTargetBirth) setBirth(userDetail.careTargetBirth);
+        if (userDetail.careGrade) setGrade(userDetail.careGrade);
+        if (userDetail.careTargetGender) setGender(userDetail.careTargetGender);
+        if (userDetail.guardianName) setGuardianName(userDetail.guardianName);
+        if (userDetail.guardianPhone) setGuardianPhone(userDetail.guardianPhone);
+
+        // null 값이 있는지 확인 (프로필 완성도 체크)
         const hasNullValue =
           !userDetail.careTargetName ||
           !userDetail.careTargetBirth ||
@@ -64,16 +74,7 @@ export default function ProgramApply() {
           setShowProfileModal(true);
           setIsProfileComplete(false);
         } else {
-          // 모든 값이 있으면 폼에 채우기
           setIsProfileComplete(true);
-          setName(userDetail.careTargetName || "");
-          setRelation((userDetail.relationRole as RelationCode) || null);
-          setPhone(userDetail.careTargetPhone || "");
-          setBirth(userDetail.careTargetBirth || "");
-          setGrade(userDetail.careGrade || "");
-          setGender(userDetail.careTargetGender || "");
-          setGuardianName(userDetail.guardianName || "");
-          setGuardianPhone(userDetail.guardianPhone || "");
         }
       } catch (error) {
         console.error("유저 정보를 불러오는데 실패했습니다:", error);
@@ -212,8 +213,8 @@ export default function ProgramApply() {
           <ToggleButtonGroup
             label="돌봄 대상자 성별"
             options={[
-              { value: "male", label: "남성" },
-              { value: "female", label: "여성" },
+              { value: "남성", label: "남성" },
+              { value: "여성", label: "여성" },
             ]}
             value={gender}
             onChange={setGender}

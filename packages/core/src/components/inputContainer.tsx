@@ -11,7 +11,7 @@ type Props = {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
-  type?: "text" | "password" | "tel" | "email" | "number" | "date";
+  type?: "text" | "password" | "tel" | "email" | "number" | "date" | "time";
   autoComplete?: string;
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
   maxLength?: number;
@@ -26,10 +26,14 @@ type Props = {
   descTypo?: FontKey;
   width?: string;
   height?: string;
+  variant?: "underline" | "filled";
+  prefixIcon?: React.ReactNode;
+  labelColor?: string;
 };
 
 export default function InputContainer({
   label,
+  variant = "underline",
   value,
   onChange,
   placeholder,
@@ -47,13 +51,14 @@ export default function InputContainer({
   inputTypo = "body2",
   width,
   height,
+  prefixIcon,
+  labelColor,
 }: Props) {
   const id = useId();
   const [show, setShow] = useState(false);
   const isPassword = type === "password";
   const rightIconVisible = isPassword && showToggleForPassword;
 
-  // 엔터/스페이스로도 열리게
   const onKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!clickable || !onClickInput) return;
     if (e.key === "Enter" || e.key === " ") {
@@ -64,11 +69,12 @@ export default function InputContainer({
 
   return (
     <Field>
-      <Label htmlFor={id} $labelTypo={labelTypo}>
+      <Label htmlFor={id} $labelTypo={labelTypo} $labelColor={labelColor}>
         {label} {required && <em aria-hidden>*</em>}
       </Label>
 
-      <InputRow $error={!!errorText}>
+      <InputRow $error={!!errorText} $variant={variant}>
+        {prefixIcon && <PrefixSlot aria-hidden>{prefixIcon}</PrefixSlot>}
         <Input
           id={id}
           value={value}
@@ -88,6 +94,7 @@ export default function InputContainer({
           tabIndex={clickable ? 0 : undefined}
           $clickable={clickable}
           $inputTypo={inputTypo}
+          $hasPrefix={!!prefixIcon}
         />
 
         {rightIconVisible && (
@@ -114,30 +121,68 @@ const Field = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
 `;
 
-const Label = styled.label<{ $labelTypo: FontKey }>`
+const Label = styled.label<{ $labelTypo: FontKey; $labelColor?: string }>`
   ${({ theme, $labelTypo }) => theme.fonts[$labelTypo]};
-  color: ${({ theme }) => theme.colors.gray05};
+  color: ${({ theme, $labelColor }) => $labelColor ?? theme.colors.gray05};
   em {
-    color: ${({ theme }) => theme.colors.alert};
+    color: ${({ theme }) => theme.colors.signal};
     font-style: normal;
     margin-left: 2px;
   }
 `;
 
-const InputRow = styled.div<{ $error: boolean }>`
+const InputRow = styled.div<{
+  $error: boolean;
+  $variant: "underline" | "filled";
+}>`
   position: relative;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid
-    ${({ theme, $error }) =>
-      $error ? theme.colors.alert : theme.colors.gray03};
-  padding: 10px 0;
+  ${({ $variant, theme, $error }) =>
+    $variant === "underline" &&
+    css`
+      border-bottom: 1px solid
+        ${$error ? theme.colors.alert : theme.colors.gray03};
+      padding: 10px 0;
 
-  &:focus-within {
-    border-bottom-color: ${({ theme, $error }) =>
-      $error ? theme.colors.alert : theme.colors.blue02};
+      &:focus-within {
+        border-bottom-color: ${$error
+          ? theme.colors.alert
+          : theme.colors.blue02};
+      }
+    `}
+
+  ${({ $variant, theme, $error }) =>
+    $variant === "filled" &&
+    css`
+      border-radius: 10px;
+      background: ${theme.colors.gray02};
+      padding: 12px 16px;
+      border: 1px solid transparent;
+
+      &:focus-within {
+        border-color: ${$error ? theme.colors.alert : theme.colors.gray02};
+      }
+    `}
+`;
+
+const PrefixSlot = styled.span`
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; /* 클릭 방해 X */
+  img,
+  svg {
+    width: 20px;
+    height: 20px;
+    opacity: 0.9;
   }
 `;
 
@@ -145,6 +190,7 @@ const Input = styled.input<{
   $isPassword?: boolean;
   $clickable?: boolean;
   $inputTypo: FontKey;
+  $hasPrefix?: boolean;
 }>`
   flex: 1;
   border: 0;
@@ -157,6 +203,8 @@ const Input = styled.input<{
   &::placeholder {
     color: ${({ theme }) => theme.colors.gray04};
   }
+
+  padding-left: ${({ $hasPrefix }) => ($hasPrefix ? "30px" : "0")};
 
   /* 값이 없을 때 글자색을 플레이스홀더 색상으로 변경 */
   &:not([value=""]) {

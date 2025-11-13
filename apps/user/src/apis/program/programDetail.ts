@@ -33,7 +33,7 @@ export type ProgramDetailResponse = {
 
 export async function getProgramDetail(programId: number) {
     const response = await getResponse<ProgramDetailResponse>(
-        `/api/programs/${programId}`
+        `/api/programs/details/${programId}`
     );
     return response?.data || null;
 }

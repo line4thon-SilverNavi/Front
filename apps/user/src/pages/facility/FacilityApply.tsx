@@ -38,13 +38,25 @@ export default function FacilityApplyPage() {
     const [checkModalOpen, setCheckModalOpen] = useState(false);
     const [isAlreadyApplied, setIsAlreadyApplied] = useState(false);
 
-    // 사용자 relationRole 불러오기
+    // 사용자 정보 불러오기
     useEffect(() => {
         const fetchUserDetail = async () => {
             try {
                 const userDetail = await getUserDetail();
                 if (userDetail) {
                     setRelationRole(userDetail.relationRole || "");
+                    
+                    // 돌봄대상자 이름 설정
+                    if (userDetail.careTargetName) {
+                        setName(userDetail.careTargetName);
+                    }
+                    
+                    // 연락처 설정 (guardianPhone 우선, 없으면 careTargetPhone)
+                    if (userDetail.guardianPhone) {
+                        setPhone(userDetail.guardianPhone);
+                    } else if (userDetail.careTargetPhone) {
+                        setPhone(userDetail.careTargetPhone);
+                    }
                 }
             } catch (error) {
                 console.log("사용자 정보를 불러올 수 없습니다. 기본값을 사용합니다.");
