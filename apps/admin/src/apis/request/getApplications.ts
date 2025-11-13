@@ -1,6 +1,6 @@
 import { getResponse } from "@core/api/instance";
 
-export type ApplicationStatus = "대기중" | "승인" | "거부";
+export type ApplicationStatus = "대기중" | "승인" | "거부" | "확인됨" | "완료";
 
 export type ApplicationsSummary = {
   totalCount: number;

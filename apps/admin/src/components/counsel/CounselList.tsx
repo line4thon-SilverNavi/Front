@@ -2,11 +2,11 @@ import {
   EntityTableList,
   type ColumnDef,
 } from "@components/common/EntityTableList";
-import ApplicationRow from "./ApplicationRow";
-import type { ApplicationItem } from "@apis/request/getApplications";
+import type { ConsultItem } from "@apis/consult/getConsult";
+import ConsultRow from "./CounselRow";
 
 type Props = {
-  items: ApplicationItem[];
+  items: ConsultItem[];
   loading?: boolean;
   onManageClick?: (id: number) => void;
   onRowClick?: (id: number) => void;
@@ -14,28 +14,28 @@ type Props = {
 
 const COLUMNS: ColumnDef[] = [
   { label: "신청일", align: "center" },
-  { label: "프로그램", align: "center" },
+  { label: "유형", align: "center" },
   { label: "신청자", align: "center" },
   { label: "연락처", align: "center" },
   { label: "상태", align: "center" },
   { label: "관리", align: "center" },
 ];
 
-export default function ApplicationList({
+export default function ConsultList({
   items,
   loading,
   onManageClick,
   onRowClick,
 }: Props) {
   return (
-    <EntityTableList<ApplicationItem>
+    <EntityTableList<ConsultItem>
       items={items}
       loading={loading}
-      cols="110px 1fr 120px 140px 140px 80px"
+      cols="90px 1fr 120px 1fr 160px 100px"
       columns={COLUMNS}
       renderRow={(it) => (
-        <ApplicationRow
-          key={it.applicationId}
+        <ConsultRow
+          key={it.consultId}
           item={it}
           onManageClick={onManageClick}
           onRowClick={onRowClick}

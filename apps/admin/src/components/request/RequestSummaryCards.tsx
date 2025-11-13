@@ -10,12 +10,12 @@ type Props = {
   onClickCard?: (status: StatusType) => void;
 };
 
-export default function RequestSummaryCards({ summary, onClickCard }: Props) {
+export default function RequestSummaryCards({ summary }: Props) {
   const { pendingCount, approvedCount, rejectedCount } = summary;
 
   return (
     <Wrap>
-      <Card status="대기중" onClick={() => onClickCard?.("대기중")}>
+      <Card status="대기중">
         <Head>
           <img src="/img/request/waiting.svg" />
           <Title>대기중</Title>
@@ -23,7 +23,7 @@ export default function RequestSummaryCards({ summary, onClickCard }: Props) {
         <Count>{pendingCount}</Count>
       </Card>
 
-      <Card status="승인" onClick={() => onClickCard?.("승인")}>
+      <Card status="승인">
         <Head>
           <img src="/img/request/approve.svg" />
           <Title>승인</Title>
@@ -31,7 +31,7 @@ export default function RequestSummaryCards({ summary, onClickCard }: Props) {
         <Count>{approvedCount}</Count>
       </Card>
 
-      <Card status="거부" onClick={() => onClickCard?.("거부")}>
+      <Card status="거부">
         <Head>
           <img src="/img/request/deny.svg" />
           <Title>거부</Title>
@@ -57,7 +57,6 @@ const Card = styled.div<{ status: StatusType }>`
       border: 0.679px solid ${s.border};
       background: ${s.bg};
       color: ${s.color};
-      cursor: pointer;
     `;
   }}
 `;
