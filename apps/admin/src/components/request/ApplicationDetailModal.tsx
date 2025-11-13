@@ -95,6 +95,7 @@ export default function ApplicationDetailModal({
   } = detail;
 
   const isSelf = !careName && !carePhone;
+  const isPending = status === "대기중";
 
   const handleReject = () => {
     // TODO: 거부 API 연동
@@ -174,22 +175,38 @@ export default function ApplicationDetailModal({
           </Section>
         </S.DetailContent>
 
-        <S.BtnBar>
-          <ButtonLayout type="row" gap={12}>
-            <Button
-              tone="red"
-              variant="outline"
-              size="lg"
-              typo="heading3"
-              onClick={handleReject}
-            >
-              거부
-            </Button>
-            <Button size="lg" typo="heading3" onClick={handleApprove}>
-              승인
-            </Button>
-          </ButtonLayout>
-        </S.BtnBar>
+        {isPending && (
+          <S.BtnBar>
+            <ButtonLayout type="row" gap={12}>
+              <Button
+                tone="red"
+                variant="outline"
+                size="lg"
+                typo="heading3"
+                onClick={handleReject}
+                leftIcon={
+                  <img src="/img/request/deny.svg" width={20} height={20} />
+                }
+              >
+                거부
+              </Button>
+              <Button
+                size="lg"
+                typo="heading3"
+                onClick={handleApprove}
+                leftIcon={
+                  <img
+                    src="/img/request/approve-white.svg"
+                    width={20}
+                    height={20}
+                  />
+                }
+              >
+                승인
+              </Button>
+            </ButtonLayout>
+          </S.BtnBar>
+        )}
       </S.Sheet>
     </S.Backdrop>
   );
