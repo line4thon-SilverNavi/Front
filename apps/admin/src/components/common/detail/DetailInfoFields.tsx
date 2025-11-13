@@ -77,7 +77,6 @@ const TextCol = styled.div`
 const Label = styled.div`
   ${({ theme }) => theme.fonts.label2};
   color: ${({ theme }) => theme.colors.gray05};
-  margin-bottom: 4px;
 `;
 
 const Value = styled.div`

@@ -4,14 +4,7 @@ import type { ConsultItem } from "@apis/consult/getConsult";
 
 import CounselStatusBadge from "./CounselStatusBadge";
 import RowBase from "@components/common/RowBase";
-
-const fmtPhone = (raw: string) => {
-  const digits = raw?.replace(/\D/g, "") || "";
-  if (!digits) return "";
-  return digits.startsWith("02")
-    ? digits.replace(/(02)(\d{3,4})(\d{4})/, "$1-$2-$3")
-    : digits.replace(/(\d{3})(\d{3,4})(\d{4})/, "$1-$2-$3");
-};
+import { fmtPhone } from "@hooks/useFmtPhone";
 
 type Props = {
   item: ConsultItem;

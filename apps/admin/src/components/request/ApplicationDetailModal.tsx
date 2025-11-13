@@ -16,6 +16,7 @@ import { DetailHeaderCard } from "@components/common/detail/DetailHeaderCard";
 import StatusTag from "./StatusTag";
 import { patchApplicationStatus } from "@apis/request/patchApplicationStatus";
 import RequestModalShell from "@components/request/RequestModalShell";
+import { fmtPhone } from "@hooks/useFmtPhone";
 
 type Props = {
   open: boolean;
@@ -23,15 +24,6 @@ type Props = {
   onClose: () => void;
   onStatusChange?: (s: ApplicationStatus) => void;
   onOpenRejectModal?: (applicationId: number) => void;
-};
-
-const fmtPhone = (raw: string) => {
-  if (!raw) return "";
-  const digits = raw.replace(/\D/g, "");
-  if (digits.startsWith("02")) {
-    return digits.replace(/(02)(\d{3,4})(\d{4})/, "$1-$2-$3");
-  }
-  return digits.replace(/(\d{3})(\d{3,4})(\d{4})/, "$1-$2-$3");
 };
 
 export default function ApplicationDetailModal({

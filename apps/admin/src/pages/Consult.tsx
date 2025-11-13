@@ -1,3 +1,4 @@
+// src/pages/consult/Consult.tsx
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import toast from "react-hot-toast";
@@ -7,12 +8,15 @@ import {
   type ConsultItem,
   type ConsultStatus,
 } from "@apis/consult/getConsult";
+
 import type { PageInfo } from "@apis/program/getPrograms";
 import CounselStatusCard from "@components/counsel/StatusCard";
 import RequestSearchBar, {
   type StatusFilter,
 } from "@components/request/RequestSearchBar";
 import ConsultList from "@components/counsel/CounselList";
+import ConsultDetailModal from "@components/counsel/CounselDetailModal";
+import type { ConsultCategory } from "@apis/consult/getConsultDetail";
 
 const DEFAULT_SUMMARY: CounselSummary = {
   totalCount: 0,
@@ -31,6 +35,12 @@ const Consult = () => {
   );
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+
+  // 🔹 상세 모달 관련 state
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedCategory, setSelectedCategory] =
+    useState<ConsultCategory | null>(null);
 
   // 검색어
   const [query, setQuery] = useState("");
@@ -63,15 +73,41 @@ const Consult = () => {
 
   const STATUS_OPTIONS: StatusFilter[] = ["전체", "대기중", "확인됨", "완료"];
 
+  /* ---------- 모달 열기 / 닫기 ---------- */
+
+  const openDetail = (id: number) => {
+    const target = consults.find((c) => c.consultId === id);
+    if (!target) {
+      toast.error("상담 정보를 찾을 수 없습니다.");
+      return;
+    }
+
+    setSelectedId(id);
+    setSelectedCategory(target.consultCategory as ConsultCategory);
+    setDetailOpen(true);
+  };
+
+  const closeDetail = () => {
+    setDetailOpen(false);
+    setSelectedId(null);
+    setSelectedCategory(null);
+  };
+
+  // (나중에 모달에서 상태 바꿨을 때 리스트에도 반영하고 싶을 때)
+  const handleStatusChange = (next: ConsultStatus) => {
+    setConsults((prev) =>
+      prev.map((c) => (c.consultId === selectedId ? { ...c, status: next } : c))
+    );
+  };
+
   return (
     <PageWrapper>
-      <HeaderRow>
-        <h1>상담 관리</h1>
-      </HeaderRow>
-
       <RequestSearchBar
         status={statusFilter}
-        onStatusChange={(s) => setStatusFilter(s as ConsultStatus | "전체")}
+        onStatusChange={(s) => {
+          setStatusFilter(s as ConsultStatus | "전체");
+          setPage(1);
+        }}
         query={query}
         onQueryChange={(q) => {
           setQuery(q);
@@ -89,9 +125,8 @@ const Consult = () => {
         <ConsultList
           items={consults}
           loading={loading}
-          onManageClick={(id) => {
-            console.log("관리 버튼 클릭:", id);
-          }}
+          // 행 클릭으로도 열고 싶으면 onRowClick={openDetail} 도 넘겨줘
+          onManageClick={openDetail}
         />
       </ListWrapper>
 
@@ -115,11 +150,20 @@ const Consult = () => {
           </button>
         </PaginationBar>
       )}
+
+      <ConsultDetailModal
+        open={detailOpen}
+        consultId={selectedId}
+        category={selectedCategory}
+        onClose={closeDetail}
+      />
     </PageWrapper>
   );
 };
 
 export default Consult;
+
+/* ---------- styles ---------- */
 
 const PageWrapper = styled.div`
   display: flex;
@@ -127,64 +171,11 @@ const PageWrapper = styled.div`
   gap: 24px;
 `;
 
-const HeaderRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  h1 {
-    ${({ theme }) => theme.fonts.heading2};
-    color: ${({ theme }) => theme.colors.gray07};
-  }
-`;
-
 const ListWrapper = styled.div`
   margin-top: 8px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-`;
-
-const Row = styled.div`
-  padding: 16px 18px;
-  border-radius: 10px;
-  background: ${({ theme }) => theme.colors.gray01};
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-
-  .name {
-    ${({ theme }) => theme.fonts.title2};
-    color: ${({ theme }) => theme.colors.gray07};
-  }
-
-  .relation {
-    ${({ theme }) => theme.fonts.body3};
-    color: ${({ theme }) => theme.colors.gray05};
-  }
-
-  .meta {
-    ${({ theme }) => theme.fonts.caption};
-    color: ${({ theme }) => theme.colors.gray05};
-    margin-top: 4px;
-  }
-
-  .phone {
-    ${({ theme }) => theme.fonts.body2};
-    color: ${({ theme }) => theme.colors.gray06};
-    text-align: right;
-  }
-`;
-
-const StatusBadge = styled.span`
-  margin-top: 4px;
-  display: inline-flex;
-  padding: 4px 10px;
-  border-radius: 999px;
-  ${({ theme }) => theme.fonts.caption};
-  background: ${({ theme }) => theme.colors.gray02};
-  color: ${({ theme }) => theme.colors.gray06};
 `;
 
 const PaginationBar = styled.div`
@@ -205,11 +196,4 @@ const PaginationBar = styled.div`
       cursor: default;
     }
   }
-`;
-
-const EmptyText = styled.p`
-  ${({ theme }) => theme.fonts.body3};
-  color: ${({ theme }) => theme.colors.gray05};
-  padding: 16px;
-  text-align: center;
 `;

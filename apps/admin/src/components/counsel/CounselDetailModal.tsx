@@ -1,310 +1,288 @@
-// import { useEffect, useState } from "react";
-// import styled from "styled-components";
-// import * as S from "@components/program/AddProgramModal/modal.styles";
-// import { Button, ButtonLayout } from "@core/ui/button";
-// import toast from "react-hot-toast";
+// src/components/counsel/ConsultDetailModal.tsx
+import { useEffect, useState } from "react";
+import styled from "styled-components";
+import * as S from "@components/program/AddProgramModal/modal.styles";
+import RequestModalShell from "@components/request/RequestModalShell";
+import toast from "react-hot-toast";
+import { formatKDateTimeFull } from "@core/hooks/ProcessingTime";
+import { Button, ButtonLayout } from "@core/ui/button";
 
-// import {
-//   CounselStatusBadge,
-//   type CounselStatus,
-// } from "@components/CounselStatusBadge";
+import {
+  DetailInfoField,
+  DetailInfoFieldGrid,
+} from "@components/common/detail/DetailInfoFields";
+import StatusTag from "@components/request/StatusTag"; // 이미 있는 상태 뱃지 재사용 (승인/대기중/거부)
 
-// type Props = {
-//   open: boolean;
-//   counselId: number | null;
-//   onClose: () => void;
-//   onStatusChange?: (s: CounselStatus) => void;
-// };
+import {
+  getConsultDetail,
+  type ConsultDetail,
+  type ConsultCategory,
+  type ConsultStatus,
+} from "@apis/consult/getConsultDetail";
+import { fmtPhone } from "@hooks/useFmtPhone";
 
-// const fmtPhone = (raw: string | null | undefined) => {
-//   if (!raw) return "";
-//   const digits = raw.replace(/\D/g, "");
-//   if (digits.startsWith("02"))
-//     return digits.replace(/(02)(\d{3,4})(\d{4})/, "$1-$2-$3");
-//   return digits.replace(/(\d{3})(\d{3,4})(\d{4})/, "$1-$2-$3");
-// };
+type Props = {
+  open: boolean;
+  consultId: number | null;
+  category: ConsultCategory | null;
+  onClose: () => void;
+  onStatusChange?: (s: ConsultStatus) => void; // 나중에 상태 변경 붙일 때 사용 가능
+};
 
-// const fmtDateTime = (iso: string) => {
-//   if (!iso) return "";
-//   const d = new Date(iso);
-//   if (Number.isNaN(d.getTime())) return iso;
-//   const yy = d.getFullYear();
-//   const mm = String(d.getMonth() + 1).padStart(2, "0");
-//   const dd = String(d.getDate()).padStart(2, "0");
-//   const hh = String(d.getHours()).padStart(2, "0");
-//   const mi = String(d.getMinutes()).padStart(2, "0");
-//   return `${yy}-${mm}-${dd} ${hh}:${mi}`;
-// };
+export default function ConsultDetailModal({
+  open,
+  consultId,
+  category,
+  onClose,
+}: Props) {
+  const [loading, setLoading] = useState(false);
+  const [detail, setDetail] = useState<ConsultDetail | null>(null);
 
-// export default function CounselDetailModal({
-//   open,
-//   counselId,
-//   onClose,
-//   onStatusChange,
-// }: Props) {
-//   const [loading, setLoading] = useState(false);
-//   // const [detail, setDetail] = useState<CounselDetail | null>(null);
+  useEffect(() => {
+    if (!open || !consultId || !category) return;
+    let alive = true;
 
-//   useEffect(() => {
-//     if (!open || !counselId) return;
-//     let alive = true;
+    (async () => {
+      try {
+        setLoading(true);
+        const data = await getConsultDetail(consultId, category);
+        if (!alive) return;
+        setDetail(data);
+      } catch (e: any) {
+        toast.error(e?.message || "상담 상세 정보를 불러오지 못했습니다.");
+        onClose();
+      } finally {
+        setLoading(false);
+      }
+    })();
 
-//     (async () => {
-//       try {
-//         setLoading(true);
-//         const data = await getCounselDetail(counselId);
-//         if (!alive) return;
-//         setDetail(data);
-//       } catch (e: any) {
-//         toast.error(e?.message || "상담 상세 정보를 불러오지 못했습니다.");
-//         onClose();
-//       } finally {
-//         setLoading(false);
-//       }
-//     })();
+    return () => {
+      alive = false;
+    };
+  }, [open, consultId, category, onClose]);
 
-//     return () => {
-//       alive = false;
-//     };
-//   }, [open, counselId, onClose]);
+  if (!open) return null;
 
-//   if (!open) return null;
+  // 로딩 중 skeleton
+  if (!detail) {
+    return (
+      <RequestModalShell open={open} onClose={onClose}>
+        <S.Header>
+          <S.H2>상담 상세 정보</S.H2>
+          <S.Close onClick={onClose} src="/img/close.svg" />
+        </S.Header>
+        <S.Content aria-busy="true">
+          <p>불러오는 중…</p>
+        </S.Content>
+      </RequestModalShell>
+    );
+  }
 
-//   if (!detail) {
-//     return (
-//       <S.Backdrop role="dialog" aria-modal="true" onClick={onClose}>
-//         <S.Sheet onClick={(e) => e.stopPropagation()}>
-//           <S.Header>
-//             <S.H2>상담 상세 정보</S.H2>
-//             <S.Close onClick={onClose} src="/img/close.svg" />
-//           </S.Header>
-//           <S.Content aria-busy="true">
-//             <p>불러오는 중</p>
-//           </S.Content>
-//         </S.Sheet>
-//       </S.Backdrop>
-//     );
-//   }
+  const {
+    consultCategory,
+    status,
+    appliedAt,
+    name,
+    phone,
+    birthDate,
+    age,
+    grade,
+    careName,
+    carePhone,
+    hopeDate,
+    hopeTime,
+    consultType,
+    // inquiryType,
+    inquiryContent,
+  } = detail;
 
-//   const {
-//     appliedAt,
-//     counselType,
-//     status,
-//     applicantName,
-//     applicantPhone,
-//     birth,
-//     age,
-//     careGrade,
-//     careName,
-//     carePhone,
-//     hopeDate,
-//     questionType,
-//     content,
-//     fixedDate,
-//     statusChangeLabel,
-//   } = detail;
+  const isSelf = !careName && !carePhone;
+  const hopeDateTime =
+    hopeDate && hopeTime ? `${hopeDate} ${hopeTime}` : (hopeDate ?? "");
 
-//   const isSelf = !careName && !carePhone;
+  return (
+    <RequestModalShell open={open} onClose={onClose}>
+      <StickyHeader>
+        <div>
+          <HeaderMeta>
+            <S.H2>상담 상세 정보</S.H2>
+            <CategoryBadge>{consultCategory}</CategoryBadge>
+            <StatusTag status={status} />
+          </HeaderMeta>
+          <span className="time">{formatKDateTimeFull(appliedAt)} 신청</span>
+        </div>
+        <S.Close onClick={onClose} src="/img/close.svg" />
+      </StickyHeader>
 
-//   const handleReject = () => {
-//     // TODO: 거부 API 연동
-//     onStatusChange?.("거부");
-//     toast.success("상담이 거부 처리되었습니다. (더미)");
-//     onClose();
-//   };
+      <ScrollArea>
+        <S.DetailContent aria-busy={loading}>
+          {/* 신청자 정보 */}
+          <SectionTitle>신청자 정보</SectionTitle>
+          <DetailInfoFieldGrid>
+            <DetailInfoField
+              iconSrc="/img/request/user.svg"
+              label="이름"
+              value={name}
+            />
+            <DetailInfoField
+              iconSrc="/img/request/phone.svg"
+              label="연락처"
+              value={fmtPhone(phone)}
+            />
+            <DetailInfoField
+              iconSrc="/img/request/calendar.svg"
+              label="생년월일"
+              value={`${birthDate} (${age}세)`}
+            />
+            <DetailInfoField
+              iconSrc="/img/request/star.svg"
+              label="요양등급"
+              value={grade}
+            />
+            {!isSelf && careName && (
+              <>
+                <DetailInfoField
+                  iconSrc="/img/request/user.svg"
+                  label="보호자 이름"
+                  value={careName}
+                />
+                <DetailInfoField
+                  iconSrc="/img/request/phone.svg"
+                  label="보호자 연락처"
+                  value={fmtPhone(carePhone ?? "")}
+                />
+              </>
+            )}
+          </DetailInfoFieldGrid>
 
-//   const handleApprove = () => {
-//     // TODO: 승인/확인 API 연동
-//     onStatusChange?.("확인됨");
-//     toast.success("상담이 승인(확인) 처리되었습니다. (더미)");
-//     onClose();
-//   };
+          {/* 상담 정보 */}
 
-//   return (
-//     <S.Backdrop role="dialog" aria-modal="true" onClick={onClose}>
-//       <S.Sheet onClick={(e) => e.stopPropagation()}>
-//         <S.Header>
-//           <S.H2>상담 상세 정보</S.H2>
-//           <S.Close onClick={onClose} src="/img/close.svg" />
-//         </S.Header>
+          <SectionTitle style={{ marginTop: 30 }}>상담 정보</SectionTitle>
+          <DetailInfoFieldGrid>
+            <DetailInfoField
+              iconSrc="/img/request/calendar.svg"
+              label="희망 상담 일시"
+              value={hopeDateTime || "-"}
+            />
+            <DetailInfoField
+              iconSrc="/img/request/type.svg"
+              label="문의 유형"
+              value={
+                consultType
+                  ? `${consultCategory} - ${consultType}`
+                  : `${consultCategory}`
+              }
+            />
+          </DetailInfoFieldGrid>
 
-//         <S.Content aria-busy={loading}>
-//           {/* 상단 요약 영역 (상단 타이틀 줄) */}
-//           <TopSummary>
-//             <TopRow1>
-//               <ApplyDate>{fmtDateTime(appliedAt)}</ApplyDate>
-//               <TypeTag>{counselType}</TypeTag>
-//               <StatusTop>
-//                 <CounselStatusBadge status={status} />
-//               </StatusTop>
-//             </TopRow1>
-//           </TopSummary>
+          <FieldBlock style={{ marginTop: 25 }}>
+            <FieldLabel>문의 내용</FieldLabel>
+            <p>{inquiryContent || "문의 내용이 없습니다."}</p>
+          </FieldBlock>
+        </S.DetailContent>
+      </ScrollArea>
 
-//           {/* 신청자 정보 */}
-//           <Section>
-//             <SectionTitle>신청자 정보</SectionTitle>
+      <S.BtnBar>
+        <ButtonLayout type="row" gap={12}>
+          <Button
+            tone="red"
+            variant="outline"
+            size="lg"
+            typo="heading3"
+            // onClick={handleReject}
+            leftIcon={
+              <img src="/img/request/deny.svg" width={20} height={20} />
+            }
+          >
+            거부
+          </Button>
+          <Button
+            size="lg"
+            typo="heading3"
+            // onClick={handleApprove}
+            // disabled={saving}
+            leftIcon={
+              <img
+                src="/img/request/approve-white.svg"
+                width={20}
+                height={20}
+              />
+            }
+          >
+            승인
+          </Button>
+        </ButtonLayout>
+      </S.BtnBar>
+    </RequestModalShell>
+  );
+}
 
-//             <TwoCol>
-//               <FieldBox>
-//                 <Label>이름</Label>
-//                 <Value>{applicantName}</Value>
-//               </FieldBox>
-//               <FieldBox>
-//                 <Label>연락처</Label>
-//                 <Value>{fmtPhone(applicantPhone)}</Value>
-//               </FieldBox>
-//             </TwoCol>
+/* ---------- 스타일 ---------- */
 
-//             <TwoCol>
-//               <FieldBox>
-//                 <Label>생년월일</Label>
-//                 <Value>
-//                   {birth} ({age}세)
-//                 </Value>
-//               </FieldBox>
-//               <FieldBox>
-//                 <Label>요양등급</Label>
-//                 <Value>{careGrade}</Value>
-//               </FieldBox>
-//             </TwoCol>
+const SectionTitle = styled.h3`
+  ${({ theme }) => theme.fonts.heading3};
+  color: ${({ theme }) => theme.colors.gray07};
+  margin-bottom: 8px;
+`;
 
-//             {!isSelf && (
-//               <TwoCol>
-//                 <FieldBox>
-//                   <Label>보호자 이름</Label>
-//                   <Value>{careName}</Value>
-//                 </FieldBox>
-//                 <FieldBox>
-//                   <Label>보호자 연락처</Label>
-//                   <Value>{fmtPhone(carePhone)}</Value>
-//                 </FieldBox>
-//               </TwoCol>
-//             )}
-//           </Section>
+const FieldBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: ${({ theme }) => theme.colors.gray02};
+  ${({ theme }) => theme.fonts.label2};
+  padding: 16px;
+  border-radius: 10px;
+  gap: 8px;
 
-//           {/* 상담 정보 */}
-//           <Section>
-//             <SectionTitle>상담 정보</SectionTitle>
+  p {
+    color: ${({ theme }) => theme.colors.gray07};
+    ${({ theme }) => theme.fonts.body2};
+  }
+`;
 
-//             <TwoCol>
-//               <FieldBox>
-//                 <Label>희망 상담 일시</Label>
-//                 <Value>{hopeDate}</Value>
-//               </FieldBox>
-//               <FieldBox>
-//                 <Label>문의유형</Label>
-//                 <Value>{questionType}</Value>
-//               </FieldBox>
-//             </TwoCol>
+const FieldLabel = styled.p`
+  ${({ theme }) => theme.fonts.label2};
+  color: ${({ theme }) => theme.colors.gray05};
+`;
 
-//             <FieldBox full>
-//               <Label>문의 내용</Label>
-//               <TextAreaReadOnly>{content || "없음"}</TextAreaReadOnly>
-//             </FieldBox>
-//           </Section>
+const ScrollArea = styled.div`
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-bottom: 80px;
+`;
 
-//           {/* 문의 답변 */}
-//           <Section>
-//             <SectionTitle>문의 답변</SectionTitle>
+const StickyHeader = styled(S.Header)`
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-//             <TwoCol>
-//               <FieldBox>
-//                 <Label>상담 확정 일시</Label>
-//                 <Value>{fixedDate || "미정"}</Value>
-//               </FieldBox>
-//               <FieldBox>
-//                 <Label>상태전환</Label>
-//                 <Value>{statusChangeLabel || "—"}</Value>
-//               </FieldBox>
-//             </TwoCol>
-//           </Section>
-//         </S.Content>
+  .time {
+    ${({ theme }) => theme.fonts.body3};
+    color: ${({ theme }) => theme.colors.gray06};
+  }
+`;
 
-//         <S.BtnBar>
-//           <ButtonLayout type="row" gap={12}>
-//             <Button
-//               tone="gray"
-//               variant="outline"
-//               size="lg"
-//               typo="heading2"
-//               onClick={handleReject}
-//             >
-//               거부
-//             </Button>
-//             <Button size="lg" typo="heading2" onClick={handleApprove}>
-//               승인
-//             </Button>
-//           </ButtonLayout>
-//         </S.BtnBar>
-//       </S.Sheet>
-//     </S.Backdrop>
-//   );
-// }
+const HeaderMeta = styled.div`
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 
-// /* ---------- styled ---------- */
+  span {
+    ${({ theme }) => theme.fonts.caption};
+    color: ${({ theme }) => theme.colors.gray05};
+  }
+`;
 
-// const TopSummary = styled.div`
-//   margin-bottom: 24px;
-// `;
-
-// const TopRow1 = styled.div`
-//   display: flex;
-//   align-items: center;
-//   gap: 12px;
-// `;
-
-// const ApplyDate = styled.span`
-//   ${({ theme }) => theme.fonts.body3};
-//   color: ${({ theme }) => theme.colors.gray05};
-// `;
-
-// const TypeTag = styled.span`
-//   ${({ theme }) => theme.fonts.body3};
-//   color: ${({ theme }) => theme.colors.blue01};
-// `;
-
-// const StatusTop = styled.div`
-//   margin-left: auto;
-// `;
-
-// const Section = styled.section`
-//   margin-bottom: 24px;
-// `;
-
-// const SectionTitle = styled.h3`
-//   ${({ theme }) => theme.fonts.title2};
-//   color: ${({ theme }) => theme.colors.gray07};
-//   margin-bottom: 12px;
-// `;
-
-// const TwoCol = styled.div`
-//   display: grid;
-//   grid-template-columns: repeat(2, minmax(0, 1fr));
-//   gap: 12px 16px;
-//   margin-bottom: 8px;
-// `;
-
-// const FieldBox = styled.div<{ full?: boolean }>`
-//   grid-column: ${({ full }) => (full ? "1 / -1" : "auto")};
-//   padding: 12px 14px;
-//   border-radius: 10px;
-//   background: ${({ theme }) => theme.colors.gray01};
-// `;
-
-// const Label = styled.div`
-//   ${({ theme }) => theme.fonts.caption};
-//   color: ${({ theme }) => theme.colors.gray05};
-//   margin-bottom: 4px;
-// `;
-
-// const Value = styled.div`
-//   ${({ theme }) => theme.fonts.body2};
-//   color: ${({ theme }) => theme.colors.gray07};
-// `;
-
-// const TextAreaReadOnly = styled.div`
-//   ${({ theme }) => theme.fonts.body2};
-//   color: ${({ theme }) => theme.colors.gray07};
-//   white-space: pre-wrap;
-//   min-height: 60px;
-// `;
+const CategoryBadge = styled.span`
+  padding: 2px 10px;
+  border-radius: 999px;
+  ${({ theme }) => theme.fonts.caption};
+  background: ${({ theme }) => theme.colors.gray02};
+  color: ${({ theme }) => theme.colors.gray06};
+`;
