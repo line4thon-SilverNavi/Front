@@ -3,9 +3,9 @@ import styled, { css } from "styled-components";
 import type { DefaultTheme } from "styled-components";
 import { fonts } from "../../styles/fonts";
 
-export type Tone = "blue" | "gray";
-export type Variant = "solid" | "subtle" | "outline";
-export type Size = "sm" | "md" | "lg" | "adminAuth";
+export type Tone = "blue" | "gray" | "red" | "disabled";
+export type Variant = "solid" | "subtle" | "outline" | "outlineV2";
+export type Size = "sm" | "md" | "lg" | "adminAuth" | "modal";
 type FontKey = keyof typeof fonts;
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -26,6 +26,7 @@ const SIZE_MAP: Record<Size, { h?: string; pad: string }> = {
   md: { h: "44px", pad: "12px 18px" },
   lg: { h: "60px", pad: "20px 60px" },
   adminAuth: { pad: "1.56rem 0rem" },
+  modal: { pad: "18px 45px" },
 };
 
 // tone별 색상
@@ -37,6 +38,16 @@ const toneColor = (theme: DefaultTheme, tone: Tone) => {
         base: c.gray06,
         bg: c.gray03,
         subtle: c.gray02,
+      };
+    case "red":
+      return {
+        base: c.alert,
+        subtle: c.gray01,
+      };
+    case "disabled":
+      return {
+        base: c.disabled,
+        subtle: c.gray03,
       };
     default:
       return {
@@ -78,6 +89,14 @@ const Base = styled.button.withConfig({
         background: transparent;
         color: ${t.base};
         border: 1px solid ${t.base};
+      `;
+    }
+
+    if ($variant === "outlineV2") {
+      return css`
+        background: transparent;
+        color: ${t.base};
+        border: 3px solid ${t.subtle};
       `;
     }
 

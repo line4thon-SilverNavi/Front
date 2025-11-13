@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { isFutureDate, isHHmm, isValidPhone } from "@shared/validators/program";
 import {
@@ -7,184 +7,191 @@ import {
   type CreateProgramReq,
 } from "@apis/program/createProgram";
 
-export const CATS: ProgramCategory[] = ["건강", "문화", "치료"];
+export const VALID_CATS = ["건강", "문화", "치료"] as const;
+export type CategoryValue = ProgramCategory | "";
+
+export const isProgramCategory = (v: string): v is ProgramCategory =>
+  (VALID_CATS as readonly string[]).includes(v);
+export const CATS: ProgramCategory[] = [...VALID_CATS];
 
 export function useAddProgramForm(facilityName?: string) {
-  const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
+  const makeInit = () => ({
+    name: "",
+    category: "" as CategoryValue,
+    instructorName: "",
+    date: "",
+    startTime: "",
+    endTime: "",
+    location: facilityName || "",
+    capacity: "" as number | "",
+    fee: "",
+    number: "",
+    description: "",
+    suppliesText: "",
+    proposal: null as File | null,
+    images: [] as File[],
+  });
 
-  const [name, setName] = useState("");
-  type CategoryValue = ProgramCategory | "";
-  const [category, setCategory] = useState<CategoryValue>("");
-  const [instructorName, setInstructorName] = useState("");
-  const [date, setDate] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [location, setLocation] = useState("");
-  const [capacity, setCapacity] = useState<number | "">("");
-  const [fee, setFee] = useState("");
-  const [number, setNumber] = useState("");
-  const [description, setDescription] = useState("");
-  const [suppliesText, setSuppliesText] = useState("");
-  const [proposal, setProposal] = useState<File | null>(null);
-  const [images, setImages] = useState<File[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [state, setState] = useState(makeInit());
   const [catOpen, setCatOpen] = useState(false);
+
+  const setName = (v: string) => setState((s) => ({ ...s, name: v }));
+  const setCategory = (v: CategoryValue) =>
+    setState((s) => ({ ...s, category: v }));
+  const setInstructorName = (v: string) =>
+    setState((s) => ({ ...s, instructorName: v }));
+  const setDate = (v: string) => setState((s) => ({ ...s, date: v }));
+  const setStartTime = (v: string) => setState((s) => ({ ...s, startTime: v }));
+  const setEndTime = (v: string) => setState((s) => ({ ...s, endTime: v }));
+  const setLocation = (v: string) => setState((s) => ({ ...s, location: v }));
+  const setCapacity = (v: number | "") =>
+    setState((s) => ({ ...s, capacity: v }));
+  const setFee = (v: string) => setState((s) => ({ ...s, fee: v }));
+  const setNumber = (v: string) => setState((s) => ({ ...s, number: v }));
+  const setDescription = (v: string) =>
+    setState((s) => ({ ...s, description: v }));
+  const setSuppliesText = (v: string) =>
+    setState((s) => ({ ...s, suppliesText: v }));
+  const setProposal = (f: File | null) =>
+    setState((s) => ({ ...s, proposal: f }));
+  const setImages = (arr: File[]) => setState((s) => ({ ...s, images: arr }));
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const imgInputRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    if (facilityName && !location) setLocation(facilityName);
-  }, [facilityName]);
+  const reset = () => {
+    setState(makeInit());
+    setCatOpen(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (imgInputRef.current) imgInputRef.current.value = "";
+  };
 
   const supplies = useMemo(
     () =>
-      suppliesText
+      state.suppliesText
         .split(/[\n,]/)
         .map((s) => s.trim())
         .filter(Boolean),
-    [suppliesText]
+    [state.suppliesText]
   );
 
-  const isProgramCategory = (v: string): v is ProgramCategory =>
-    (CATS as readonly ProgramCategory[]).includes(v as ProgramCategory);
-
-  const onPickProposal = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    if (f.type !== "application/pdf") {
-      setErr("기획서는 PDF만 업로드 가능합니다.");
-      e.target.value = "";
-      return;
-    }
-    if (f.size > 15 * 1024 * 1024) {
-      setErr("기획서 최대 용량은 15MB 입니다.");
-      e.target.value = "";
-      return;
-    }
-    setErr(null);
-    setProposal(f);
-  };
-
-  const onPickImages = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []);
-    const valid = files.filter((f) => {
-      if (!f.type.startsWith("image/")) return false;
-      const ok = f.size <= 5 * 1024 * 1024;
-      if (!ok) toast.error(`"${f.name}" 파일이 5MB를 초과합니다.`);
-      return ok;
-    });
-    const next = [...images, ...valid].slice(0, 5);
-    if (next.length === images.length && valid.length) {
-      toast.error("이미지는 최대 5장까지 업로드 가능합니다.");
-    }
-    setImages(next);
-    e.target.value = "";
-  };
-
-  const validate = (): string | null => {
-    if (!name.trim()) return "프로그램명을 입력해주세요.";
-    if (category === "") return "카테고리를 선택해주세요.";
-    if (!isFutureDate(date)) return "일정은 오늘 이후 날짜여야 합니다.";
+  const validate = (): boolean => {
+    const {
+      name,
+      category,
+      date,
+      startTime,
+      endTime,
+      capacity,
+      number,
+      proposal,
+      images,
+    } = state;
+    if (!name.trim()) return (toast.error("프로그램명을 입력해주세요."), false);
+    if (category === "")
+      return (toast.error("카테고리를 선택해주세요."), false);
+    if (!isFutureDate(date))
+      return (toast.error("일정은 오늘 이후 날짜여야 합니다."), false);
     if (!isHHmm(startTime) || !isHHmm(endTime))
-      return "시간 형식은 HH:mm 입니다.";
-    if (startTime >= endTime) return "종료 시간은 시작 시간 이후여야 합니다.";
+      return (toast.error("시간 형식은 HH:mm 입니다."), false);
+    if (startTime >= endTime)
+      return (toast.error("종료 시간은 시작 시간 이후여야 합니다."), false);
     if (capacity !== "" && Number(capacity) < 1)
-      return "정원은 1 이상이어야 합니다.";
-    if (!isValidPhone(number)) return "전화번호 형식이 올바르지 않습니다.";
-    if (!proposal) return "프로그램 기획서(PDF)는 필수입니다.";
-    if (images.length < 1) return "프로그램 사진은 최소 1장이 필요합니다.";
-    if (images.length > 5) return "이미지는 최대 5장까지 업로드 가능합니다.";
-    return null;
+      return (toast.error("정원은 1 이상이어야 합니다."), false);
+    if (!isValidPhone(number))
+      return (toast.error("전화번호 형식이 올바르지 않습니다."), false);
+    if (!proposal)
+      return (toast.error("프로그램 기획서(PDF)는 필수입니다."), false);
+    if (images.length < 1)
+      return (toast.error("프로그램 사진은 최소 1장이 필요합니다."), false);
+    if (images.length > 5)
+      return (toast.error("이미지는 최대 5장까지 업로드 가능합니다."), false);
+    return true;
   };
 
   const buildBody = (cat: ProgramCategory): CreateProgramReq => ({
-    name,
+    name: state.name.trim(),
     category: cat,
-    instructorName: instructorName || null,
-    date,
-    startTime,
-    endTime,
-    location: location || null,
-    capacity: capacity === "" ? null : Number(capacity),
-    fee: fee || null,
-    number: number || null,
-    description: description || null,
+    instructorName: state.instructorName.trim() || null,
+    date: state.date,
+    startTime: state.startTime,
+    endTime: state.endTime,
+    location: state.location.trim() || null,
+    capacity: state.capacity === "" ? null : Number(state.capacity),
+    fee: state.fee.trim() || null,
+    number: state.number.trim() || null,
+    description: state.description.trim() || null,
     supplies,
-    proposal: proposal!,
-    images,
+    proposal: state.proposal!,
+    images: state.images,
   });
 
   const submit = async (
     onSuccess?: (newId: number) => void,
     onClose?: () => void
   ) => {
-    const v = validate();
-    if (v) {
-      setErr(v);
-      return;
-    }
-    if (!isProgramCategory(category)) {
-      setErr("카테고리를 선택해주세요.");
-      return;
-    }
+    if (!validate()) return;
+
+    const cat = state.category;
+    if (cat === "") return toast.error("카테고리를 선택해주세요.");
 
     try {
       setBusy(true);
-      setErr(null);
-      const ok = await postCreateProgram(buildBody(category));
+      const ok = await postCreateProgram(buildBody(cat as ProgramCategory));
       setBusy(false);
       if (ok) {
         toast.success("프로그램이 등록되었습니다.");
         onClose?.();
         onSuccess?.(0);
       } else {
-        setErr("프로그램 등록에 실패했습니다.");
+        toast.error("프로그램 등록에 실패했습니다.");
       }
     } catch {
       setBusy(false);
+      toast.error("요청 중 오류가 발생했습니다.");
     }
   };
 
   return {
     busy,
-    err,
-    name,
+    name: state.name,
     setName,
-    category,
+    category: state.category,
     setCategory,
     catOpen,
     setCatOpen,
-    instructorName,
+    instructorName: state.instructorName,
     setInstructorName,
-    date,
+    date: state.date,
     setDate,
-    startTime,
+    startTime: state.startTime,
     setStartTime,
-    endTime,
+    endTime: state.endTime,
     setEndTime,
-    location,
+    location: state.location,
     setLocation,
-    capacity,
+    capacity: state.capacity,
     setCapacity,
-    fee,
+    fee: state.fee,
     setFee,
-    number,
+    number: state.number,
     setNumber,
-    description,
+    description: state.description,
     setDescription,
-    suppliesText,
+    suppliesText: state.suppliesText,
     setSuppliesText,
     supplies,
-    proposal,
+    proposal: state.proposal,
     setProposal,
-    images,
+    images: state.images,
     setImages,
     fileInputRef,
     imgInputRef,
-    onPickProposal,
-    onPickImages,
     submit,
-    CATS,
+    reset,
+    CATS: VALID_CATS,
+    onPickProposal: (_e: React.ChangeEvent<HTMLInputElement>) => {},
+    onPickImages: (_e: React.ChangeEvent<HTMLInputElement>) => {},
   };
 }

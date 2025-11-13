@@ -7,6 +7,7 @@ export const colors = {
   gray05: "#8f8f8f",
   gray06: "#5e5e5e",
   gray07: "#1a1a1a",
+  disabled: "#999",
 
   //blue
   blue01: "#409EE3",
