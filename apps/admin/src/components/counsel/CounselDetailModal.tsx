@@ -10,7 +10,6 @@ import {
   DetailInfoField,
   DetailInfoFieldGrid,
 } from "@components/common/detail/DetailInfoFields";
-import StatusTag from "@components/request/StatusTag";
 
 import {
   getConsultDetail,
@@ -429,7 +428,7 @@ const FieldBlock = styled.div`
   }
 `;
 
-const FieldLabel = styled.p`
+const FieldLabel = styled.h1`
   ${({ theme }) => theme.fonts.label2};
   color: ${({ theme }) => theme.colors.gray05};
 `;
