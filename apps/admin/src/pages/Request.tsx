@@ -1,4 +1,10 @@
-import { useLayoutEffect, useMemo, useState, useEffect } from "react";
+import {
+  useLayoutEffect,
+  useMemo,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { useOutletContext } from "react-router-dom";
 import styled from "styled-components";
 import RequestSummaryCards from "@components/request/RequestSummaryCards";
@@ -13,6 +19,7 @@ import RequestSearchBar, {
   type StatusFilter,
 } from "@components/request/RequestSearchBar";
 import ApplicationList from "@components/request/ApplicationList";
+import ApplicationDetailModal from "@components/request/ApplicationDetailModal";
 
 type OutletCtx = {
   setHeader: (o: {
@@ -34,6 +41,8 @@ const Request = () => {
   const [status, setStatus] = useState<StatusFilter>("전체");
   const [query, setQuery] = useState("");
   const [items, setItems] = useState<ApplicationItem[]>([]);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailId, setDetailId] = useState<number | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -86,6 +95,13 @@ const Request = () => {
     };
   }, [status]);
 
+  //모달 열기
+
+  const handleManageClick = useCallback((applicationId: number) => {
+    setDetailId(applicationId);
+    setDetailOpen(true);
+  }, []);
+
   return (
     <Wrap>
       {/* 상단 요약 카드 */}
@@ -109,8 +125,19 @@ const Request = () => {
       <ApplicationList
         items={items}
         loading={loading}
-        onManageClick={(id) => {
-          /* 상세/모달 열기 */
+        onManageClick={handleManageClick}
+      />
+
+      <ApplicationDetailModal
+        open={detailOpen}
+        applicationId={detailId}
+        onClose={() => {
+          setDetailOpen(false);
+          setDetailId(null);
+        }}
+        onStatusChange={(s) => {
+          // 승인/거부 후 다시 목록 refetch 등
+          // refetch();
         }}
       />
     </Wrap>

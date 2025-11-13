@@ -40,10 +40,7 @@ export default function ApplicationRow({
         <StatusBadge status={status as "대기중" | "승인" | "거부"} />
       </Cell>
       <Cell $align="center" onClick={(e) => e.stopPropagation()}>
-        <IconBtn
-          onClick={() => onManageClick?.(applicationId)}
-          aria-label="관리"
-        >
+        <IconBtn onClick={() => onManageClick?.(applicationId)}>
           <img
             src="/img/program/application.svg"
             alt=""

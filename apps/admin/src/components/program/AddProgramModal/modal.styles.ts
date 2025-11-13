@@ -29,6 +29,13 @@ export const Content = styled.div`
   padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px));
 `;
 
+export const DetailContent = styled.div`
+  padding: 24px 50px;
+  flex: 1 1 auto;
+  overflow: auto;
+  padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+`;
+
 export const BtnBar = styled.div`
   position: sticky;
   bottom: 0;
