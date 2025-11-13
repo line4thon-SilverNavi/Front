@@ -132,6 +132,13 @@ const AdminProgram = () => {
     [editId, items, mergeDetailIntoItem]
   );
 
+  const currentProgramName = useMemo(() => {
+    if (!attPid) return "";
+    const base = localItems ?? items;
+    const found = base.find((it) => it.programId === attPid);
+    return found?.programName ?? "";
+  }, [attPid, localItems, items]);
+
   return (
     <Wrap>
       <ProgramSearchBar
@@ -190,6 +197,7 @@ const AdminProgram = () => {
       <AttendanceModal
         open={attOpen}
         programId={attPid}
+        programName={currentProgramName}
         onClose={() => {
           setAttOpen(false);
           setAttPid(null);

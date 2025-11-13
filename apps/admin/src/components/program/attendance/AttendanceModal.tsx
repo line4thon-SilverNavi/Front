@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Button, ButtonLayout } from "@core/ui/button";
 import * as S from "../AddProgramModal/modal.styles";
@@ -6,6 +6,7 @@ import styled from "styled-components";
 
 import {
   getProgramApplications,
+  toggleProgramAttendance,
   type ProgramApplicant,
 } from "@apis/program/getApplication";
 import ApplicantList from "./ApplicantList";
@@ -13,6 +14,7 @@ import ApplicantList from "./ApplicantList";
 type Props = {
   open: boolean;
   programId: number | null;
+  programName: string;
   onClose: () => void;
   onSaved?: () => void;
 };
@@ -20,6 +22,7 @@ type Props = {
 export default function AttendanceModal({
   open,
   programId,
+  programName,
   onClose,
   onSaved,
 }: Props) {
@@ -28,6 +31,11 @@ export default function AttendanceModal({
   const [applicants, setApplicants] = useState<ProgramApplicant[]>([]);
   const [total, setTotal] = useState(0);
   const [showNotice, setShowNotice] = useState(true);
+
+  const originalStatusRef = useRef<Map<
+    number,
+    ProgramApplicant["attendanceStatus"]
+  > | null>(null);
 
   useEffect(() => {
     if (!open || !programId) return;
@@ -38,8 +46,13 @@ export default function AttendanceModal({
         setLoading(true);
         const { summary, applicants } = await getProgramApplications(programId);
         if (!alive) return;
+
         setApplicants(applicants);
         setTotal(summary.totalApplicants);
+
+        originalStatusRef.current = new Map(
+          applicants.map((a) => [a.applicantId, a.attendanceStatus])
+        );
       } catch (e: any) {
         toast.error(e?.message || "신청자 정보를 불러오지 못했습니다.");
         onClose();
@@ -57,20 +70,13 @@ export default function AttendanceModal({
     () => applicants.filter((a) => a.attendanceStatus === "출석").length,
     [applicants]
   );
+
   const attendanceRate = useMemo(() => {
     if (!total) return 0;
     return Math.round((attendanceCount / total) * 100);
   }, [attendanceCount, total]);
 
   if (!open) return null;
-
-  // const setStatus = (id: number, status: AttendanceStatus) => {
-  //   setApplicants((list) =>
-  //     list.map((a) =>
-  //       a.applicantId === id ? { ...a, attendanceStatus: status } : a
-  //     )
-  //   );
-  // };
 
   const toggleAttend = (id: number) => {
     setApplicants((list) =>
@@ -98,12 +104,29 @@ export default function AttendanceModal({
   };
 
   const handleSave = async () => {
+    if (!programId) return;
+
     try {
       setSaving(true);
 
-      // 저장 API
+      const original = originalStatusRef.current;
+      if (!original) {
+        toast.error("초기 출석 정보를 불러오지 못했습니다.");
+        return;
+      }
 
-      toast.success("출석 상태가 저장되었습니다. (로컬)");
+      const changedIds = applicants
+        .filter((a) => original.get(a.applicantId) !== a.attendanceStatus)
+        .map((a) => a.applicantId);
+
+      if (changedIds.length === 0) {
+        onClose();
+        return;
+      }
+
+      await toggleProgramAttendance(programId, changedIds);
+
+      toast.success("출석 상태가 저장되었습니다.");
       onSaved?.();
       onClose();
     } catch (e: any) {
@@ -116,67 +139,85 @@ export default function AttendanceModal({
   return (
     <S.Backdrop role="dialog" aria-modal="true" onClick={onClose}>
       <S.Sheet onClick={(e) => e.stopPropagation()}>
-        <S.HeaderWrapper>
+        <HeaderTopFixed>
           <S.HeaderTop>
             <S.HeaderContainer>
-              <S.H2>건강체조 프로그램</S.H2>
+              <S.H2>{programName}</S.H2>
               <p className="attendDes">신청자 관리 및 출석 체크</p>
             </S.HeaderContainer>
             <S.Close src="/img/close.svg" onClick={onClose} />
           </S.HeaderTop>
+        </HeaderTopFixed>
 
-          {showNotice && (
-            <S.NoticeWrapper>
-              <S.NoticeContainer>
-                <img src="/img/program/notice.svg" />
-                <S.NoticeText>
-                  <p>혹시 신청자 전부가 보이지 않는다면?</p>
-                  <p className="noticeDes">
-                    프로그램 신청 관리에서 승인되신 참가자 명단만 보여드립니다.
-                    <br />
-                    혹여나 아직 대기를 승인하지 않으셨다면{" "}
-                    <span className="blue">"신청 관리"</span>에서 확인해보세요!
-                  </p>
-                </S.NoticeText>
-              </S.NoticeContainer>
-              <S.Close
-                src="/img/program/blueClose.svg"
-                onClick={() => setShowNotice(false)}
-                className="blueClose"
-              />
-            </S.NoticeWrapper>
-          )}
-          <S.AttendancyCurrent>
-            <SummaryBox label="총 참가자" value={`${total}명`} />
-            <SummaryBox label="출석 인원" value={`${attendanceCount}명`} />
-            <SummaryBox label="출석률" value={`${attendanceRate}%`} />
-          </S.AttendancyCurrent>
+        <Body>
+          <S.HeaderWrapper>
+            {showNotice && (
+              <S.NoticeWrapper>
+                <S.NoticeContainer>
+                  <img src="/img/program/notice.svg" />
+                  <S.NoticeText>
+                    <p>혹시 신청자 전부가 보이지 않는다면?</p>
+                    <p className="noticeDes">
+                      프로그램 신청 관리에서 승인되신 참가자 명단만
+                      보여드립니다.
+                      <br />
+                      혹여나 아직 대기를 승인하지 않으셨다면{" "}
+                      <span className="blue">"신청 관리"</span>에서
+                      확인해보세요!
+                    </p>
+                  </S.NoticeText>
+                </S.NoticeContainer>
+                <S.Close
+                  src="/img/program/blueClose.svg"
+                  onClick={() => setShowNotice(false)}
+                  className="blueClose"
+                />
+              </S.NoticeWrapper>
+            )}
 
-          <ButtonLayout type="row" gap={12}>
-            <Button onClick={checkAll} size="lg" typo="heading3">
-              전체 출석 체크
-            </Button>
-            <Button
-              tone="gray"
-              variant="subtle"
-              onClick={uncheckAll}
-              size="lg"
-              typo="heading3"
-            >
-              전체 출석 취소
-            </Button>
-          </ButtonLayout>
-        </S.HeaderWrapper>
+            <S.AttendancyCurrent>
+              <SummaryBox label="총 참가자" value={`${total}명`} />
+              <SummaryBox label="출석 인원" value={`${attendanceCount}명`} />
+              <SummaryBox label="출석률" value={`${attendanceRate}%`} />
+            </S.AttendancyCurrent>
 
-        <S.Content aria-busy={loading}>
-          <ApplicantList items={applicants} onToggle={toggleAttend} />
-        </S.Content>
+            <ButtonLayout type="row" gap={12}>
+              <Button onClick={checkAll} size="lg" typo="heading3">
+                전체 출석 체크
+              </Button>
+              <Button
+                tone="gray"
+                variant="subtle"
+                onClick={uncheckAll}
+                size="lg"
+                typo="heading3"
+              >
+                전체 출석 취소
+              </Button>
+            </ButtonLayout>
+          </S.HeaderWrapper>
+
+          <S.Content aria-busy={loading}>
+            <ApplicantList items={applicants} onToggle={toggleAttend} />
+          </S.Content>
+        </Body>
+
+        <ButtonContainer>
+          <Button
+            fullWidth
+            size="lg"
+            typo="heading3"
+            onClick={handleSave}
+            disabled={saving}
+          >
+            출석 체크 저장하기
+          </Button>
+        </ButtonContainer>
       </S.Sheet>
     </S.Backdrop>
   );
 }
 
-/* ---------- small parts ---------- */
 function SummaryBox({ label, value }: { label: string; value: string }) {
   return (
     <Box>
@@ -201,4 +242,29 @@ const Label = styled.div`
 const Value = styled.div`
   ${({ theme }) => theme.fonts.heading2};
   color: ${({ theme }) => theme.colors.gray07};
+`;
+
+const ButtonContainer = styled.div`
+  width: 100%;
+  display: flex;
+  padding: 15px;
+  border-top: 1px solid ${({ theme }) => theme.colors.gray04};
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  background: #fff;
+`;
+
+const HeaderTopFixed = styled.div`
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #fff;
+  padding: 18px 24px 0 18px;
+`;
+
+const Body = styled.div`
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 `;
