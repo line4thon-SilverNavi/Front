@@ -33,13 +33,18 @@ export default function Review(){
     }, [facilityId]);
 
     const renderStars = () => {
-        const stars = Array.from({ length: 5 }, (_, index) => index < Math.floor(averageRating));
-        return stars.map((filled, index) => (
-            <img
-                key={index}
-                src={filled ? "/img/cards/rate.png" : "/img/detail-page/star-empty.png"}
-            />
-        ));
+        return Array.from({ length: 5 }, (_, index) => {
+            const fillPercentage = Math.min(Math.max(averageRating - index, 0), 1) * 100;
+            
+            return (
+                <StarWrapper key={index}>
+                    <img src="/img/detail-page/star-empty.png" alt="empty star" />
+                    <FilledStar $fillPercentage={fillPercentage}>
+                        <img src="/img/cards/rate.png" alt="filled star" />
+                    </FilledStar>
+                </StarWrapper>
+            );
+        });
     };
 
     return(
@@ -118,6 +123,34 @@ const StarsContainer = styled.div`
     img {
         width: 20px;
         height: 20px;
+    }
+`;
+
+const StarWrapper = styled.div`
+    position: relative;
+    width: 20px;
+    height: 20px;
+    
+    img {
+        width: 20px;
+        height: 20px;
+        display: block;
+    }
+`;
+
+const FilledStar = styled.div<{ $fillPercentage: number }>`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    clip-path: inset(0 ${props => 100 - props.$fillPercentage}% 0 0);
+    
+    img {
+        width: 20px;
+        height: 20px;
+        display: block;
     }
 `;
 
