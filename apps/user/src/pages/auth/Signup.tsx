@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import DefaultLayout from "@layouts/DefaultLayout";
 import InputContainer from "@core/components/inputContainer";
 import { postSignup } from "@apis/auth/signup";
-import { relationLabel, type RelationCode } from "@constants/relation";
+import { relationLabel, relationToApi, type RelationCode } from "@constants/relation";
 import RelationSelectModal from "@components/auth/RelationSelectModal";
 import styled from "styled-components";
 
@@ -23,7 +23,7 @@ export default function Signup() {
 
     const res = await postSignup({
       name,
-      relation,
+      relation: relationToApi(relation as RelationCode) || "",
       phone: phone.replace(/[^0-9]/g, ""),
       password: pw,
       passwordCheck: pwCheck,
