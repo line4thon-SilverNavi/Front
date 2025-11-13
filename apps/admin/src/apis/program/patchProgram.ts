@@ -3,8 +3,12 @@ import type { PatchProgramPayload, ApiEnvelope, ProgramDetail } from "./types";
 
 const fdAdd = (fd: FormData, key: string, val: unknown) => {
   if (val === null || val === undefined) return;
-  if (Array.isArray(val)) fd.append(key, JSON.stringify(val));
-  else fd.append(key, String(val));
+  if (Array.isArray(val)) {
+    // supplies 같은 애들만 여기 타게 (서버에서 JSON 문자열로 받는 경우)
+    fd.append(key, JSON.stringify(val));
+  } else {
+    fd.append(key, String(val));
+  }
 };
 
 export async function patchProgram(
@@ -27,10 +31,24 @@ export async function patchProgram(
   fdAdd(fd, "supplies", payload.supplies);
   fdAdd(fd, "isDeleteProposal", payload.isDeleteProposal);
 
-  if (payload.proposal) fd.append("proposal", payload.proposal);
-  payload.newImages?.forEach((f) => fd.append("newImages", f));
-  if (payload.existingImageUrls)
-    fd.append("existingImageUrls", JSON.stringify(payload.existingImageUrls));
+  if (payload.supplies !== null) {
+    fd.append("supplies", JSON.stringify(payload.supplies ?? []));
+  }
+
+  // 파일들
+  if (payload.proposal) {
+    fd.append("proposal", payload.proposal);
+  }
+
+  payload.newImages?.forEach((f) => {
+    if (f) fd.append("newImages", f);
+  });
+
+  if (payload.existingImageUrls) {
+    payload.existingImageUrls.forEach((url) => {
+      fd.append("existingImageUrls", url);
+    });
+  }
 
   const res = await instance.patch<ApiEnvelope<ProgramDetail>>(
     `/api/programs/${id}`,

@@ -52,6 +52,10 @@ export const Header = styled.div`
   justify-content: space-between;
   border-bottom: 1px solid ${({ theme }) => theme.colors.gray04};
   padding: 18px 24px;
+  top: 0;
+  position: sticky;
+  background-color: #fff;
+  z-index: 99;
 
   .attendDes {
     ${({ theme }) => theme.fonts.title1};

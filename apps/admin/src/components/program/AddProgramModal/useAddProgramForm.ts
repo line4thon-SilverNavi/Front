@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from "react";
+import type React from "react";
 import toast from "react-hot-toast";
 import { isFutureDate, isHHmm, isValidPhone } from "@shared/validators/program";
 import {
@@ -153,6 +154,30 @@ export function useAddProgramForm(facilityName?: string) {
     }
   };
 
+  const onPickProposal = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setState((s) => ({ ...s, proposal: file }));
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const onPickImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+
+    setState((s) => {
+      const merged = [...s.images, ...files];
+      if (merged.length > 5) {
+        toast.error("이미지는 최대 5장까지 업로드 가능합니다.");
+        return { ...s, images: merged.slice(0, 5) };
+      }
+      return { ...s, images: merged };
+    });
+
+    if (imgInputRef.current) imgInputRef.current.value = "";
+  };
+
   return {
     busy,
     name: state.name,
@@ -191,7 +216,7 @@ export function useAddProgramForm(facilityName?: string) {
     submit,
     reset,
     CATS: VALID_CATS,
-    onPickProposal: (_e: React.ChangeEvent<HTMLInputElement>) => {},
-    onPickImages: (_e: React.ChangeEvent<HTMLInputElement>) => {},
+    onPickProposal,
+    onPickImages,
   };
 }
