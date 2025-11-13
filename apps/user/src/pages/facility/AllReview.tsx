@@ -152,13 +152,3 @@ const EmptyState = styled.div`
     color: ${({ theme }) => theme.colors.gray04};
 `;
 
-const DoReview  = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 1.5rem 1rem 2.5rem 1rem;
-    border-radius: 12px;
-    gap: 1.2rem;
-    ${({ theme }) => theme.fonts.title2};
-    color: ${({ theme }) => theme.colors.gray07};
-`;

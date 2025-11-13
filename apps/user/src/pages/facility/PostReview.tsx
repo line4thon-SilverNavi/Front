@@ -3,7 +3,7 @@ import CommonHeader from "@components/common/CommonHeader";
 import styled from "styled-components";
 import NavBar from "@components/common/NavBar";
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getFacilityDetail } from "@apis/facility/facilityDetail";
 import TextAreaContainer from "@core/components/TextAreaContainer";
 import { Button } from "@core/ui/button";
@@ -12,7 +12,6 @@ import ReviewSuccessModal from "@components/facility/ReviewSuccessModal";
 
 export default function PostReview(){
     const { facilityId } = useParams<{ facilityId: string }>();
-    const navigate = useNavigate();
     const [name, setName] = useState("");
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
