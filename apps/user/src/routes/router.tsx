@@ -18,6 +18,9 @@ import SetUserInfo from "@pages/mypage/SetUserInfo";
 import Certify from "@pages/mypage/Certify";
 import ProgramApply from "@pages/program/ProgramApply";
 import History from "@pages/history/History";
+import Notification from "@pages/notification/Notification";
+import Search from "@pages/search/Search";
+import SearchResult from "@pages/search/SearchResult";
 
 const router = createBrowserRouter([
   {
@@ -38,8 +41,11 @@ const router = createBrowserRouter([
       { path: "finishapply", element: <FinishApplyPage />},
       { path: "mypage", element: <Mypage /> },
       { path: "setuser", element: <SetUserInfo /> },
-      { path: "mypage/certify", element: <Certify /> },
+      { path: "certify", element: <Certify /> },
       { path: "history", element: <History /> },
+      { path: "notification", element: <Notification /> },
+      { path: "search", element: <Search /> },
+      { path: "search/result", element: <SearchResult /> },
       { path: "button", element: <Btn /> },
     ],
   },

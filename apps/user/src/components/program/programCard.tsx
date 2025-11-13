@@ -17,6 +17,7 @@ type ProgramCardProps = {
     fee: string; 
     thumbnail: string | null; 
     bookmarked: boolean;
+    done?: "예정" | "완료";
 };
 
 export default function ProgramCard({
@@ -32,7 +33,8 @@ export default function ProgramCard({
     currentApplicants,
     capacity,
     //fee,
-    bookmarked
+    bookmarked,
+    done
 }: ProgramCardProps){
     const navigate = useNavigate();
     const formattedDate = useFormatDate(date);
@@ -58,16 +60,23 @@ export default function ProgramCard({
 
     return(
         <CardWrapper onClick={handleCardClick}>
-            <BookmarkButtonWrapper onClick={handleBookmarkClick}>
-                <BookmarkButton 
-                    initialBookmarked={bookmarked}
-                    contentId={programId}
-                    type="프로그램"
-                />
-            </BookmarkButtonWrapper>
+            {!done && (
+                <BookmarkButtonWrapper onClick={handleBookmarkClick}>
+                    <BookmarkButton 
+                        initialBookmarked={bookmarked}
+                        contentId={programId}
+                        type="프로그램"
+                    />
+                </BookmarkButtonWrapper>
+            )}
             <CategoryTag>
                 {category}
             </CategoryTag>
+            {done && (
+                <StatusTag $isDone={done === "완료"}>
+                    {done}
+                </StatusTag>
+            )}
             <Container>
                 <Img style={{ backgroundImage: `url(${displayThumbnail})` }}></Img>
                 <InfoContainer>
@@ -115,6 +124,23 @@ const CategoryTag = styled.div`
     ${({ theme }) => theme.fonts.body4};
     color: ${({ theme }) => theme.colors.blue01};
     background-color: ${({ theme }) => theme.colors.blue03};
+    padding: 0.15rem 0.4rem;
+    border-radius: 5px;
+    width: 3rem;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+`;
+
+const StatusTag = styled.div<{ $isDone: boolean }>`
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+    z-index: 10;
+    ${({ theme }) => theme.fonts.title3};
+    color: white;
+    background-color: ${({ $isDone, theme }) => 
+        $isDone ? theme.colors.signal : theme.colors.blue01};
     padding: 0.15rem 0.4rem;
     border-radius: 5px;
     width: 3rem;
