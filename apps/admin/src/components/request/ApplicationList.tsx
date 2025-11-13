@@ -60,7 +60,7 @@ const Empty = styled.div`
   padding: 28px;
   text-align: center;
   color: #64748b;
-  background: #ffffff;
+  background: ${({ theme }) => theme.colors.gray01};
   border-radius: 12px;
-  border: 1px solid ${({ theme }) => theme.colors.gray03};
+  border: 0.636px solid ${({ theme }) => theme.colors.gray03};
 `;

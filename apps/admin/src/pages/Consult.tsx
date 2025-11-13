@@ -140,6 +140,8 @@ const Consult = () => {
 
   return (
     <PageWrapper>
+      {/* 상태 요약 카드 */}
+      <CounselStatusCard summary={summary} />
       <RequestSearchBar
         status={statusFilter}
         onStatusChange={(s) => {
@@ -155,9 +157,6 @@ const Consult = () => {
         placeholder="이름, 연락처로 검색"
         statusOptions={STATUS_OPTIONS}
       />
-
-      {/* 상태 요약 카드 */}
-      <CounselStatusCard summary={summary} />
 
       {/* 상담 리스트 영역 */}
       <ListWrapper aria-busy={loading}>
