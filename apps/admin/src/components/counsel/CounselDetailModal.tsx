@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import {
   getCounselDetail,
   type CounselDetail,
-} from "@apis/counsel/getCounselDetail";
+} from "@apis/consult/getConsultDetail";
 import {
   CounselStatusBadge,
   type CounselStatus,
