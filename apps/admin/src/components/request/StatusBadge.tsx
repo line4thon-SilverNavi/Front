@@ -1,6 +1,10 @@
+import {
+  STATUS_STYLE_MAP,
+  type StatusType,
+} from "@components/common/status/statusMap";
 import styled, { css } from "styled-components";
 
-export type AppStatus = "대기중" | "승인" | "거부";
+export type AppStatus = StatusType;
 
 type Props = { status: AppStatus; className?: string };
 
@@ -25,7 +29,6 @@ export default function StatusBadge({ status, className }: Props) {
   );
 }
 
-/* ---------- styles ---------- */
 const Badge = styled.span<{ $status: AppStatus }>`
   display: inline-flex;
   align-items: center;
@@ -33,30 +36,20 @@ const Badge = styled.span<{ $status: AppStatus }>`
   padding: 4px 16px;
   width: 80%;
   border-radius: 20px;
+
   ${({ theme }) => theme.fonts.body3};
 
-  ${({ $status, theme }) => {
-    switch ($status) {
-      case "승인":
-        return css`
-          color: ${theme.colors.blue01};
-          background: ${theme.colors.blue03};
-        `;
-      case "대기중":
-        return css`
-          color: #ff9500;
-          background: #fefce8;
-        `;
-      case "거부":
-        return css`
-          color: ${theme.colors.alert};
-          background: #fef2f2;
-        `;
-    }
+  ${({ $status }) => {
+    const s = STATUS_STYLE_MAP[$status];
+    return css`
+      color: ${s.color};
+      background: ${s.bg};
+    `;
   }}
 `;
 
 const Icon = styled.img`
   width: 18px;
   height: 18px;
+  flex-shrink: 0;
 `;

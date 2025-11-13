@@ -1,17 +1,21 @@
 import type { ApplicationsSummary } from "@apis/request/getApplications";
-import styled from "styled-components";
+import {
+  STATUS_STYLE_MAP,
+  type StatusType,
+} from "@components/common/status/statusMap";
+import styled, { css } from "styled-components";
 
 type Props = {
   summary: ApplicationsSummary;
-  onClickCard?: (status?: "대기중" | "승인" | "거부") => void;
+  onClickCard?: (status: StatusType) => void;
 };
 
-export default function RequestSummaryCards({ summary }: Props) {
+export default function RequestSummaryCards({ summary, onClickCard }: Props) {
   const { pendingCount, approvedCount, rejectedCount } = summary;
 
   return (
     <Wrap>
-      <Card $tone="pending">
+      <Card status="대기중" onClick={() => onClickCard?.("대기중")}>
         <Head>
           <img src="/img/request/waiting.svg" />
           <Title>대기중</Title>
@@ -19,7 +23,7 @@ export default function RequestSummaryCards({ summary }: Props) {
         <Count>{pendingCount}</Count>
       </Card>
 
-      <Card $tone="approved">
+      <Card status="승인" onClick={() => onClickCard?.("승인")}>
         <Head>
           <img src="/img/request/approve.svg" />
           <Title>승인</Title>
@@ -27,7 +31,7 @@ export default function RequestSummaryCards({ summary }: Props) {
         <Count>{approvedCount}</Count>
       </Card>
 
-      <Card $tone="rejected">
+      <Card status="거부" onClick={() => onClickCard?.("거부")}>
         <Head>
           <img src="/img/request/deny.svg" />
           <Title>거부</Title>
@@ -38,36 +42,24 @@ export default function RequestSummaryCards({ summary }: Props) {
   );
 }
 
-/* ---------- styled ---------- */
 const Wrap = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 `;
 
-const Card = styled.div<{ $tone: "pending" | "approved" | "rejected" }>`
-  padding: 20px;
-  border-radius: 12px;
-  border: 0.679px solid
-    ${({ $tone }) =>
-      $tone === "pending"
-        ? "#FF9500"
-        : $tone === "approved"
-          ? "#409EE3"
-          : "#FF6B6B"};
-  background: ${({ $tone }) =>
-    $tone === "pending"
-      ? "#FEFCE8"
-      : $tone === "approved"
-        ? "#EEF8FF"
-        : "#FEF2F2"};
-
-  color: ${({ $tone }) =>
-    $tone === "pending"
-      ? "#FF9500"
-      : $tone === "approved"
-        ? "#409EE3"
-        : "#FF6B6B"};
+const Card = styled.div<{ status: StatusType }>`
+  ${({ status }) => {
+    const s = STATUS_STYLE_MAP[status];
+    return css`
+      padding: 20px;
+      border-radius: 12px;
+      border: 0.679px solid ${s.border};
+      background: ${s.bg};
+      color: ${s.color};
+      cursor: pointer;
+    `;
+  }}
 `;
 
 const Head = styled.div`
