@@ -71,10 +71,36 @@ export const HeaderTop = styled.div`
   justify-content: space-between;
 `;
 
+export const RejectHeaderTop = styled.div`
+  display: flex;
+  padding: 30px 24px;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.gray04};
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+
+  .rejectTop {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+`;
+
 export const HeaderContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5.49px;
+`;
+
+export const RejectHeaderContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5.49px;
+`;
+
+export const HeaderIcon = styled.img`
+  width: 48px;
+  height: 48px;
 `;
 
 export const NoticeWrapper = styled.div`

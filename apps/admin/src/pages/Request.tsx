@@ -20,6 +20,7 @@ import RequestSearchBar, {
 } from "@components/request/RequestSearchBar";
 import ApplicationList from "@components/request/ApplicationList";
 import ApplicationDetailModal from "@components/request/ApplicationDetailModal";
+import RejectApplicationModal from "@components/request/RejectApplicationModal";
 
 type OutletCtx = {
   setHeader: (o: {
@@ -43,6 +44,11 @@ const Request = () => {
   const [items, setItems] = useState<ApplicationItem[]>([]);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailId, setDetailId] = useState<number | null>(null);
+  const [rejectTarget, setRejectTarget] = useState<{
+    id: number | null;
+    applicantName: string;
+    programName: string;
+  } | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -97,6 +103,30 @@ const Request = () => {
 
   //모달 열기
 
+  const handleStatusChange = useCallback(
+    (id: number | null, nextStatus: ApplicationStatus) => {
+      if (!id) return;
+
+      // 리스트에서 해당 신청의 상태만 갱신
+      setItems((prev) =>
+        prev.map((item) =>
+          item.applicationId === id ? { ...item, status: nextStatus } : item
+        )
+      );
+
+      // 요약 카드도 최신으로 맞추고 싶으면 다시 fetch
+      (async () => {
+        try {
+          const res = await getApplications({ page: 1, status: statusFilter });
+          setSummary(res.summary);
+        } catch {
+          // 요약 새로 못 불러와도 치명적이진 않으니 토스트는 생략 가능
+        }
+      })();
+    },
+    [statusFilter]
+  );
+
   const handleManageClick = useCallback((applicationId: number) => {
     setDetailId(applicationId);
     setDetailOpen(true);
@@ -111,7 +141,6 @@ const Request = () => {
           onClickCard={(st) => setStatusFilter(st)}
         />
       )}
-
       <RequestSearchBar
         status={status}
         onStatusChange={(s) => {
@@ -121,13 +150,11 @@ const Request = () => {
         onQueryChange={setQuery}
         onSubmit={() => {}}
       />
-
       <ApplicationList
         items={items}
         loading={loading}
         onManageClick={handleManageClick}
       />
-
       <ApplicationDetailModal
         open={detailOpen}
         applicationId={detailId}
@@ -135,10 +162,28 @@ const Request = () => {
           setDetailOpen(false);
           setDetailId(null);
         }}
-        onStatusChange={(s) => {
-          // 승인/거부 후 다시 목록 refetch 등
-          // refetch();
+        onOpenRejectModal={(id) => {
+          const target = items.find((a) => a.applicationId === id);
+          setRejectTarget({
+            id,
+            applicantName: target?.applicantName ?? "",
+            programName: target?.programName ?? "",
+          });
+          // 거부 모달 띄울 때 상세 모달은 닫는 게 UX 상 자연스러움
+          setDetailOpen(false);
         }}
+        // 승인 시: 현재 detailId 기준으로 상태 업데이트
+        onStatusChange={(s) => handleStatusChange(detailId, s)}
+      />
+      \
+      <RejectApplicationModal
+        open={!!rejectTarget}
+        applicationId={rejectTarget?.id ?? null}
+        applicantName={rejectTarget?.applicantName ?? ""}
+        programName={rejectTarget?.programName ?? ""}
+        onClose={() => setRejectTarget(null)}
+        // 거부 시: rejectTarget.id 기준으로 상태 업데이트
+        onStatusChange={(s) => handleStatusChange(rejectTarget?.id ?? null, s)}
       />
     </Wrap>
   );
