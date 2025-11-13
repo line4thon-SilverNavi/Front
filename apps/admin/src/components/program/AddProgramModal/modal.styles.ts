@@ -71,21 +71,6 @@ export const HeaderTop = styled.div`
   justify-content: space-between;
 `;
 
-export const RejectHeaderTop = styled.div`
-  display: flex;
-  padding: 30px 24px;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.gray04};
-  width: 100%;
-  align-items: center;
-  justify-content: space-between;
-
-  .rejectTop {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-`;
-
 export const HeaderContainer = styled.div`
   display: flex;
   flex-direction: column;

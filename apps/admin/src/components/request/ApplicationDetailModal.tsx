@@ -15,6 +15,7 @@ import {
 import { DetailHeaderCard } from "@components/common/detail/DetailHeaderCard";
 import StatusTag from "./StatusTag";
 import { patchApplicationStatus } from "@apis/request/patchApplicationStatus";
+import RequestModalShell from "@components/request/RequestModalShell";
 
 type Props = {
   open: boolean;
@@ -71,17 +72,15 @@ export default function ApplicationDetailModal({
 
   if (!detail) {
     return (
-      <S.Backdrop role="dialog" aria-modal="true" onClick={onClose}>
-        <S.Sheet onClick={(e) => e.stopPropagation()}>
-          <S.Header>
-            <S.H2>신청자 상세 정보</S.H2>
-            <S.Close onClick={onClose} src="/img/close.svg" />
-          </S.Header>
-          <S.Content aria-busy="true">
-            <p>불러오는 중</p>
-          </S.Content>
-        </S.Sheet>
-      </S.Backdrop>
+      <RequestModalShell open={open} onClose={onClose}>
+        <S.Header>
+          <S.H2>신청자 상세 정보</S.H2>
+          <S.Close onClick={onClose} src="/img/close.svg" />
+        </S.Header>
+        <S.Content aria-busy="true">
+          <p>불러오는 중</p>
+        </S.Content>
+      </RequestModalShell>
     );
   }
 
@@ -107,8 +106,6 @@ export default function ApplicationDetailModal({
       toast.error("대기중 상태에서만 거부할 수 있습니다.");
       return;
     }
-
-    // 나중에 구현할 거부 사유 모달 열기
     onOpenRejectModal?.(applicationId);
   };
 
@@ -133,14 +130,15 @@ export default function ApplicationDetailModal({
       setSaving(false);
     }
   };
-  return (
-    <S.Backdrop role="dialog" aria-modal="true" onClick={onClose}>
-      <S.Sheet onClick={(e) => e.stopPropagation()}>
-        <S.Header>
-          <S.H2>신청자 상세 정보</S.H2>
-          <S.Close onClick={onClose} src="/img/close.svg" />
-        </S.Header>
 
+  return (
+    <RequestModalShell open={open} onClose={onClose}>
+      <StickyHeader>
+        <S.H2>신청자 상세 정보</S.H2>
+        <S.Close onClick={onClose} src="/img/close.svg" />
+      </StickyHeader>
+
+      <ScrollArea>
         <S.DetailContent aria-busy={loading}>
           <DetailHeaderCard
             title={programName}
@@ -190,6 +188,7 @@ export default function ApplicationDetailModal({
             <SectionTitle>특이사항</SectionTitle>
             <TextAreaReadOnly>{content}</TextAreaReadOnly>
           </Section>
+
           <Section style={{ marginTop: 16 }}>
             <SectionTitle>현재 상태</SectionTitle>
             <StatusBox>
@@ -197,43 +196,45 @@ export default function ApplicationDetailModal({
             </StatusBox>
           </Section>
         </S.DetailContent>
-
-        {isPending && (
-          <S.BtnBar>
-            <ButtonLayout type="row" gap={12}>
-              <Button
-                tone="red"
-                variant="outline"
-                size="lg"
-                typo="heading3"
-                onClick={handleReject}
-                leftIcon={
-                  <img src="/img/request/deny.svg" width={20} height={20} />
-                }
-              >
-                거부
-              </Button>
-              <Button
-                size="lg"
-                typo="heading3"
-                onClick={handleApprove}
-                leftIcon={
-                  <img
-                    src="/img/request/approve-white.svg"
-                    width={20}
-                    height={20}
-                  />
-                }
-              >
-                승인
-              </Button>
-            </ButtonLayout>
-          </S.BtnBar>
-        )}
-      </S.Sheet>
-    </S.Backdrop>
+      </ScrollArea>
+      {isPending && (
+        <S.BtnBar>
+          <ButtonLayout type="row" gap={12}>
+            <Button
+              tone="red"
+              variant="outline"
+              size="lg"
+              typo="heading3"
+              onClick={handleReject}
+              leftIcon={
+                <img src="/img/request/deny.svg" width={20} height={20} />
+              }
+            >
+              거부
+            </Button>
+            <Button
+              size="lg"
+              typo="heading3"
+              onClick={handleApprove}
+              disabled={saving}
+              leftIcon={
+                <img
+                  src="/img/request/approve-white.svg"
+                  width={20}
+                  height={20}
+                />
+              }
+            >
+              승인
+            </Button>
+          </ButtonLayout>
+        </S.BtnBar>
+      )}
+    </RequestModalShell>
   );
 }
+
+/* ---------- 스타일 ---------- */
 
 const Section = styled.section`
   margin-bottom: 16px;
@@ -260,4 +261,16 @@ const TextAreaReadOnly = styled.div`
   ${({ theme }) => theme.fonts.body2};
   color: ${({ theme }) => theme.colors.gray07};
   white-space: pre-wrap;
+`;
+
+const ScrollArea = styled.div`
+  max-height: 70vh;
+  overflow-y: auto;
+`;
+
+const StickyHeader = styled(S.Header)`
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
 `;
