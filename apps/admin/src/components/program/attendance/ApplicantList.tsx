@@ -2,17 +2,11 @@ import styled from "styled-components";
 import type { ProgramApplicant } from "@apis/program/getApplication";
 import checkImg from "/img/program/check.svg";
 import noCheckImg from "/img/program/noCheck.svg";
+import { fmtPhone } from "@hooks/useFmtPhone";
 
 export type ApplicantListProps = {
   items: ProgramApplicant[];
   onToggle: (id: number) => void;
-};
-
-const fmtPhone = (raw: string) => {
-  if (!raw) return "";
-  if (raw.startsWith("02"))
-    return raw.replace(/(02)(\d{3,4})(\d{4})/, "$1-$2-$3");
-  return raw.replace(/(\d{3})(\d{3,4})(\d{4})/, "$1-$2-$3");
 };
 
 export default function ApplicantList({ items, onToggle }: ApplicantListProps) {

@@ -1,22 +1,21 @@
 import { useEffect, useRef } from "react";
 import styled from "styled-components";
-import type { ProgramCategory } from "@apis/program/createProgram";
 
-type Props = {
+type Props<T extends string> = {
   open: boolean;
-  value: ProgramCategory | "";
-  options: ProgramCategory[];
-  onSelect: (v: ProgramCategory) => void;
+  value: T | "";
+  options: T[];
+  onSelect: (v: T) => void;
   onClose: () => void;
 };
 
-export default function CategoryDropdown({
+export default function CategoryDropdown<T extends string>({
   open,
   value,
   options,
   onSelect,
   onClose,
-}: Props) {
+}: Props<T>) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {

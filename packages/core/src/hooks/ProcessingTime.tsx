@@ -78,6 +78,38 @@ export function useFormatTime(startTime: string, endTime: string): string {
   }
 }
 
+// 내부 헬퍼: 24h → 12h + 오전/오후
+function toK12full(h: number, m: number, s: number) {
+  const isAM = h < 12;
+  const h12 = ((h + 11) % 12) + 1; // 0,12 -> 12, 13->1 ...
+  return {
+    meridiem: isAM ? "오전" : "오후",
+    h12,
+    mm: String(m).padStart(2, "0"),
+    ss: String(s).padStart(2, "0"),
+  };
+}
+
+// "2025-11-13T00:35:23.966645"
+// "2025. 11. 13. 오전 12:35:23"
+export function formatKDateTimeFull(dateString: string): string {
+  if (!dateString) return "";
+  const d = new Date(dateString);
+  if (isNaN(d.getTime())) return dateString;
+
+  const year = d.getFullYear();
+  const month = d.getMonth() + 1;
+  const day = d.getDate();
+
+  const h = d.getHours();
+  const m = d.getMinutes();
+  const s = d.getSeconds();
+
+  const t = toK12full(h, m, s);
+
+  return `${year}. ${month}. ${day}. ${t.meridiem} ${t.h12}:${t.mm}:${t.ss}`;
+}
+
 // "14:00" -> "오후 2시"
 // "10:30" -> "오전 10시 30분"
 // "14:00:00" -> "오후 2시" (초 단위 제거)

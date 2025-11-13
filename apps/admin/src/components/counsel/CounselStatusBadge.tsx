@@ -9,13 +9,11 @@ type Props = {
 
 export default function CounselStatusBadge({ status, className }: Props) {
   const iconSrc =
-    status === "완료"
+    status === "확인됨"
       ? "/img/request/approve.svg"
       : status === "대기중"
         ? "/img/request/waiting.svg"
-        : status === "확인됨"
-          ? "/img/request/check.svg"
-          : "/img/request/deny.svg";
+        : "/img/request/deny.svg";
 
   return (
     <Badge
@@ -41,7 +39,7 @@ const Badge = styled.span<{ $status: CounselStatus }>`
 
   ${({ $status, theme }) => {
     switch ($status) {
-      case "완료":
+      case "확인됨":
         return css`
           color: ${theme.colors.blue01};
           background: ${theme.colors.blue03};
@@ -51,12 +49,7 @@ const Badge = styled.span<{ $status: CounselStatus }>`
           color: #ff9500;
           background: #fefce8;
         `;
-      case "확인됨":
-        return css`
-          color: ${theme.colors.gray06};
-          background: ${theme.colors.gray02};
-        `;
-      case "거부":
+      case "완료":
         return css`
           color: ${theme.colors.alert};
           background: #fef2f2;
