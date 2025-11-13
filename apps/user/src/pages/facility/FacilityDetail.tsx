@@ -101,6 +101,7 @@ export default function FacilityDetailPage() {
                             <ReviewCard key={review.id} review={review} />
                         )}
                         direction="vertical"
+                        gap="0.25rem"
                     />
                 ) : (
                     <div style={{ textAlign: "center", padding: "20px 0", color: "#999" }}>

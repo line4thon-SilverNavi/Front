@@ -44,7 +44,7 @@ export default function Review(){
                     </FilledStar>
                 </StarWrapper>
             );
-        });
+        });ㄴ
     };
 
     return(
@@ -81,6 +81,7 @@ export default function Review(){
                                 <ReviewCard key={review.id} review={review} backgroundColor="#eef8ff" />
                             )}
                             direction="vertical"
+                            gap="0.25rem"
                         />
                     </>
                 )}
