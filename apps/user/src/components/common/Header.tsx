@@ -26,7 +26,8 @@ export default function Header(){
                 {error ? "서경대학교" : address || "위치 정보 로딩 중..."}
             </UserLocationInfo>
             <ButtonContainer>
-                <img src={"/img/header/search.png"} style={{height:"22px"}}/>
+                <img src={"/img/header/search.png"} style={{height:"22px"}}
+                onClick={() => navigate("/search")}/>
                 <img 
                     src={noti ? "/img/header/notification-red.png" : "/img/header/notification.png"} 
                     style={{height:"26px", width:"25px"}}

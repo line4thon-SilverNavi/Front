@@ -1,5 +1,12 @@
+import SearchHeader from "@components/search/SearchHeader";
+import DefaultLayout from "@layouts/DefaultLayout";
+
+
 export default function Search(){
     return(
-        <p>검색창입니다.</p>
+        <DefaultLayout 
+            header={<SearchHeader />}>
+    
+        </DefaultLayout>
     );
 }
