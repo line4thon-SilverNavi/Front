@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getFacilityDetail, type ReviewRes } from "@apis/facility/facilityDetail";
 import ReviewCard from "@components/facility/ReviewCard";
+import CardList from "@components/common/CardList";
 
 export default function Review(){
     const { facilityId } = useParams<{ facilityId: string }>();
@@ -58,18 +59,24 @@ export default function Review(){
                 
                 {reviews.length === 0 ? (
                     <EmptyState>아직 작성된 리뷰가 없습니다.</EmptyState>
-                ) : (   <><RatingSection>
-                        <AverageRating>{averageRating.toFixed(1)}</AverageRating>
-                        <StarsContainer>
-                            {renderStars()}
-                        </StarsContainer>
-                        <ReviewCount>후기 {reviews.length}</ReviewCount>
-                    </RatingSection>
-                    <ReviewList>
-                        {reviews.map((review) => (
-                            <ReviewCard key={review.id} review={review} />
-                        ))}
-                    </ReviewList>
+                ) : (
+                    <>
+                        <RatingSection>
+                            <Left>
+                                <AverageRating>{averageRating.toFixed(1)}</AverageRating>
+                                <StarsContainer>
+                                    {renderStars()}
+                                </StarsContainer>
+                            </Left>
+                            <ReviewCount>후기 {reviews.length} <img src="/img/review/arrow.png"/></ReviewCount>
+                        </RatingSection>
+                        <CardList 
+                            items={reviews}
+                            renderCard={(review) => (
+                                <ReviewCard key={review.id} review={review} backgroundColor="#eef8ff" />
+                            )}
+                            direction="vertical"
+                        />
                     </>
                 )}
             </Container>
@@ -78,23 +85,28 @@ export default function Review(){
 }
 
 const Container = styled.div`
-    padding: 1rem;
 `;
 
 const RatingSection = styled.div`
     display: flex;
-    flex-direction: column;
     align-items: center;
-    padding: 2rem 1rem;
+    padding: 0 1rem;
     background: ${({ theme }) => theme.colors.gray01};
     border-radius: 12px;
     margin-bottom: 1.5rem;
+    justify-content: space-between;
 `;
 
 const AverageRating = styled.div`
-    ${({ theme }) => theme.fonts.heading1};
+    ${({ theme }) => theme.fonts.heading2};
     color: ${({ theme }) => theme.colors.gray07};
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.2rem;
+`;
+
+const Left = styled.div`
+    display: flex;
+    align-items: center;
+    gap:5px;
 `;
 
 const StarsContainer = styled.div`
@@ -110,14 +122,15 @@ const StarsContainer = styled.div`
 `;
 
 const ReviewCount = styled.div`
-    ${({ theme }) => theme.fonts.body2};
+    ${({ theme }) => theme.fonts.body3};
     color: ${({ theme }) => theme.colors.gray05};
-`;
-
-const ReviewList = styled.div`
+    align-items: center;
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    gap: 6px;
+    img{
+        width: 4px;
+        height: 8px;
+    }
 `;
 
 const EmptyState = styled.div`

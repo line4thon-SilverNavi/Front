@@ -4,13 +4,14 @@ import type { ReviewRes } from "@apis/facility/facilityDetail";
 
 interface ReviewCardProps {
     review: ReviewRes;
+    backgroundColor?: string;
 }
 
-export default function ReviewCard({ review }: ReviewCardProps) {
+export default function ReviewCard({ review, backgroundColor }: ReviewCardProps) {
     const stars = Array.from({ length: 5 }, (_, index) => index < review.rating);
     
     return (
-        <Card>
+        <Card $backgroundColor={backgroundColor}>
             <Header>
                 <Name>
                     <Avatar>{review.authorName[0]}</Avatar>
@@ -31,11 +32,10 @@ export default function ReviewCard({ review }: ReviewCardProps) {
     );
 }
 
-const Card = styled.div`
+const Card = styled.div<{ $backgroundColor?: string }>`
     padding: 1rem;
-    border: 1px solid ${({ theme }) => theme.colors.gray02};
     border-radius: 8px;
-    background: ${({ theme }) => theme.colors.gray01};
+    background: ${({ $backgroundColor }) => $backgroundColor ?? '#f5f5f5'};
     margin-bottom: 1rem;
 `;
 
@@ -85,7 +85,7 @@ const RatingStarContainer = styled.div`
 `;
 
 const Content = styled.div`
-    ${({ theme }) => theme.fonts.body1};
+    ${({ theme }) => theme.fonts.body4};
     color: ${({ theme }) => theme.colors.gray07};
     line-height: 1.5;
 `;

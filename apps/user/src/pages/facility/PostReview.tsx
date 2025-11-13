@@ -56,9 +56,13 @@ export default function PostReview(){
             });
             alert("리뷰가 등록되었습니다.");
             navigate(`/facility/${facilityId}/review`);
-        } catch (error) {
+        } catch (error: any) {
             console.error("리뷰 등록에 실패했습니다:", error);
-            alert("리뷰 등록에 실패했습니다. 다시 시도해주세요.");
+            if (error.response?.status === 409) {
+                alert("이미 이 시설에 대한 리뷰를 작성하셨습니다.");
+            } else {
+                alert("리뷰 등록에 실패했습니다. 다시 시도해주세요.");
+            }
         }
     };
 
@@ -94,7 +98,9 @@ export default function PostReview(){
                         label=""
                         value={content}
                         onChange={setContent}
-                        placeholder="후기를 자유롭게 작성해주세요."
+                        backgroundColor="transparent"
+                        border="1px solid #e5e5e5"
+                        placeholder="시설에 관한 후기를 자유롭게 작성해주세요"
                         helperText=" "
                     />
                 </ContentContainer>
@@ -179,6 +185,6 @@ const Title = styled.div`
 `;
 
 const ButtonContainer = styled.div`
-    margin-top: 2rem;
+    margin-top: 5rem;
     padding-bottom: 1rem;
 `;

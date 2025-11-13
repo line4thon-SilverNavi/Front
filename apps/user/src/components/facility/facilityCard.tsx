@@ -104,7 +104,7 @@ const InfoContainer = styled.div`
     flex-direction: column;
     align-items: flex-start;
     padding: 0.8rem 1.1rem;
-    gap: 0.5rem;
+    gap: 0.2rem;
 `;
 
 const Title = styled.div`
@@ -142,6 +142,7 @@ const Details = styled.div`
 const Review = styled.div`
     display: flex;
     gap: 5px;
+    align-items: center;
     ${({ theme }) => theme.fonts.body3};
     color: ${({ theme }) => theme.colors.gray07};
     p{
