@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import * as S from "@components/program/AddProgramModal/modal.styles";
 import RequestModalShell from "@components/request/RequestModalShell";
 import toast from "react-hot-toast";
@@ -29,6 +29,7 @@ import ConsultReplyField, { type ConsultReplyValue } from "./CounselReplyField";
 import TextAreaContainer from "@core/components/TextareaContainer";
 import { postConsultReply } from "@apis/consult/postReply";
 import ConsultStatusField from "./ConsultStatusField";
+import { STATUS_STYLE_MAP } from "@components/common/status/statusMap";
 
 type Props = {
   open: boolean;
@@ -253,7 +254,7 @@ export default function ConsultDetailModal({
           <HeaderMeta>
             <S.H2>상담 상세 정보</S.H2>
             <CategoryBadge>{consultCategory}</CategoryBadge>
-            <StatusTag status={status} />
+            <StatusBadge $status={status}>{status}</StatusBadge>
           </HeaderMeta>
           <span className="time">{formatKDateTimeFull(appliedAt)} 신청</span>
         </div>
@@ -458,17 +459,26 @@ const HeaderMeta = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-
-  span {
-    ${({ theme }) => theme.fonts.caption};
-    color: ${({ theme }) => theme.colors.gray05};
-  }
 `;
 
 const CategoryBadge = styled.span`
-  padding: 2px 10px;
-  border-radius: 999px;
-  ${({ theme }) => theme.fonts.caption};
-  background: ${({ theme }) => theme.colors.gray02};
-  color: ${({ theme }) => theme.colors.gray06};
+  padding: 5px 10px;
+  border-radius: 25100200px;
+  ${({ theme }) => theme.fonts.title3};
+  background: ${({ theme }) => theme.colors.blue03};
+  color: ${({ theme }) => theme.colors.blue01};
+`;
+
+const StatusBadge = styled.span<{ $status: ConsultStatus }>`
+  padding: 5px 10px;
+  border-radius: 25100200px;
+  ${({ theme }) => theme.fonts.title3};
+
+  ${({ $status }) => {
+    const s = STATUS_STYLE_MAP[$status];
+    return css`
+      color: ${s.color};
+      background: ${s.bg};
+    `;
+  }}
 `;
