@@ -1,11 +1,13 @@
 import styled from "styled-components";
 import { useFetchAddress } from "@hooks/UserLocation";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Header(){
     const { address, error } = useFetchAddress();
-    const [ noti, _setNoti] = useState(false);
-    // _setNoti 추후 알림기능 백과 연동 후 사용
+    const [ noti, _setNoti] = useState(false);     // _setNoti 추후 알림기능 백과 연동 후 사용
+    const navigate = useNavigate();
+
 
     return(
         <HeaderContainer>
@@ -14,7 +16,11 @@ export default function Header(){
             </UserLocationInfo>
             <ButtonContainer>
                 <img src={"/img/header/search.png"} style={{height:"22px"}}/>
-                <img src={noti ? "/img/header/notification-red.png" : "/img/header/notification.png"} style={{height:"26px", width:"25px"}}/>
+                <img 
+                    src={noti ? "/img/header/notification-red.png" : "/img/header/notification.png"} 
+                    style={{height:"26px", width:"25px"}}
+                    onClick={() => navigate("/notification")}
+                />
             </ButtonContainer>
         </HeaderContainer>
     )
