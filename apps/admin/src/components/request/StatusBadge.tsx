@@ -10,7 +10,7 @@ type Props = { status: AppStatus; className?: string };
 
 export default function StatusBadge({ status, className }: Props) {
   const iconSrc =
-    status === "승인"
+    status === "승인" || "확인됨"
       ? "/img/request/approve.svg"
       : status === "대기중"
         ? "/img/request/waiting.svg"

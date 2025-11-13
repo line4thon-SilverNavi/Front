@@ -1,7 +1,7 @@
 import { getResponse } from "@core/api/instance";
 
 export type ConsultCategory = "일반상담" | "시설상담";
-export type ConsultStatus = "대기중" | "승인" | "거부";
+export type ConsultStatus = "대기중" | "확인됨" | "완료" | "거부";
 
 type ConsultDetailApi = {
   consultCategory: ConsultCategory;

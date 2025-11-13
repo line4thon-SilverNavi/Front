@@ -1,4 +1,3 @@
-// src/components/counsel/ConsultDetailModal.tsx
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import * as S from "@components/program/AddProgramModal/modal.styles";
@@ -11,7 +10,6 @@ import {
   DetailInfoField,
   DetailInfoFieldGrid,
 } from "@components/common/detail/DetailInfoFields";
-import StatusTag from "@components/request/StatusTag"; // 이미 있는 상태 뱃지 재사용 (승인/대기중/거부)
 
 import {
   getConsultDetail,
@@ -20,13 +18,21 @@ import {
   type ConsultStatus,
 } from "@apis/consult/getConsultDetail";
 import { fmtPhone } from "@hooks/useFmtPhone";
+import {
+  patchConsultReply,
+  type ConfirmedTime,
+  type ConsultStatusForPatch,
+} from "@apis/consult/patchConsultReply";
+import type { ConsultReplyValue } from "./CounselReplyField";
+import ConsultReplyField from "./CounselReplyField";
+import ConsultStatusField from "./ConsultStatusField";
 
 type Props = {
   open: boolean;
   consultId: number | null;
   category: ConsultCategory | null;
   onClose: () => void;
-  onStatusChange?: (s: ConsultStatus) => void; // 나중에 상태 변경 붙일 때 사용 가능
+  onStatusChange?: (s: ConsultStatus) => void;
 };
 
 export default function ConsultDetailModal({
@@ -37,6 +43,25 @@ export default function ConsultDetailModal({
 }: Props) {
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState<ConsultDetail | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [reply, setReply] = useState<ConsultReplyValue>({
+    confirmedDate: "",
+    confirmedTime: "",
+    status: "대기중",
+  });
+
+  useEffect(() => {
+    if (!detail) return;
+
+    const baseDate = detail.hopeDate ?? "";
+    const baseTime = (detail.hopeTime as ConfirmedTime | null) ?? "";
+
+    setReply({
+      confirmedDate: baseDate,
+      confirmedTime: baseTime,
+      status: detail.status,
+    });
+  }, [detail]);
 
   useEffect(() => {
     if (!open || !consultId || !category) return;
@@ -63,7 +88,6 @@ export default function ConsultDetailModal({
 
   if (!open) return null;
 
-  // 로딩 중 skeleton
   if (!detail) {
     return (
       <RequestModalShell open={open} onClose={onClose}>
@@ -72,7 +96,7 @@ export default function ConsultDetailModal({
           <S.Close onClick={onClose} src="/img/close.svg" />
         </S.Header>
         <S.Content aria-busy="true">
-          <p>불러오는 중…</p>
+          <p>불러오는 중</p>
         </S.Content>
       </RequestModalShell>
     );
@@ -80,7 +104,6 @@ export default function ConsultDetailModal({
 
   const {
     consultCategory,
-    status,
     appliedAt,
     name,
     phone,
@@ -100,6 +123,35 @@ export default function ConsultDetailModal({
   const hopeDateTime =
     hopeDate && hopeTime ? `${hopeDate} ${hopeTime}` : (hopeDate ?? "");
 
+  const handleSaveReply = async () => {
+    if (!consultId || !category) {
+      toast.error("상담 정보를 찾을 수 없습니다.");
+      return;
+    }
+
+    const { confirmedDate, confirmedTime, status } = reply;
+
+    if (!confirmedDate || !confirmedTime) {
+      toast.error("상담 확정 일시를 입력해주세요.");
+      return;
+    }
+
+    try {
+      setSaving(true);
+      await patchConsultReply(consultId, category, {
+        confirmedDate,
+        confirmedTime: confirmedTime as ConfirmedTime,
+        consultStatus: status as ConsultStatusForPatch,
+      });
+      toast.success("상담 답변이 저장되었습니다.");
+      onClose();
+    } catch (e: any) {
+      toast.error(e?.message || "상담 답변 저장 중 오류가 발생했습니다.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <RequestModalShell open={open} onClose={onClose}>
       <StickyHeader>
@@ -107,7 +159,6 @@ export default function ConsultDetailModal({
           <HeaderMeta>
             <S.H2>상담 상세 정보</S.H2>
             <CategoryBadge>{consultCategory}</CategoryBadge>
-            <StatusTag status={status} />
           </HeaderMeta>
           <span className="time">{formatKDateTimeFull(appliedAt)} 신청</span>
         </div>
@@ -179,6 +230,23 @@ export default function ConsultDetailModal({
             <FieldLabel>문의 내용</FieldLabel>
             <p>{inquiryContent || "문의 내용이 없습니다."}</p>
           </FieldBlock>
+
+          <SectionTitle style={{ marginTop: 30 }}>문의 답변</SectionTitle>
+
+          <DetailInfoFieldGrid>
+            <ConsultReplyField value={reply} onChange={setReply} />
+
+            {/* 상태 전환 */}
+            <ConsultStatusField
+              value={reply.status}
+              onChange={(next) =>
+                setReply((prev) => ({
+                  ...prev,
+                  status: next,
+                }))
+              }
+            />
+          </DetailInfoFieldGrid>
         </S.DetailContent>
       </ScrollArea>
 
@@ -199,8 +267,8 @@ export default function ConsultDetailModal({
           <Button
             size="lg"
             typo="heading3"
-            // onClick={handleApprove}
-            // disabled={saving}
+            onClick={handleSaveReply}
+            disabled={saving}
             leftIcon={
               <img
                 src="/img/request/approve-white.svg"
@@ -216,8 +284,6 @@ export default function ConsultDetailModal({
     </RequestModalShell>
   );
 }
-
-/* ---------- 스타일 ---------- */
 
 const SectionTitle = styled.h3`
   ${({ theme }) => theme.fonts.heading3};
@@ -249,7 +315,6 @@ const FieldLabel = styled.p`
 const ScrollArea = styled.div`
   max-height: 70vh;
   overflow-y: auto;
-  padding-bottom: 80px;
 `;
 
 const StickyHeader = styled(S.Header)`
@@ -285,4 +350,35 @@ const CategoryBadge = styled.span`
   ${({ theme }) => theme.fonts.caption};
   background: ${({ theme }) => theme.colors.gray02};
   color: ${({ theme }) => theme.colors.gray06};
+`;
+
+const ReplyField = styled.div`
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 10px;
+  background: ${({ theme }) => theme.colors.gray01};
+`;
+
+const LeftIcon = styled.img`
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+`;
+
+const StatusSelectWrapper = styled.div`
+  position: relative;
+  width: 160px;
+  margin-top: 6px;
+`;
+
+const StatusButton = styled.button`
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid ${({ theme }) => theme.colors.gray03};
+  background: ${({ theme }) => theme.colors.gray02};
+  padding: 10px 12px;
+  text-align: left;
+  ${({ theme }) => theme.fonts.body3};
+  color: ${({ theme }) => theme.colors.gray07};
 `;
