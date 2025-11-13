@@ -6,16 +6,12 @@ type Props = {
   onClickCard?: (status?: "대기중" | "승인" | "거부") => void;
 };
 
-export default function RequestSummaryCards({ summary, onClickCard }: Props) {
+export default function RequestSummaryCards({ summary }: Props) {
   const { pendingCount, approvedCount, rejectedCount } = summary;
 
   return (
     <Wrap>
-      <Card
-        $tone="pending"
-        role="button"
-        onClick={() => onClickCard?.("대기중")}
-      >
+      <Card $tone="pending">
         <Head>
           <img src="/img/request/waiting.svg" />
           <Title>대기중</Title>
@@ -23,11 +19,7 @@ export default function RequestSummaryCards({ summary, onClickCard }: Props) {
         <Count>{pendingCount}</Count>
       </Card>
 
-      <Card
-        $tone="approved"
-        role="button"
-        onClick={() => onClickCard?.("승인")}
-      >
+      <Card $tone="approved">
         <Head>
           <img src="/img/request/approve.svg" />
           <Title>승인</Title>
@@ -35,11 +27,7 @@ export default function RequestSummaryCards({ summary, onClickCard }: Props) {
         <Count>{approvedCount}</Count>
       </Card>
 
-      <Card
-        $tone="rejected"
-        role="button"
-        onClick={() => onClickCard?.("거부")}
-      >
+      <Card $tone="rejected">
         <Head>
           <img src="/img/request/deny.svg" />
           <Title>거부</Title>
@@ -80,11 +68,6 @@ const Card = styled.div<{ $tone: "pending" | "approved" | "rejected" }>`
       : $tone === "approved"
         ? "#409EE3"
         : "#FF6B6B"};
-  cursor: pointer;
-
-  &:hover {
-    filter: brightness(0.98);
-  }
 `;
 
 const Head = styled.div`
