@@ -5,6 +5,7 @@ import { Button } from "@core/ui/button";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { postOcr } from "@apis/mypage/ocr";
+import { updateUserInfo } from "@apis/mypage/updateUserInfo";
 
 export default function Certify() {
   const navigate = useNavigate();
@@ -30,12 +31,13 @@ export default function Certify() {
       const response = await postOcr(formData);
 
       if (response?.isSuccess) {
-        const careGrade = response.data.careGrade;
+        const careGrade = response.data.careGrade as "1등급" | "2등급" | "3등급" | "4등급" | "5등급" | "등급외";
 
-        navigate("/mypage/set-user-info", {
-          state: { careGrade },
-          replace: true,
-        });
+        // 바로 서버에 careGrade 저장
+        await updateUserInfo({ careGrade });
+
+        // SetUserInfo 페이지로 돌아가기
+        navigate(-1);
       } else {
         alert(
           `인증서 인식에 실패했습니다.\n${response?.message || "다시 촬영해 주세요."}`

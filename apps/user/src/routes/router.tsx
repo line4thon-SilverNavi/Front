@@ -38,7 +38,7 @@ const router = createBrowserRouter([
       { path: "finishapply", element: <FinishApplyPage />},
       { path: "mypage", element: <Mypage /> },
       { path: "setuser", element: <SetUserInfo /> },
-      { path: "mypage/certify", element: <Certify /> },
+      { path: "certify", element: <Certify /> },
       { path: "history", element: <History /> },
       { path: "button", element: <Btn /> },
     ],

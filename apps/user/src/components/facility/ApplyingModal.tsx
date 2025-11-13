@@ -13,7 +13,7 @@ type ApplyingModalProps = {
 export default function ApplyingModal({ onClose, facilityId, facilityName }: ApplyingModalProps) {
     // 🔧 테스트용: 이 값을 변경해서 각 케이스 UI 확인하기
     // null, "1등급", "2등급", "3등급", "4등급", "5등급", "인지지원등급"
-    const TEST_CARE_GRADE = "1등급"; // ← 여기를 수정하세요!
+    const TEST_CARE_GRADE = ""; // ← 여기를 수정하세요!
     //-----나중엔 삭제--------
     
     const navigate = useNavigate();
