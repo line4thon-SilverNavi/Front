@@ -47,7 +47,7 @@ const Overlay = styled.div`
 `;
 
 const ModalWrapper = styled.div`
-    background: ${({ theme }) => theme.colors.gray01};
+    background: ${({ theme }) => theme.colors.gray02};
     border-radius: 16px;
     padding: 2rem 1.5rem;
     max-width: 320px;
@@ -81,10 +81,5 @@ const StyledButton = styled.button`
     transition: all 0.2s;
     min-width: 120px;
     border: 1px solid ${({ theme }) => theme.colors.gray03};
-    background: ${({ theme }) => theme.colors.gray01};
     color: ${({ theme }) => theme.colors.gray05};
-    
-    &:hover {
-        background: ${({ theme }) => theme.colors.gray02};
-    }
 `;
