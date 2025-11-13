@@ -4,11 +4,13 @@ import {
 } from "@components/common/EntityTableList";
 import type { ConsultItem } from "@apis/consult/getConsult";
 import ConsultRow from "./CounselRow";
+import type { ConsultCategory } from "@apis/consult/getConsultDetail";
 
 type Props = {
   items: ConsultItem[];
   loading?: boolean;
-  onManageClick?: (id: number) => void;
+  onManageClick?: (id: number, category: ConsultCategory) => void;
+
   onRowClick?: (id: number) => void;
 };
 

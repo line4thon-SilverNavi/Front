@@ -1,11 +1,12 @@
 import { getResponse } from "@core/api/instance";
+import type { ConsultCategory } from "./getConsultDetail";
 
 export type ConsultStatus = "대기중" | "확인됨" | "완료" | "거부";
 
 export type ConsultItem = {
   consultId: number;
   consultDate: string;
-  consultCategory: string;
+  consultCategory: ConsultCategory;
   name: string;
   relationRole: string | null;
   phone: string;

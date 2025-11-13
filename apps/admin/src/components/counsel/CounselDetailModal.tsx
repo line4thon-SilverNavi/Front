@@ -10,6 +10,7 @@ import {
   DetailInfoField,
   DetailInfoFieldGrid,
 } from "@components/common/detail/DetailInfoFields";
+import StatusTag from "@components/request/StatusTag";
 
 import {
   getConsultDetail,
@@ -23,8 +24,10 @@ import {
   type ConfirmedTime,
   type ConsultStatusForPatch,
 } from "@apis/consult/patchConsultReply";
-import type { ConsultReplyValue } from "./CounselReplyField";
-import ConsultReplyField from "./CounselReplyField";
+
+import ConsultReplyField, { type ConsultReplyValue } from "./CounselReplyField";
+import TextAreaContainer from "@core/components/TextareaContainer";
+import { postConsultReply } from "@apis/consult/postReply";
 import ConsultStatusField from "./ConsultStatusField";
 
 type Props = {
@@ -40,28 +43,30 @@ export default function ConsultDetailModal({
   consultId,
   category,
   onClose,
+  onStatusChange,
 }: Props) {
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState<ConsultDetail | null>(null);
-  const [saving, setSaving] = useState(false);
+
+  // 상담 확정 일시(날짜 + 시간대)
   const [reply, setReply] = useState<ConsultReplyValue>({
     confirmedDate: "",
     confirmedTime: "",
     status: "대기중",
   });
+  const [initialReply, setInitialReply] = useState<ConsultReplyValue | null>(
+    null
+  );
 
-  useEffect(() => {
-    if (!detail) return;
+  // 상태 전환
+  const [statusToChange, setStatusToChange] =
+    useState<ConsultStatusForPatch>("대기중");
 
-    const baseDate = detail.hopeDate ?? "";
-    const baseTime = (detail.hopeTime as ConfirmedTime | null) ?? "";
+  // 답변 및 거부 사유
+  const [description, setDescription] = useState("");
+  const [initialDescription, setInitialDescription] = useState("");
 
-    setReply({
-      confirmedDate: baseDate,
-      confirmedTime: baseTime,
-      status: detail.status,
-    });
-  }, [detail]);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!open || !consultId || !category) return;
@@ -73,6 +78,29 @@ export default function ConsultDetailModal({
         const data = await getConsultDetail(consultId, category);
         if (!alive) return;
         setDetail(data);
+
+        //확정 날짜, 시간
+        const baseDate = data.confirmedDate ?? data.hopeDate ?? "";
+        const baseTime =
+          (data.confirmedTime as ConfirmedTime | null) ??
+          ("" as ConfirmedTime | "");
+
+        const baseStatus: ConsultStatusForPatch =
+          (data.consultStatus as ConsultStatusForPatch) ??
+          ((data.status as ConsultStatusForPatch) || "대기중");
+
+        const initial: ConsultReplyValue = {
+          confirmedDate: baseDate,
+          confirmedTime: baseTime,
+          status: baseStatus,
+        };
+
+        setReply(initial);
+        setInitialReply(initial);
+        setDescription("");
+        setInitialDescription("");
+
+        setStatusToChange(baseStatus);
       } catch (e: any) {
         toast.error(e?.message || "상담 상세 정보를 불러오지 못했습니다.");
         onClose();
@@ -104,6 +132,7 @@ export default function ConsultDetailModal({
 
   const {
     consultCategory,
+    status,
     appliedAt,
     name,
     phone,
@@ -115,7 +144,6 @@ export default function ConsultDetailModal({
     hopeDate,
     hopeTime,
     consultType,
-    // inquiryType,
     inquiryContent,
   } = detail;
 
@@ -123,33 +151,99 @@ export default function ConsultDetailModal({
   const hopeDateTime =
     hopeDate && hopeTime ? `${hopeDate} ${hopeTime}` : (hopeDate ?? "");
 
-  const handleSaveReply = async () => {
+  const isCompleted = status == "완료";
+
+  /* ---------- 변경 여부 판단 ---------- */
+
+  const trimmedDesc = description.trim();
+
+  const hasReplyChanged =
+    !!initialReply &&
+    (initialReply.confirmedDate !== reply.confirmedDate ||
+      initialReply.confirmedTime !== reply.confirmedTime ||
+      initialReply.status !== reply.status);
+
+  const hasDescriptionChanged =
+    trimmedDesc !== initialDescription.trim() && trimmedDesc.length > 0;
+
+  /* ---------- PATCH + POST ---------- */
+
+  const runSave = async (nextStatus: ConsultStatusForPatch) => {
+    if (isCompleted) return;
     if (!consultId || !category) {
       toast.error("상담 정보를 찾을 수 없습니다.");
       return;
     }
 
-    const { confirmedDate, confirmedTime, status } = reply;
-
-    if (!confirmedDate || !confirmedTime) {
-      toast.error("상담 확정 일시를 입력해주세요.");
-      return;
+    if (nextStatus !== "거부") {
+      if (!reply.confirmedDate || !reply.confirmedTime) {
+        toast.error("상담 확정 일시를 입력해주세요.");
+        return;
+      }
     }
 
     try {
       setSaving(true);
-      await patchConsultReply(consultId, category, {
-        confirmedDate,
-        confirmedTime: confirmedTime as ConfirmedTime,
-        consultStatus: status as ConsultStatusForPatch,
-      });
-      toast.success("상담 답변이 저장되었습니다.");
+
+      const tasks: Promise<any>[] = [];
+
+      // 1) 확정 일시 + 상태 전환 PATCH
+      if (hasReplyChanged || nextStatus === "거부") {
+        const baseDate =
+          reply.confirmedDate || hopeDate || appliedAt.slice(0, 10);
+        const timeForPatch = reply.confirmedTime || ("오전" as ConfirmedTime);
+
+        tasks.push(
+          patchConsultReply(consultId, category, {
+            confirmedDate: baseDate,
+            confirmedTime: timeForPatch,
+            consultStatus: nextStatus,
+          })
+        );
+      }
+
+      // 2) 상담 답변 POST (내용이 있는 경우만)
+      if (hasDescriptionChanged) {
+        tasks.push(
+          postConsultReply({
+            consultId,
+            category,
+            content: trimmedDesc,
+          })
+        );
+      }
+
+      if (tasks.length === 0) {
+        toast("변경된 내용이 없습니다.");
+        return;
+      }
+
+      await Promise.all(tasks);
+
+      if (nextStatus === "거부") {
+        toast.success("상담이 거부 처리되었습니다.");
+        onStatusChange?.("거부");
+      } else {
+        toast.success("상담 정보가 저장되었습니다.");
+        onStatusChange?.(nextStatus as ConsultStatus);
+      }
+
       onClose();
     } catch (e: any) {
-      toast.error(e?.message || "상담 답변 저장 중 오류가 발생했습니다.");
+      toast.error(e?.message || "상담 정보 저장 중 오류가 발생했습니다.");
     } finally {
       setSaving(false);
     }
+  };
+
+  // 승인 버튼
+  const handleApprove = async () => {
+    await runSave(statusToChange);
+  };
+
+  // 거부 버튼
+  const handleReject = async () => {
+    await runSave("거부");
   };
 
   return (
@@ -159,6 +253,7 @@ export default function ConsultDetailModal({
           <HeaderMeta>
             <S.H2>상담 상세 정보</S.H2>
             <CategoryBadge>{consultCategory}</CategoryBadge>
+            <StatusTag status={status} />
           </HeaderMeta>
           <span className="time">{formatKDateTimeFull(appliedAt)} 신청</span>
         </div>
@@ -207,7 +302,6 @@ export default function ConsultDetailModal({
           </DetailInfoFieldGrid>
 
           {/* 상담 정보 */}
-
           <SectionTitle style={{ marginTop: 30 }}>상담 정보</SectionTitle>
           <DetailInfoFieldGrid>
             <DetailInfoField
@@ -231,56 +325,81 @@ export default function ConsultDetailModal({
             <p>{inquiryContent || "문의 내용이 없습니다."}</p>
           </FieldBlock>
 
+          {/* 문의 답변 / 확정 일시 / 상태 전환 */}
           <SectionTitle style={{ marginTop: 30 }}>문의 답변</SectionTitle>
 
           <DetailInfoFieldGrid>
-            <ConsultReplyField value={reply} onChange={setReply} />
+            <ConsultReplyField
+              value={reply}
+              onChange={setReply}
+              readOnly={isCompleted}
+            />
 
-            {/* 상태 전환 */}
             <ConsultStatusField
               value={reply.status}
-              onChange={(next) =>
+              readOnly={isCompleted}
+              onChange={(next) => {
                 setReply((prev) => ({
                   ...prev,
                   status: next,
-                }))
-              }
+                }));
+                setStatusToChange(next);
+              }}
             />
           </DetailInfoFieldGrid>
+
+          <div style={{ marginTop: 24 }}>
+            <TextAreaContainer
+              label="답변 및 거부 사유"
+              placeholder="답변 혹은 거부 사유를 작성해주세요."
+              value={description}
+              onChange={setDescription}
+              labelTypo="heading3"
+              textareaTypo="body2"
+              placeholderTypo="body2"
+              labelColor="#1A1A1A"
+              placeholderColor="#A8A8A8"
+              readOnly={isCompleted}
+              readOnlyEmptyText="작성되지 않았습니다."
+            />
+          </div>
         </S.DetailContent>
       </ScrollArea>
 
-      <S.BtnBar>
-        <ButtonLayout type="row" gap={12}>
-          <Button
-            tone="red"
-            variant="outline"
-            size="lg"
-            typo="heading3"
-            // onClick={handleReject}
-            leftIcon={
-              <img src="/img/request/deny.svg" width={20} height={20} />
-            }
-          >
-            거부
-          </Button>
-          <Button
-            size="lg"
-            typo="heading3"
-            onClick={handleSaveReply}
-            disabled={saving}
-            leftIcon={
-              <img
-                src="/img/request/approve-white.svg"
-                width={20}
-                height={20}
-              />
-            }
-          >
-            승인
-          </Button>
-        </ButtonLayout>
-      </S.BtnBar>
+      {!isCompleted && (
+        <S.BtnBar>
+          <ButtonLayout type="row" gap={12}>
+            <Button
+              tone="red"
+              variant="outline"
+              size="lg"
+              typo="heading3"
+              onClick={handleReject}
+              disabled={saving}
+              leftIcon={
+                <img src="/img/request/deny.svg" width={20} height={20} />
+              }
+            >
+              거부
+            </Button>
+            <Button
+              size="lg"
+              typo="heading3"
+              onClick={handleApprove}
+              disabled={saving}
+              leftIcon={
+                <img
+                  src="/img/request/approve-white.svg"
+                  width={20}
+                  height={20}
+                />
+              }
+            >
+              승인
+            </Button>
+          </ButtonLayout>
+        </S.BtnBar>
+      )}
     </RequestModalShell>
   );
 }
@@ -350,35 +469,4 @@ const CategoryBadge = styled.span`
   ${({ theme }) => theme.fonts.caption};
   background: ${({ theme }) => theme.colors.gray02};
   color: ${({ theme }) => theme.colors.gray06};
-`;
-
-const ReplyField = styled.div`
-  display: flex;
-  gap: 12px;
-  padding: 16px;
-  border-radius: 10px;
-  background: ${({ theme }) => theme.colors.gray01};
-`;
-
-const LeftIcon = styled.img`
-  width: 32px;
-  height: 32px;
-  flex-shrink: 0;
-`;
-
-const StatusSelectWrapper = styled.div`
-  position: relative;
-  width: 160px;
-  margin-top: 6px;
-`;
-
-const StatusButton = styled.button`
-  width: 100%;
-  border-radius: 10px;
-  border: 1px solid ${({ theme }) => theme.colors.gray03};
-  background: ${({ theme }) => theme.colors.gray02};
-  padding: 10px 12px;
-  text-align: left;
-  ${({ theme }) => theme.fonts.body3};
-  color: ${({ theme }) => theme.colors.gray07};
 `;

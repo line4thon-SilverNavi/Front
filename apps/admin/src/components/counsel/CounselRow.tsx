@@ -5,10 +5,11 @@ import type { ConsultItem } from "@apis/consult/getConsult";
 import CounselStatusBadge from "./CounselStatusBadge";
 import RowBase from "@components/common/RowBase";
 import { fmtPhone } from "@hooks/useFmtPhone";
+import type { ConsultCategory } from "@apis/consult/getConsultDetail";
 
 type Props = {
   item: ConsultItem;
-  onManageClick?: (id: number) => void;
+  onManageClick?: (id: number, category: ConsultCategory) => void;
   onRowClick?: (id: number) => void;
 };
 
@@ -28,7 +29,7 @@ export default function ConsultRow({ item, onManageClick, onRowClick }: Props) {
       id={consultId}
       onRowClick={onRowClick}
       manageCell={
-        <ManageBtn onClick={() => onManageClick?.(consultId)}>
+        <ManageBtn onClick={() => onManageClick?.(consultId, consultCategory)}>
           상세보기
         </ManageBtn>
       }

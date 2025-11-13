@@ -13,11 +13,16 @@ export type ConsultReplyValue = {
 type Props = {
   value: ConsultReplyValue;
   onChange: (next: ConsultReplyValue) => void;
+  readOnly?: boolean;
 };
 
 const TIME_OPTIONS: ConfirmedTime[] = ["오전", "오후", "저녁"];
 
-export default function ConsultReplyField({ value, onChange }: Props) {
+export default function ConsultReplyField({
+  value,
+  onChange,
+  readOnly,
+}: Props) {
   const [dateTimeOpen, setDateTimeOpen] = useState(false);
   const { confirmedDate, confirmedTime } = value;
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -57,7 +62,7 @@ export default function ConsultReplyField({ value, onChange }: Props) {
             </span>
           </ConfirmPill>
 
-          {dateTimeOpen && (
+          {!readOnly && dateTimeOpen && (
             <ConfirmEditor>
               <EditorRow>
                 <span className="editor-label">확정 날짜</span>

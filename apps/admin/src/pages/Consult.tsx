@@ -2,12 +2,14 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import toast from "react-hot-toast";
+
 import type { CounselSummary } from "@components/counsel/StatusCard";
 import {
   getConsultManagement,
   type ConsultItem,
   type ConsultStatus,
 } from "@apis/consult/getConsult";
+import type { ConsultCategory } from "@apis/consult/getConsultDetail";
 
 import type { PageInfo } from "@apis/program/getPrograms";
 import CounselStatusCard from "@components/counsel/StatusCard";
@@ -16,7 +18,6 @@ import RequestSearchBar, {
 } from "@components/request/RequestSearchBar";
 import ConsultList from "@components/counsel/CounselList";
 import ConsultDetailModal from "@components/counsel/CounselDetailModal";
-import type { ConsultCategory } from "@apis/consult/getConsultDetail";
 
 const DEFAULT_SUMMARY: CounselSummary = {
   totalCount: 0,
@@ -36,7 +37,7 @@ const Consult = () => {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  // 🔹 상세 모달 관련 state
+  // 상세 모달 관련 state
   const [detailOpen, setDetailOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] =
@@ -59,7 +60,7 @@ const Consult = () => {
           totalCount: data.summary.totalCount,
           pendingCount: data.summary.pendingCount,
           completedCount: data.summary.completedCount,
-          canceledCount: 0,
+          canceledCount: 0, // BE 요약에는 거부 카운트가 없어서 0으로
         });
         setConsults(data.consults);
         setPageInfo(data.pageInfo);
@@ -75,15 +76,9 @@ const Consult = () => {
 
   /* ---------- 모달 열기 / 닫기 ---------- */
 
-  const openDetail = (id: number) => {
-    const target = consults.find((c) => c.consultId === id);
-    if (!target) {
-      toast.error("상담 정보를 찾을 수 없습니다.");
-      return;
-    }
-
+  const openDetail = (id: number, category: ConsultCategory) => {
     setSelectedId(id);
-    setSelectedCategory(target.consultCategory as ConsultCategory);
+    setSelectedCategory(category);
     setDetailOpen(true);
   };
 
@@ -93,11 +88,27 @@ const Consult = () => {
     setSelectedCategory(null);
   };
 
-  // (나중에 모달에서 상태 바꿨을 때 리스트에도 반영하고 싶을 때)
-  const handleStatusChange = (next: ConsultStatus) => {
-    setConsults((prev) =>
-      prev.map((c) => (c.consultId === selectedId ? { ...c, status: next } : c))
-    );
+  /* ---------- 모달에서 상태 변경 시 리스트/요약 반영 ---------- */
+
+  const handleModalStatusChange = (next: ConsultStatus) => {
+    if (!selectedId) return;
+
+    setConsults((prev) => {
+      const nextConsults = prev.map((c) =>
+        c.consultId === selectedId ? { ...c, status: next } : c
+      );
+
+      // 요약도 즉시 재계산해서 카드에 반영
+      const nextSummary: CounselSummary = {
+        totalCount: nextConsults.length,
+        pendingCount: nextConsults.filter((c) => c.status === "대기중").length,
+        completedCount: nextConsults.filter((c) => c.status === "완료").length,
+        canceledCount: nextConsults.filter((c) => c.status === "거부").length,
+      };
+      setSummary(nextSummary);
+
+      return nextConsults;
+    });
   };
 
   return (
@@ -125,8 +136,10 @@ const Consult = () => {
         <ConsultList
           items={consults}
           loading={loading}
-          // 행 클릭으로도 열고 싶으면 onRowClick={openDetail} 도 넘겨줘
-          onManageClick={openDetail}
+          // 상세보기(관리) 클릭 시 모달 오픈
+          onManageClick={(id, category) => openDetail(id, category)}
+          // 필요하면 onRowClick에서도 openDetail 호출 가능
+          // onRowClick={(id, category) => openDetail(id, category)}
         />
       </ListWrapper>
 
@@ -156,6 +169,7 @@ const Consult = () => {
         consultId={selectedId}
         category={selectedCategory}
         onClose={closeDetail}
+        onStatusChange={handleModalStatusChange}
       />
     </PageWrapper>
   );
