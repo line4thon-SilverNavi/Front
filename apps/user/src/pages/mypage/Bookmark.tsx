@@ -9,8 +9,6 @@ import FacilityCard from "@components/facility/facilityCard";
 import { useState, useEffect } from "react";
 import { getBookmarks } from "@apis/mypage/bookmark";
 import type { BookmarkProgram, BookmarkFacility } from "@apis/mypage/bookmark";
-import { dummyProgramData } from "@apis/dummy/programDummy";
-import { dummyFacilityData } from "@apis/dummy/facilityDummy";
 
 type TabType = "프로그램" | "시설";
 
@@ -25,60 +23,15 @@ export default function Bookmark(){
         const fetchBookmarks = async () => {
             try {
                 const data = await getBookmarks();
-                if (data && data.results) {
+                if (data) {
                     setPrograms(data.results.programs);
                     setFacilities(data.results.facilities);
                     setProgramCount(data.programCount);
                     setFacilityCount(data.facilityCount);
-                } else {
-                    // API 응답이 없을 때 더미 데이터 사용
-                    useDummyData();
                 }
             } catch (error) {
                 console.error("북마크 데이터를 불러오는데 실패했습니다:", error);
-                // API 실패 시 더미 데이터 사용
-                useDummyData();
             }
-        };
-
-        const useDummyData = () => {
-            const bookmarkedPrograms = dummyProgramData
-                .filter(p => p.bookmarked)
-                .map(p => ({
-                    programId: p.programId,
-                    programName: p.programName || "",
-                    location: p.location || "",
-                    category: p.category || "",
-                    date: p.date || "",
-                    dayOfWeek: p.dayOfWeek || "",
-                    startTime: p.startTime || "",
-                    endTime: p.endTime || "",
-                    currentApplicants: p.currentApplicants,
-                    capacity: p.capacity,
-                    fee: p.fee || "",
-                    thumbnail: p.thumbnail,
-                    bookmarked: p.bookmarked
-                }));
-            
-            const bookmarkedFacilities = dummyFacilityData
-                .filter(f => f.bookmarked)
-                .map(f => ({
-                    facilityId: f.facilityId,
-                    name: f.name || "",
-                    thumbnail: f.thumbnail,
-                    distanceKm: f.distanceKm,
-                    averageRating: f.averageRating,
-                    reviewCount: f.reviewCount,
-                    operatingHours: f.operatingHours,
-                    phoneNumber: f.phoneNumber || "",
-                    category: f.category,
-                    bookmarked: f.bookmarked
-                }));
-            
-            setPrograms(bookmarkedPrograms);
-            setFacilities(bookmarkedFacilities);
-            setProgramCount(bookmarkedPrograms.length);
-            setFacilityCount(bookmarkedFacilities.length);
         };
 
         fetchBookmarks();
