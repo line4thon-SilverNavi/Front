@@ -14,12 +14,14 @@ import {
 } from "@components/common/detail/DetailInfoFields";
 import { DetailHeaderCard } from "@components/common/detail/DetailHeaderCard";
 import StatusTag from "./StatusTag";
+import { patchApplicationStatus } from "@apis/request/patchApplicationStatus";
 
 type Props = {
   open: boolean;
   applicationId: number | null;
   onClose: () => void;
   onStatusChange?: (s: ApplicationStatus) => void;
+  onOpenRejectModal?: (applicationId: number) => void;
 };
 
 const fmtPhone = (raw: string) => {
@@ -36,8 +38,10 @@ export default function ApplicationDetailModal({
   applicationId,
   onClose,
   onStatusChange,
+  onOpenRejectModal,
 }: Props) {
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [detail, setDetail] = useState<ApplicationDetail | null>(null);
 
   useEffect(() => {
@@ -98,18 +102,37 @@ export default function ApplicationDetailModal({
   const isPending = status === "대기중";
 
   const handleReject = () => {
-    // TODO: 거부 API 연동
-    onStatusChange?.("거부");
-    toast.success("거부 처리되었습니다. (더미)");
-    onClose();
+    if (!applicationId) return;
+    if (!isPending) {
+      toast.error("대기중 상태에서만 거부할 수 있습니다.");
+      return;
+    }
+
+    // 나중에 구현할 거부 사유 모달 열기
+    onOpenRejectModal?.(applicationId);
   };
 
-  const handleApprove = () => {
-    onStatusChange?.("승인");
-    toast.success("승인 처리되었습니다. (더미)");
-    onClose();
-  };
+  const handleApprove = async () => {
+    if (!applicationId) return;
+    if (!isPending) {
+      toast.error("대기중 상태에서만 승인할 수 있습니다.");
+      return;
+    }
 
+    try {
+      setSaving(true);
+      await patchApplicationStatus(applicationId, {
+        isApproved: true,
+      });
+      toast.success("승인 처리되었습니다.");
+      onStatusChange?.("승인");
+      onClose();
+    } catch (e: any) {
+      toast.error(e?.message || "승인 처리 중 오류가 발생했습니다.");
+    } finally {
+      setSaving(false);
+    }
+  };
   return (
     <S.Backdrop role="dialog" aria-modal="true" onClick={onClose}>
       <S.Sheet onClick={(e) => e.stopPropagation()}>
