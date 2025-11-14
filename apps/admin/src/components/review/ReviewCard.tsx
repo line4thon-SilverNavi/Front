@@ -115,6 +115,7 @@ const TabBar = styled.div`
   border-radius: 12px;
   background: ${({ theme }) => theme.colors.gray01};
   border: 0.636px solid ${({ theme }) => theme.colors.gray03};
+  margin-top: 20px;
 `;
 
 const TabButton = styled.button<{ $active: boolean }>`
