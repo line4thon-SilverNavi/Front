@@ -4,15 +4,39 @@ type ItemProps = {
   label: string;
   value: number;
   color: string;
+  showStar?: boolean;
+  showReview?: boolean;
 };
 
-export function CounselStatusItem({ label, value, color }: ItemProps) {
+export function CounselStatusItem({
+  label,
+  value,
+  color,
+  showStar,
+  showReview,
+}: ItemProps) {
   return (
     <CardContainer $color={color}>
       <p className="label">{label}</p>
-      <p>
-        <span className="value">{value}</span>건
-      </p>
+
+      {showStar && (
+        <div className="star">
+          <p>
+            <span className="value">{value}</span>
+            <img src="/img/review/star.svg" alt="star" />
+          </p>
+        </div>
+      )}
+      {showReview && (
+        <p>
+          <span className="value">{value}</span>
+        </p>
+      )}
+      {!showStar && !showReview && (
+        <>
+          <span className="value">{value}</span>건
+        </>
+      )}
     </CardContainer>
   );
 }
