@@ -25,6 +25,7 @@ import Bookmark from "@pages/mypage/Bookmark";
 import Review from "@pages/facility/Review";
 import PostReview from "@pages/facility/PostReview";
 import AllReview from "@pages/facility/AllReview";
+import Location from "@pages/location/Location";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,7 @@ const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
       { index: true, element: <Home /> },
+      { path: "location", element: <Location /> },
       { path: "program", element: <ProgramHome />},
       { path: "nearfacility", element: <FacilityHome />},
       { path: "program/:programId", element: <ProgramDetailPage />},
