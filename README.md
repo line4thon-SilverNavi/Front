@@ -77,8 +77,7 @@ _당신의 하루가 더 활짝 피어나도록._
 
 | 오찬주 | 김연비 |
 | :--- | :--- |
-| 데이터 1-1 | 데이터 1-2 |
-| 데이터 2-1 | 데이터 2-2 |
+| [github](https://github.com/ohchanju3)| [github](https://github.com/KimYeonBee) |
 
 
 
