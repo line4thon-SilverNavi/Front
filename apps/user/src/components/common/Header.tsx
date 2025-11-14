@@ -22,7 +22,7 @@ export default function Header(){
 
     return(
         <HeaderContainer>
-            <UserLocationInfo>
+            <UserLocationInfo onClick={() => navigate("/location")}>
                 {error ? "서경대학교" : address || "위치 정보 로딩 중..."}
             </UserLocationInfo>
             <ButtonContainer>
