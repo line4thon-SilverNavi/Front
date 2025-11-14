@@ -32,7 +32,6 @@ export default function Location(){
     return(
         <DefaultLayout
             header={<CommonHeader title="내 동네 설정" />}
-            noPadding
         >
             <Container>
                 <MapWrapper>
@@ -57,6 +56,7 @@ export default function Location(){
 const Container = styled.div`
     position: relative;
     height: calc(100vh - 60px);
+    align-items: center;
 `;
 
 const MapWrapper = styled.div`
@@ -66,8 +66,11 @@ const MapWrapper = styled.div`
 
 const SetRangeWrapper = styled.div`
     position: absolute;
+    align-items: center;
+    width: 101%;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 10;
+    box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.2);
 `;

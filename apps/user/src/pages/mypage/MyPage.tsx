@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { getMypage, type MypageResponse } from "@apis/mypage/mypage";
 import { useNavigate } from "react-router-dom";
 import { addHyphen } from "@hooks/ProcessingTel";
+import { clearTokens } from "@core/api/auth";
+
 
 export default function Mypage () {
   const navigate = useNavigate();
@@ -24,6 +26,11 @@ export default function Mypage () {
     
     fetchUserData();
   }, []);
+
+  const handleLogout = () => {
+    clearTokens();
+    navigate("/intro");
+  };
 
   const isSelf = userData?.relation === "본인";
 
@@ -109,15 +116,15 @@ export default function Mypage () {
         <S.MyActivity>
           <S.Title>나의 활동</S.Title>
           <S.ActivityContainer>
-            <S.ActivityCard onClick={() => navigate('/history')}>
+            <S.ActivityCard>
               <S.ActivityCount>{userData?.consultCount || 0}</S.ActivityCount>
               <S.ActivityLabel>신청한 <br/> 프로그램</S.ActivityLabel>
             </S.ActivityCard>
-            <S.ActivityCard onClick={() => navigate('/bookmark')}>
+            <S.ActivityCard >
               <S.ActivityCount>{userData?.bookmarkCount || 0}</S.ActivityCount>
               <S.ActivityLabel>찜한 목록</S.ActivityLabel>
             </S.ActivityCard>
-            <S.ActivityCard onClick={() => navigate('/history')}>
+            <S.ActivityCard>
               <S.ActivityCount>{userData?.reviewCount || 0}</S.ActivityCount>
               <S.ActivityLabel>리뷰 작성</S.ActivityLabel>
             </S.ActivityCard>
@@ -151,7 +158,7 @@ export default function Mypage () {
           </S.MenuContainer>
         </S.Menu>
 
-        <S.LogoutButton onClick={() => navigate('/intro')}>
+        <S.LogoutButton onClick={handleLogout}>
           <img src="/img/mypage/logout.png" style={{width:"20px", height:"20px"}}/>
           로그아웃
         </S.LogoutButton>

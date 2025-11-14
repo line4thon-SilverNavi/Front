@@ -132,6 +132,8 @@ const ScrollableContent = styled.div`
   padding: 1.36rem;
   display: flex;
   flex-direction: column;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 `;
 
 const Footer = styled.footer`
