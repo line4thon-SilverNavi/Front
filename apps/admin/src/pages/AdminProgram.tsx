@@ -5,7 +5,6 @@ import AddProgramModal from "@components/program/AddProgramModal/AddProgramModal
 import ProgramSearchBar from "@components/program/ProgramSearchBar";
 import ProgramList from "@components/program/ProgramList";
 import { usePrograms } from "@hooks/programs/usePrograms";
-import Pagination from "@components/program/Pagination";
 import DeleteModal from "@components/program/DeleteModal";
 import toast from "react-hot-toast";
 import { deleteProgram } from "@apis/program/deleteProgram";
@@ -14,6 +13,7 @@ import AttendanceModal from "@components/program/attendance/AttendanceModal";
 import type { ProgramItem } from "@apis/program/getPrograms";
 import type { ProgramDetail } from "@apis/program/types";
 import { searchPrograms } from "@apis/program/searchPrograms";
+import Pagination from "@components/common/Pagination";
 
 type OutletCtx = {
   setHeader: (o: {
@@ -229,7 +229,7 @@ const AdminProgram = () => {
       />
 
       <Pagination
-        page={page}
+        currentPage={page}
         totalPages={totalPages}
         onChange={(p) => {
           setPage(p);

@@ -18,6 +18,7 @@ import RequestSearchBar, {
 import ConsultList from "@components/counsel/CounselList";
 import ConsultDetailModal from "@components/counsel/CounselDetailModal";
 import { searchConsults } from "@apis/consult/searchConsults";
+import Pagination from "@components/common/Pagination";
 
 const DEFAULT_SUMMARY: CounselSummary = {
   totalCount: 0,
@@ -169,23 +170,11 @@ const Consult = () => {
 
       {/* 페이지네이션 */}
       {!localConsults && pageInfo && pageInfo.totalPages > 1 && (
-        <PaginationBar>
-          <button
-            disabled={page <= 1}
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-          >
-            이전
-          </button>
-          <span>
-            {pageInfo.currentPage} / {pageInfo.totalPages}
-          </span>
-          <button
-            disabled={page >= pageInfo.totalPages}
-            onClick={() => setPage((p) => Math.min(pageInfo.totalPages, p + 1))}
-          >
-            다음
-          </button>
-        </PaginationBar>
+        <Pagination
+          totalPages={pageInfo.totalPages}
+          currentPage={page}
+          onChange={setPage}
+        />
       )}
 
       <ConsultDetailModal
@@ -214,24 +203,4 @@ const ListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-`;
-
-const PaginationBar = styled.div`
-  margin-top: 12px;
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-
-  button {
-    padding: 6px 10px;
-    border-radius: 8px;
-    border: 1px solid ${({ theme }) => theme.colors.gray03};
-    background: white;
-    ${({ theme }) => theme.fonts.body3};
-
-    &:disabled {
-      opacity: 0.4;
-      cursor: default;
-    }
-  }
 `;
