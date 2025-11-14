@@ -136,6 +136,7 @@ const ContentWrapper = styled.div`
   flex-direction: column;
   gap: 2rem;
   padding: 1rem;
+  color: ${({ theme }) => theme.colors.gray07};
 `;
 
 const Section = styled.div`

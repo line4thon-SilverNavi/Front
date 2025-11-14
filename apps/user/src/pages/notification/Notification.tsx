@@ -41,6 +41,7 @@ export default function Notification(){
                     </EmptyState>
                 ) : (
                     <>
+                    <Cards>
                     <CardList
                         items={notifications}
                         renderCard={(notification) => (
@@ -51,6 +52,7 @@ export default function Notification(){
                         )}
                         direction="vertical"
                     />
+                    </Cards>
                     <Bottom>최근 30일 이내의 알림만 보여집니다.</Bottom>
                     </>
                 )}
@@ -64,6 +66,11 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+`;
+
+const Cards  = styled.div`
+    display: flex;
+    flex-direction: column;
 `;
 
 const EmptyState = styled.div`
