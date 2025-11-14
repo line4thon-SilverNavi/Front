@@ -22,6 +22,8 @@ import Notification from "@pages/notification/Notification";
 import Search from "@pages/search/Search";
 import SearchResult from "@pages/search/SearchResult";
 import Bookmark from "@pages/mypage/Bookmark";
+import Review from "@pages/facility/Review";
+import PostReview from "@pages/facility/PostReview";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +41,8 @@ const router = createBrowserRouter([
       { path: "facility/:facilityId", element: <FacilityDetailPage />},
       { path: "facility/:facilityId/apply", element: <FacilityApplyPage />},
       { path: "facility/:facilityId/finish-apply", element: <FinishApplyPage />},
+      { path: "facility/:facilityId/review", element: <Review />},
+      { path: "facility/:facilityId/review/postreview", element: <PostReview />},
       { path: "finishapply", element: <FinishApplyPage />},
       { path: "mypage", element: <Mypage /> },
       { path: "bookmark", element: <Bookmark /> },

@@ -19,6 +19,8 @@ type Props = {
   placeholderTypo?: FontKey;
   labelColor?: string;
   placeholderColor?: string;
+  backgroundColor?: string;
+  border?: string;
   readOnly?: boolean;
   readOnlyEmptyText?: string;
 };
@@ -39,6 +41,8 @@ export default function TextAreaContainer({
   labelColor,
   readOnly,
   placeholderColor,
+  backgroundColor,
+  border,
   readOnlyEmptyText = "작성되지 않았습니다.",
 }: Props) {
   const id = useId();
@@ -74,7 +78,7 @@ export default function TextAreaContainer({
         {label} {required && <em aria-hidden>*</em>}
       </Label>
 
-      <TextAreaWrapper $error={!!errorText}>
+      <TextAreaWrapper $error={!!errorText} $backgroundColor={backgroundColor} $border={border}>
         <TextArea
           id={id}
           value={value}
@@ -124,12 +128,12 @@ const Label = styled.label<{
   }
 `;
 
-const TextAreaWrapper = styled.div<{ $error: boolean }>`
+const TextAreaWrapper = styled.div<{ $error: boolean; $backgroundColor?: string; $border?: string }>`
   display: flex;
   border-radius: 10px;
-  background: ${({ theme }) => theme.colors.gray02};
+  background: ${({ theme, $backgroundColor }) => $backgroundColor ?? theme.colors.gray02};
   padding: 14px 16px;
-  border: 1px solid transparent;
+  border: ${({ $border }) => $border ?? '1px solid transparent'};
   transition: border-color 0.2s;
 
   &:focus-within {

@@ -109,7 +109,7 @@ export default function Mypage () {
         <S.MyActivity>
           <S.Title>나의 활동</S.Title>
           <S.ActivityContainer>
-            <S.ActivityCard onClick={() => navigate('/mypage/programs')}>
+            <S.ActivityCard onClick={() => navigate('/history')}>
               <S.ActivityCount>{userData?.consultCount || 0}</S.ActivityCount>
               <S.ActivityLabel>신청한 <br/> 프로그램</S.ActivityLabel>
             </S.ActivityCard>
@@ -117,7 +117,7 @@ export default function Mypage () {
               <S.ActivityCount>{userData?.bookmarkCount || 0}</S.ActivityCount>
               <S.ActivityLabel>찜한 목록</S.ActivityLabel>
             </S.ActivityCard>
-            <S.ActivityCard onClick={() => navigate('/mypage/reviews')}>
+            <S.ActivityCard onClick={() => navigate('/history')}>
               <S.ActivityCount>{userData?.reviewCount || 0}</S.ActivityCount>
               <S.ActivityLabel>리뷰 작성</S.ActivityLabel>
             </S.ActivityCard>
