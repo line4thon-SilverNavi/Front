@@ -9,14 +9,25 @@ type ScheduleType = "예정" | "완료";
 
 interface ProgramHistoryProps {
     historyData: ProgramHistoryData | null;
+    searchKeyword: string;
 }
 
-export default function ProgramHistory({ historyData }: ProgramHistoryProps) {
+export default function ProgramHistory({ historyData, searchKeyword }: ProgramHistoryProps) {
     const [scheduleType, setScheduleType] = useState<ScheduleType>("예정");
     
     // 실제 데이터 사용 (더미 데이터를 사용하려면 아래 줄의 주석을 해제하고 historyData를 dummyProgramHistory로 변경)
     // const data = dummyProgramHistory;
     const data = historyData;
+
+    // 검색어로 필터링하는 함수
+    const filterByKeyword = (programs: any[]) => {
+        if (!searchKeyword.trim()) return programs;
+        return programs.filter(program => 
+            program.programName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+            program.location.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+            program.category.toLowerCase().includes(searchKeyword.toLowerCase())
+        );
+    };
 
     return (
         <>
@@ -52,7 +63,7 @@ export default function ProgramHistory({ historyData }: ProgramHistoryProps) {
                         예정된 프로그램
                     </Title>
                     <CardList
-                        items={data?.programs.filter(p => p.status === "예정") || []}
+                        items={filterByKeyword(data?.programs.filter(p => p.status === "예정") || [])}
                         renderCard={(program) => (
                             <ProgramCard
                                 key={program.programId}
@@ -82,7 +93,7 @@ export default function ProgramHistory({ historyData }: ProgramHistoryProps) {
                         완료된 프로그램
                     </Title>
                     <CardList
-                        items={data?.programs.filter(p => p.status === "완료") || []}
+                        items={filterByKeyword(data?.programs.filter(p => p.status === "완료") || [])}
                         renderCard={(program) => (
                             <ProgramCard
                                 key={program.programId}
