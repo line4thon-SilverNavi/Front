@@ -9,7 +9,7 @@ import {
   type ReviewStatus,
 } from "@apis/review/getReviews";
 import toast from "react-hot-toast";
-import Pagination from "@components/common/Pagination";
+import Pagination from "@components/common/pagination";
 
 const Review = () => {
   const [summary, setSummary] = useState<ReviewSummary | null>(null);
