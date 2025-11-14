@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 
 import { patchApplicationStatus } from "@apis/request/patchApplicationStatus";
 import type { ApplicationStatus } from "@apis/request/getApplications";
-import TextAreaContainer from "@core/components/TextareaContainer";
+import TextAreaContainer from "@core/components/TextAreaContainer";
 import RequestModalShell from "@components/request/RequestModalShell";
 
 type Props = {
