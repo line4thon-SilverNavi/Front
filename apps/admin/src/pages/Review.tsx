@@ -16,7 +16,7 @@ const Review = () => {
   const [reviews, setReviews] = useState<ReviewItem[]>([]);
   const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [_, setLoading] = useState(false);
   const [ratingFilter, setRatingFilter] = useState<ReviewStatus | undefined>();
 
   useEffect(() => {
@@ -33,6 +33,8 @@ const Review = () => {
       } catch (err) {
         console.error(err);
         toast.error("리뷰 정보를 불러오지 못했습니다.");
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -43,7 +45,14 @@ const Review = () => {
 
   return (
     <>
-      <ReviewStatusCard summary={summary} />
+      <ReviewStatusCard
+        summary={summary}
+        selectedStatus={ratingFilter}
+        onStatusChange={(rating) => {
+          setRatingFilter(rating);
+          setPage(1);
+        }}
+      />
       <ReviewList items={reviews} />
       {pageInfo && (
         <Pagination
