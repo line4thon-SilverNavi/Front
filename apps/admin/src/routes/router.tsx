@@ -6,7 +6,6 @@ import PrivateRoute from "@layouts/PrivateLayout";
 import Login from "@pages/auth/Login";
 import Signup from "@pages/auth/Signup";
 
-import ScrollToTop from "@core/hooks/ScrollToTop";
 import AdminProgram from "@pages/AdminProgram";
 import AdminRouteLayout from "@layouts/AdminLayout/AdminRouteLayout";
 import Request from "@pages/Request";
@@ -14,6 +13,7 @@ import Consult from "@pages/Consult";
 import Review from "@pages/Review";
 import Ads from "@pages/Ads";
 import Dashboard from "@pages/Dashboard";
+import ScrollToTop from "@hooks/ScrollToTop";
 
 const router = createBrowserRouter([
   {
