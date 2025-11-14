@@ -47,7 +47,6 @@
 //   return data;
 // }
 
-import { dummyData } from "@apis/dummy/applicant";
 import { getResponse, patchResponse } from "@core/api/instance";
 
 export type AttendanceStatus = "출석" | "결석" | null;
@@ -92,9 +91,9 @@ export async function getProgramApplications(
 
   const data = res.data;
 
-  if (data.applicants.length === 0) {
-    return dummyData;
-  }
+  // if (data.applicants.length === 0) {
+  //   return dummyData;
+  // }
   return data;
 }
 

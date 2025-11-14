@@ -27,6 +27,7 @@ export type ConsultDetail = {
   confirmedDate: string | null;
   confirmedTime: ConfirmedTime | null;
   consultStatus: ConsultStatusForPatch;
+  reply: string | null;
 };
 
 type Envelope = {

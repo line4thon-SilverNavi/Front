@@ -79,6 +79,11 @@ export const HeaderContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5.49px;
+
+  .attendDes {
+    ${({ theme }) => theme.fonts.title2};
+    color: ${({ theme }) => theme.colors.gray04};
+  }
 `;
 
 export const RejectHeaderContainer = styled.div`
