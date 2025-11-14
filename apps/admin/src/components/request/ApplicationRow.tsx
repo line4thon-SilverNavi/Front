@@ -46,7 +46,10 @@ export default function ApplicationRow({
       <Cell $align="center">
         <ProgName>{programName}</ProgName>
       </Cell>
-      <Cell $align="center">{applicantName}</Cell>
+      <Cell $align="center">
+        {" "}
+        <AppName>{applicantName}</AppName>
+      </Cell>
       <Cell $align="center">
         <Phone>{fmtPhone(phone)}</Phone>
       </Cell>
@@ -64,6 +67,11 @@ const ProgName = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+`;
+
+const AppName = styled.span`
+  ${({ theme }) => theme.fonts.label2};
+  color: ${({ theme }) => theme.colors.gray07};
 `;
 
 const Phone = styled.span`
