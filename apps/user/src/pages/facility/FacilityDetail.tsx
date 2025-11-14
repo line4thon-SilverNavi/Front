@@ -77,7 +77,6 @@ export default function FacilityDetailPage() {
                 </s.DetailInfoRow>
             </s.DetailInfoContainer>
 
-            <s.FullWidthDivider />
 
             {facility.mainServices.length > 0 && (
                 <s.DetailListSection>
