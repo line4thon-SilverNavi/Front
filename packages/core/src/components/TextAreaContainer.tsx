@@ -78,7 +78,11 @@ export default function TextAreaContainer({
         {label} {required && <em aria-hidden>*</em>}
       </Label>
 
-      <TextAreaWrapper $error={!!errorText} $backgroundColor={backgroundColor} $border={border}>
+      <TextAreaWrapper
+        $error={!!errorText}
+        $backgroundColor={backgroundColor}
+        $border={border}
+      >
         <TextArea
           id={id}
           value={value}
@@ -128,12 +132,17 @@ const Label = styled.label<{
   }
 `;
 
-const TextAreaWrapper = styled.div<{ $error: boolean; $backgroundColor?: string; $border?: string }>`
+const TextAreaWrapper = styled.div<{
+  $error: boolean;
+  $backgroundColor?: string;
+  $border?: string;
+}>`
   display: flex;
   border-radius: 10px;
-  background: ${({ theme, $backgroundColor }) => $backgroundColor ?? theme.colors.gray02};
+  background: ${({ theme, $backgroundColor }) =>
+    $backgroundColor ?? theme.colors.gray02};
   padding: 14px 16px;
-  border: ${({ $border }) => $border ?? '1px solid transparent'};
+  border: ${({ $border }) => $border ?? "1px solid transparent"};
   transition: border-color 0.2s;
 
   &:focus-within {
@@ -155,6 +164,7 @@ const TextArea = styled.textarea<{
   ${({ theme, $textareaTypo }) => theme.fonts[$textareaTypo]};
   color: ${({ theme }) => theme.colors.gray07};
   min-height: 100px;
+  font-family: inherit;
 
   &::placeholder {
     color: ${({ theme, $phColor }) => $phColor ?? theme.colors.gray05};
