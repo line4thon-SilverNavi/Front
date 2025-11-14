@@ -21,10 +21,16 @@ export const IntroTitleContainer = styled.div`
   ${({ theme }) => theme.fonts.body4};
   color: ${({ theme }) => theme.colors.gray07};
   gap: 12px;
+  margin-top: 8rem;
 
   img {
-    width: 133px;
-    height: 52px;
+    width: 325px;
+    height: 77px;
+
+    &.caption{
+      width: 225px;
+      height: 15px;
+    }
   }
 `;
 

@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
+import PrivateRoute from "@layouts/PrivateLayout";
 
 // pages
 import Login from "@pages/auth/Login";
@@ -24,37 +25,47 @@ import SearchResult from "@pages/search/SearchResult";
 import Bookmark from "@pages/mypage/Bookmark";
 import Review from "@pages/facility/Review";
 import PostReview from "@pages/facility/PostReview";
+import AllReview from "@pages/facility/AllReview";
+import Location from "@pages/location/Location";
 
 const router = createBrowserRouter([
   {
     path: "/",
     children: [
+      // Public routes
       { path: "intro", element: <Intro /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
-      { index: true, element: <Home /> },
-      { path: "program", element: <ProgramHome />},
-      { path: "nearfacility", element: <FacilityHome />},
-      { path: "program/:programId", element: <ProgramDetailPage />},
-      { path: "program/:programId/apply", element: <ProgramApply />},
-      { path: "facility", element: <FacilityMain />},
-      { path: "facility/:facilityId", element: <FacilityDetailPage />},
-      { path: "facility/:facilityId/apply", element: <FacilityApplyPage />},
-      { path: "facility/:facilityId/finish-apply", element: <FinishApplyPage />},
-      { path: "facility/:facilityId/review", element: <Review />},
-      { path: "facility/:facilityId/review/postreview", element: <PostReview />},
-      { path: "finishapply", element: <FinishApplyPage />},
-      { path: "mypage", element: <Mypage /> },
-      { path: "bookmark", element: <Bookmark /> },
-      { path: "setuser", element: <SetUserInfo /> },
-      { path: "certify", element: <Certify /> },
-      { path: "history", element: <History /> },
-      { path: "notification", element: <Notification /> },
-      { path: "search", element: <Search /> },
-      { path: "search/result", element: <SearchResult /> },
-      { path: "button", element: <Btn /> },
+      
+      // Protected routes
+      {
+        element: <PrivateRoute />,
+        children: [
+          { index: true, element: <Home /> },
+          { path: "location", element: <Location /> },
+          { path: "program", element: <ProgramHome />},
+          { path: "nearfacility", element: <FacilityHome />},
+          { path: "program/:programId", element: <ProgramDetailPage />},
+          { path: "program/:programId/apply", element: <ProgramApply />},
+          { path: "facility", element: <FacilityMain />},
+          { path: "facility/:facilityId", element: <FacilityDetailPage />},
+          { path: "facility/:facilityId/apply", element: <FacilityApplyPage />},
+          { path: "facility/:facilityId/finish-apply", element: <FinishApplyPage />},
+          { path: "facility/:facilityId/review", element: <Review />},
+          { path: "facility/:facilityId/review/allreview", element: <AllReview />},
+          { path: "facility/:facilityId/review/postreview", element: <PostReview />},
+          { path: "finishapply", element: <FinishApplyPage />},
+          { path: "mypage", element: <Mypage /> },
+          { path: "bookmark", element: <Bookmark /> },
+          { path: "setuser", element: <SetUserInfo /> },
+          { path: "certify", element: <Certify /> },
+          { path: "history", element: <History /> },
+          { path: "notification", element: <Notification /> },
+          { path: "search", element: <Search /> },
+          { path: "search/result", element: <SearchResult /> },
+          { path: "button", element: <Btn /> },
+        ],
+      },
     ],
   },
-]);
-
-export default router;
+]);export default router;

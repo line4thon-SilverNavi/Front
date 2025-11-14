@@ -3,19 +3,20 @@ import CommonHeader from "@components/common/CommonHeader";
 import styled from "styled-components";
 import NavBar from "@components/common/NavBar";
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getFacilityDetail } from "@apis/facility/facilityDetail";
 import TextAreaContainer from "@core/components/TextAreaContainer";
 import { Button } from "@core/ui/button";
 import { postReview } from "@apis/facility/reviewposting";
+import ReviewSuccessModal from "@components/facility/ReviewSuccessModal";
 
 export default function PostReview(){
     const { facilityId } = useParams<{ facilityId: string }>();
-    const navigate = useNavigate();
     const [name, setName] = useState("");
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
     const [content, setContent] = useState("");
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
 
     useEffect(() => {
         const fetchFacilityInfo = async () => {
@@ -54,26 +55,26 @@ export default function PostReview(){
                 rating,
                 content: content.trim()
             });
-            alert("리뷰가 등록되었습니다.");
-            navigate(`/facility/${facilityId}/review`);
-        } catch (error: any) {
+            setShowSuccessModal(true);
+        } catch (error) {
             console.error("리뷰 등록에 실패했습니다:", error);
-            if (error.response?.status === 409) {
-                alert("이미 이 시설에 대한 리뷰를 작성하셨습니다.");
-            } else {
-                alert("리뷰 등록에 실패했습니다. 다시 시도해주세요.");
-            }
+            alert("리뷰 등록에 실패했습니다. 다시 시도해주세요.");
         }
     };
 
 
     return(
-        <DefaultLayout header={<CommonHeader title="이용 후기 작성"/>} footer={<NavBar />}>
-            <Container>
-                <Facility>
-                    <p>시설</p>
-                    {name}
-                </Facility>
+        <>
+            <ReviewSuccessModal 
+                open={showSuccessModal} 
+                onClose={() => setShowSuccessModal(false)} 
+            />
+            <DefaultLayout header={<CommonHeader title="이용 후기 작성"/>} footer={<NavBar />}>
+                <Container>
+                    <Facility>
+                        <p>시설</p>
+                        {name}
+                    </Facility>
                 <DoReview>
                     별점을 선택해주세요
                     <Stars>
@@ -112,6 +113,7 @@ export default function PostReview(){
                 </ButtonContainer>
             </Container>
         </DefaultLayout>
+        </>
     );
 }
 

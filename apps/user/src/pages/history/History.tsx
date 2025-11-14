@@ -13,6 +13,7 @@ type TabType = "신청 목록" | "상담 내역";
 export default function History(){
     const [activeTab, setActiveTab] = useState<TabType>("신청 목록");
     const [historyData, setHistoryData] = useState<ProgramHistoryData | null>(null);
+    const [searchKeyword, setSearchKeyword] = useState("");
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -26,7 +27,7 @@ export default function History(){
 
 
     return(
-        <DefaultLayout header={<HeaderHistory />} footer={<NavBar />}>
+        <DefaultLayout header={<HeaderHistory onSearchChange={setSearchKeyword} />} footer={<NavBar />}>
             <TabContainer 
                 tabs={["신청 목록", "상담 내역"]} 
                 activeTab={activeTab} 
@@ -35,10 +36,10 @@ export default function History(){
 
             <ContentContainer>
                 {activeTab === "신청 목록" ? (
-                    <ProgramHistory historyData={historyData} />
+                    <ProgramHistory historyData={historyData} searchKeyword={searchKeyword} />
                 ) : (
                     <>
-                    <ConsultHistory />
+                    <ConsultHistory searchKeyword={searchKeyword} />
                     </>
                 )}
             </ContentContainer>

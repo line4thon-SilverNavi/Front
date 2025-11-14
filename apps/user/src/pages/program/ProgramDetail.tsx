@@ -145,8 +145,6 @@ export default function ProgramDetailPage() {
                 </s.DetailInfoRow>
             </s.DetailInfoContainer>
 
-            <s.FullWidthDivider />
-
             {program.supplies && program.supplies.length > 0 && (
                 <s.DetailListSection>
                     <s.DetailListTitle>준비물</s.DetailListTitle>

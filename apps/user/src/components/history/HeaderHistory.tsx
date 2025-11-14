@@ -2,10 +2,18 @@ import InputContainer from "@core/components/inputContainer";
 import { useState } from "react";
 import styled from "styled-components";
 
+type HeaderHistoryProps = {
+    onSearchChange: (keyword: string) => void;
+};
 
-export default function HeaderHistory(){
+export default function HeaderHistory({ onSearchChange }: HeaderHistoryProps){
     const [keyword, setKeyword] = useState("");
     const [noti, setNoti] = useState(false);
+
+    const handleSearchChange = (value: string) => {
+        setKeyword(value);
+        onSearchChange(value);
+    };
 
     return(
         <Wrapper>
@@ -14,7 +22,7 @@ export default function HeaderHistory(){
                 label=""
                 placeholder="내용을 입력하여 검색하세요."
                 value={keyword}
-                onChange={(value) => setKeyword(value)}
+                onChange={handleSearchChange}
                 variant="filled"
                 inputTypo="body2"
                 width="100%"
