@@ -5,8 +5,9 @@ export type ConsultReplyBody = {
   consultId: number;
   category: "일반상담" | "시설상담";
   content: string;
-  confirmedDate: string;
-  confirmedTime: ConfirmedTime;
+  confirmedDate?: string;
+  confirmedTime?: ConfirmedTime;
+  status: "거부" | "완료";
 };
 
 export async function postConsultReply(body: ConsultReplyBody) {

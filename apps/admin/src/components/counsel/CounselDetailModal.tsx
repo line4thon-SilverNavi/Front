@@ -164,9 +164,16 @@ export default function ConsultDetailModal({
     }
 
     const trimmedDesc = description.trim();
+    const isReject = nextStatus === "거부";
 
-    // 거부가 아닐 때는 확정 일시 무조건
-    if (nextStatus !== "거부") {
+    // 거부일 때: 사유 필수
+    if (isReject) {
+      if (!trimmedDesc) {
+        toast.error("거부 사유를 작성해주세요.");
+        return;
+      }
+    } else {
+      // 거부가 아닐 때: 확정 일시 필수
       if (!reply.confirmedDate || !reply.confirmedTime) {
         toast.error("상담 확정 일시를 입력해주세요.");
         return;
@@ -181,7 +188,8 @@ export default function ConsultDetailModal({
 
     const hasDescription = trimmedDesc.length > 0;
 
-    if (!hasReplyChanged && !hasDescription) {
+    // 거부도 아니고, 답변도 없고, 일시/상태도 안 바뀐 경우
+    if (!isReject && !hasReplyChanged && !hasDescription) {
       toast("변경된 내용이 없습니다.");
       return;
     }
@@ -192,15 +200,27 @@ export default function ConsultDetailModal({
     try {
       setSaving(true);
 
-      if (hasDescription) {
+      if (isReject) {
+        // 1) 거부: 무조건 POST (status, content, category, consultId만)
         await postConsultReply({
           consultId,
           category,
           content: trimmedDesc,
+          status: "거부",
+        });
+      } else if (hasDescription) {
+        // 2) 답변이 있을 때: 무조건 POST
+        //    -> status는 "완료"로 보내기로 스펙 정의
+        await postConsultReply({
+          consultId,
+          category,
+          content: trimmedDesc,
+          status: "완료",
           confirmedDate: baseDate,
           confirmedTime: timeForPatch,
         });
       } else {
+        // 3) 답변 없고 거부도 아니고, 일시/상태만 변경 -> PATCH
         await patchConsultReply(consultId, category, {
           confirmedDate: baseDate,
           confirmedTime: timeForPatch,
@@ -208,9 +228,14 @@ export default function ConsultDetailModal({
         });
       }
 
-      if (nextStatus === "거부") {
+      // 리스트 상태는 여기서 바로 반영
+      if (isReject) {
         toast.success("상담이 거부 처리되었습니다.");
         onStatusChange?.(consultId, "거부");
+      } else if (hasDescription) {
+        // 답변을 작성했다면 화면에서도 완료로 표시
+        toast.success("상담 답변이 저장되었습니다.");
+        onStatusChange?.(consultId, "완료");
       } else {
         toast.success("상담 정보가 저장되었습니다.");
         onStatusChange?.(consultId, nextStatus as ConsultStatus);

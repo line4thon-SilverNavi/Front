@@ -35,13 +35,15 @@ const TitleArea = styled.div`
   width: 100%;
   max-width: 750px;
   margin: 0 auto clamp(8px, 1vh, 20px);
+  margin-top: 4rem;
 `;
 
 const Main = styled.main`
   flex: 1 1 auto;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
+  width: 100%;
 `;
 
 const Container = styled.div`
