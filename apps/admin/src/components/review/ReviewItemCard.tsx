@@ -11,13 +11,19 @@ export default function ReviewItemCard({ item }: Props) {
 
   const initial = authorName?.[0] ?? "?";
 
+  const maskName = (name: string): string => {
+    if (!name) return "";
+    const first = name[0];
+    return first + "**";
+  };
+
   return (
     <Card>
       <HeaderRow>
         <Avatar>{initial}</Avatar>
 
         <HeaderText>
-          <Name>{authorName}</Name>
+          <Name>{maskName(authorName)}</Name>
           <Meta>{formatKDateTimeFull(createdDate)}</Meta>
         </HeaderText>
       </HeaderRow>
