@@ -1,7 +1,7 @@
 //설명, 준비물
 
-import TextAreaContainer from "@core/components/TextareaContainer";
 import InputContainer from "@core/components/inputContainer";
+import TextAreaContainer from "@core/components/TextAreaContainer";
 
 type Props = {
   description: string;

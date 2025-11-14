@@ -25,7 +25,7 @@ import {
 } from "@apis/consult/patchConsultReply";
 
 import ConsultReplyField, { type ConsultReplyValue } from "./CounselReplyField";
-import TextAreaContainer from "@core/components/TextareaContainer";
+import TextAreaContainer from "@core/components/TextAreaContainer";
 import { postConsultReply } from "@apis/consult/postReply";
 import ConsultStatusField from "./ConsultStatusField";
 import { STATUS_STYLE_MAP } from "@components/common/status/statusMap";
