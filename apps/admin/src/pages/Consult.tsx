@@ -118,15 +118,13 @@ const Consult = () => {
 
   /* ---------- 모달에서 상태 변경 시 리스트/요약 반영 ---------- */
 
-  const handleModalStatusChange = (next: ConsultStatus) => {
-    if (!selectedId) return;
-
+  const handleModalStatusChange = (id: number, next: ConsultStatus) => {
+    // 기본 consults 업데이트
     setConsults((prev) => {
       const nextConsults = prev.map((c) =>
-        c.consultId === selectedId ? { ...c, status: next } : c
+        c.consultId === id ? { ...c, status: next } : c
       );
 
-      // 요약도 즉시 재계산해서 카드에 반영
       const nextSummary: CounselSummary = {
         totalCount: nextConsults.length,
         pendingCount: nextConsults.filter((c) => c.status === "대기중").length,
@@ -137,12 +135,19 @@ const Consult = () => {
 
       return nextConsults;
     });
+
+    setLocalConsults((prev) =>
+      prev
+        ? prev.map((c) => (c.consultId === id ? { ...c, status: next } : c))
+        : null
+    );
   };
 
   return (
     <PageWrapper>
       {/* 상태 요약 카드 */}
       <CounselStatusCard summary={summary} />
+
       <RequestSearchBar
         status={statusFilter}
         onStatusChange={(s) => {

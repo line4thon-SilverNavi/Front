@@ -35,7 +35,7 @@ type Props = {
   consultId: number | null;
   category: ConsultCategory | null;
   onClose: () => void;
-  onStatusChange?: (s: ConsultStatus) => void;
+  onStatusChange?: (id: number, s: ConsultStatus) => void;
 };
 
 export default function ConsultDetailModal({
@@ -64,7 +64,7 @@ export default function ConsultDetailModal({
 
   // 답변 및 거부 사유
   const [description, setDescription] = useState("");
-  const [initialDescription, setInitialDescription] = useState("");
+  const [_, setInitialDescription] = useState("");
 
   const [saving, setSaving] = useState(false);
 
@@ -79,7 +79,7 @@ export default function ConsultDetailModal({
         if (!alive) return;
         setDetail(data);
 
-        //확정 날짜, 시간
+        // 확정 날짜, 시간
         const baseDate = data.confirmedDate ?? data.hopeDate ?? "";
         const baseTime =
           (data.confirmedTime as ConfirmedTime | null) ??
@@ -97,8 +97,9 @@ export default function ConsultDetailModal({
 
         setReply(initial);
         setInitialReply(initial);
-        setDescription("");
-        setInitialDescription("");
+        const baseReply = data.reply ?? "";
+        setDescription(baseReply);
+        setInitialDescription(baseReply);
 
         setStatusToChange(baseStatus);
       } catch (e: any) {
@@ -151,20 +152,7 @@ export default function ConsultDetailModal({
   const hopeDateTime =
     hopeDate && hopeTime ? `${hopeDate} ${hopeTime}` : (hopeDate ?? "");
 
-  const isCompleted = status == "완료";
-
-  /* ---------- 변경 여부 판단 ---------- */
-
-  const trimmedDesc = description.trim();
-
-  const hasReplyChanged =
-    !!initialReply &&
-    (initialReply.confirmedDate !== reply.confirmedDate ||
-      initialReply.confirmedTime !== reply.confirmedTime ||
-      initialReply.status !== reply.status);
-
-  const hasDescriptionChanged =
-    trimmedDesc !== initialDescription.trim() && trimmedDesc.length > 0;
+  const isCompleted = status === "완료";
 
   /* ---------- PATCH + POST ---------- */
 
@@ -175,6 +163,9 @@ export default function ConsultDetailModal({
       return;
     }
 
+    const trimmedDesc = description.trim();
+
+    // 거부가 아닐 때는 확정 일시 무조건
     if (nextStatus !== "거부") {
       if (!reply.confirmedDate || !reply.confirmedTime) {
         toast.error("상담 확정 일시를 입력해주세요.");
@@ -182,50 +173,47 @@ export default function ConsultDetailModal({
       }
     }
 
+    const hasReplyChanged =
+      !!initialReply &&
+      (initialReply.confirmedDate !== reply.confirmedDate ||
+        initialReply.confirmedTime !== reply.confirmedTime ||
+        initialReply.status !== reply.status);
+
+    const hasDescription = trimmedDesc.length > 0;
+
+    if (!hasReplyChanged && !hasDescription) {
+      toast("변경된 내용이 없습니다.");
+      return;
+    }
+
+    const baseDate = reply.confirmedDate || hopeDate || appliedAt.slice(0, 10);
+    const timeForPatch = reply.confirmedTime || ("오전" as ConfirmedTime);
+
     try {
       setSaving(true);
 
-      const tasks: Promise<any>[] = [];
-
-      // 1) 확정 일시 + 상태 전환 PATCH
-      if (hasReplyChanged || nextStatus === "거부") {
-        const baseDate =
-          reply.confirmedDate || hopeDate || appliedAt.slice(0, 10);
-        const timeForPatch = reply.confirmedTime || ("오전" as ConfirmedTime);
-
-        tasks.push(
-          patchConsultReply(consultId, category, {
-            confirmedDate: baseDate,
-            confirmedTime: timeForPatch,
-            consultStatus: nextStatus,
-          })
-        );
+      if (hasDescription) {
+        await postConsultReply({
+          consultId,
+          category,
+          content: trimmedDesc,
+          confirmedDate: baseDate,
+          confirmedTime: timeForPatch,
+        });
+      } else {
+        await patchConsultReply(consultId, category, {
+          confirmedDate: baseDate,
+          confirmedTime: timeForPatch,
+          consultStatus: nextStatus,
+        });
       }
-
-      // 2) 상담 답변 POST (내용이 있는 경우만)
-      if (hasDescriptionChanged) {
-        tasks.push(
-          postConsultReply({
-            consultId,
-            category,
-            content: trimmedDesc,
-          })
-        );
-      }
-
-      if (tasks.length === 0) {
-        toast("변경된 내용이 없습니다.");
-        return;
-      }
-
-      await Promise.all(tasks);
 
       if (nextStatus === "거부") {
         toast.success("상담이 거부 처리되었습니다.");
-        onStatusChange?.("거부");
+        onStatusChange?.(consultId, "거부");
       } else {
         toast.success("상담 정보가 저장되었습니다.");
-        onStatusChange?.(nextStatus as ConsultStatus);
+        onStatusChange?.(consultId, nextStatus as ConsultStatus);
       }
 
       onClose();
