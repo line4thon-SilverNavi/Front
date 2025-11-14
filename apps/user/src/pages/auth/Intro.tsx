@@ -18,8 +18,8 @@ const Intro = () => {
   return (
     <s.IntroWrapper>
       <s.IntroTitleContainer>
-        <p>당신의 하루가 더 활짝 피어나도록</p>
         <img src="/img/auth/logo.png" />
+        <img className="caption" src="/img/auth/caption.png" />
       </s.IntroTitleContainer>
       <s.IntroBtnContainer>
         <Button tone="blue" radius="5px" typo="body3" onClick={handleLogin}>

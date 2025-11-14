@@ -5,16 +5,30 @@ import { getConsultHistory } from "@apis/history/history";
 import CategoryMap from "@components/common/CategoryMap";
 import { useFormatDate } from "@core/hooks/ProcessingTime";
 
+type ConsultHistoryProps = {
+    searchKeyword: string;
+};
 
-export default function ConsultHistory(){
+export default function ConsultHistory({ searchKeyword }: ConsultHistoryProps){
     const [consultData, setConsultData] = useState<ConsultHistoryData | null>(null);
     const [selectedStatus, setSelectedStatus] = useState<string>("전체");
 
     const statusCategories = ["전체", "대기중", "확인됨", "완료"];
 
-    const filteredConsults = selectedStatus === "전체" 
+    // 검색어와 상태로 필터링
+    const filteredConsults = (selectedStatus === "전체" 
         ? consultData?.consults || []
-        : consultData?.consults.filter(consult => consult.consultStatus === selectedStatus) || [];
+        : consultData?.consults.filter(consult => consult.consultStatus === selectedStatus) || []
+    ).filter(consult => {
+        if (!searchKeyword.trim()) return true;
+        const keyword = searchKeyword.toLowerCase();
+        return (
+            (consult.content && consult.content.toLowerCase().includes(keyword)) ||
+            (consult.facilityName && consult.facilityName.toLowerCase().includes(keyword)) ||
+            (consult.consultCategory && consult.consultCategory.toLowerCase().includes(keyword)) ||
+            (consult.consultType && consult.consultType.toLowerCase().includes(keyword))
+        );
+    });
 
     useEffect(() => {
         const fetchConsults = async () => {

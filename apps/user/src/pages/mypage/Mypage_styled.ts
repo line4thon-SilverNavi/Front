@@ -8,7 +8,7 @@ export const Wrapper = styled.div`
 
 export const Header = styled.div`
     display: flex;
-    color: #A0D0FC;
+    color: ${({ theme }) => theme.colors.gray07};
     ${({ theme }) => theme.fonts.heading3};
     justify-content: center;
 `;

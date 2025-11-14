@@ -1,15 +1,18 @@
 import { Button } from "@core/ui/button";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import * as s from "@layouts/DetailPageLayout";
 import { useEffect, useState } from "react";
 import { getFacilityDetail, type FacilityDetailData } from "@apis/facility/facilityDetail";
 import ApplyingModal from "@components/facility/ApplyingModal";
-import { useFormatDateFull } from "@core/hooks/ProcessingTime";
+import ReviewCard from "@components/facility/ReviewCard";
+import CardList from "@components/common/CardList";
 
 export default function FacilityDetailPage() {
     const { facilityId } = useParams<{ facilityId: string }>();
     const [facility, setFacility] = useState<FacilityDetailData | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const navigate = useNavigate();
     
     useEffect(() => {
         const fetchFacilityDetail = async () => {
@@ -74,7 +77,6 @@ export default function FacilityDetailPage() {
                 </s.DetailInfoRow>
             </s.DetailInfoContainer>
 
-            <s.FullWidthDivider />
 
             {facility.mainServices.length > 0 && (
                 <s.DetailListSection>
@@ -89,21 +91,17 @@ export default function FacilityDetailPage() {
 
             <s.DetailListSection>
                 <s.DetailListTitle className="moreinfo">이용 후기
-                    <p>자세히보기</p>
+                    <p onClick={() => navigate("review")}>자세히보기</p>
                 </s.DetailListTitle>
                 {facility.reviews.length > 0 ? (
-                    facility.reviews.map((review) => (
-                        <s.ReviewCard key={review.id}>
-                            <s.ReviewHeader>
-                                <s.ReviewName>
-                                    <p>{review.authorName[0]}</p>
-                                    {review.authorName[0]}**</s.ReviewName>
-                                <s.ReviewDate>{useFormatDateFull(review.createdAt)}</s.ReviewDate>
-                            </s.ReviewHeader>
-                            <s.RatingStar rating={review.rating} />
-                            <s.ReviewText>{review.content}</s.ReviewText>
-                        </s.ReviewCard>
-                    ))
+                    <CardList 
+                        items={facility.reviews.slice(0, 2)}
+                        renderCard={(review) => (
+                            <ReviewCard key={review.id} review={review} />
+                        )}
+                        direction="vertical"
+                        gap="0.25rem"
+                    />
                 ) : (
                     <div style={{ textAlign: "center", padding: "20px 0", color: "#999" }}>
                         <p>아직 리뷰가 없어요</p>

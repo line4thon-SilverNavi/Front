@@ -64,6 +64,8 @@ const Wrap = styled.div`
   flex-direction: column;
   background: ${({ theme }) => theme.colors.gray01};
   height: 100dvh;
+  overflow-x: hidden;
+  user-select: none;
 `;
 
 const ImageContainer = styled.div`
@@ -78,6 +80,9 @@ const Image = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
 `;
 
 const Header = styled.header`
@@ -123,9 +128,12 @@ const CategoryTag = styled.div`
 const ScrollableContent = styled.div`
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1.36rem;
   display: flex;
   flex-direction: column;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 `;
 
 const Footer = styled.footer`
@@ -256,14 +264,6 @@ export const DetailInfoRow = styled.div`
   align-items: center;
 `;
 
-// 전체 너비 구분선 (패딩 무시)
-export const FullWidthDivider = styled.div`
-  width: calc(100% + 2.72rem);
-  height: 9px;
-  background: ${({ theme }) => theme.colors.gray02};
-  margin-left: -1.36rem;
-  margin-right: -1.36rem;
-`;
 
 // 리스트 섹션 (주요 서비스 등)
 export const DetailListSection = styled.div`
@@ -323,79 +323,6 @@ export const DetailListItem = styled.li`
     color: ${({ theme }) => theme.colors.blue01};
     ${({ theme }) => theme.fonts.heading2};
   }
-`;
-
-// 리뷰 컴포넌트
-export const ReviewCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  background-color: ${({ theme }) => theme.colors.gray02};
-  border-radius: 10px;
-  padding: 1rem;
-`;
-
-export const ReviewHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-export const ReviewName = styled.div`
-  ${({ theme }) => theme.fonts.body3};
-  color: ${({ theme }) => theme.colors.gray07};
-  display: flex;
-  align-items: center;
-  p{
-    margin: 0 0.5rem 0 0;
-    background-color: ${({ theme }) => theme.colors.blue01};
-    color: white;
-    border-radius: 50%;
-    padding: 5px 10px;
-  }
-`;
-
-export const ReviewDate = styled.div`
-  ${({ theme }) => theme.fonts.body4};
-  color: ${({ theme }) => theme.colors.gray05};
-`;
-
-// 별점 표시 컴포넌트
-type RatingStarProps = {
-  rating: number;
-};
-
-export function RatingStar({ rating }: RatingStarProps) {
-  const stars = Array.from({ length: 5 }, (_, index) => index < rating);
-  
-  return (
-    <RatingStarContainer>
-      {stars.map((filled, index) => (
-        <img
-          key={index}
-          src={filled ? "/img/cards/rate.png" : "/img/detail-page/star-empty.png"}
-          alt={filled ? "filled star" : "empty star"}
-        />
-      ))}
-    </RatingStarContainer>
-  );
-}
-
-const RatingStarContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-  
-  img {
-    width: 16px;
-    height: 16px;
-  }
-`;
-
-export const ReviewText = styled.div`
-  ${({ theme }) => theme.fonts.body3};
-  color: ${({ theme }) => theme.colors.gray06};
-  line-height: 1.5;
 `;
 
 // 첨부자료 & 문의전화 섹션

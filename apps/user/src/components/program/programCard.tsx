@@ -78,7 +78,9 @@ export default function ProgramCard({
                 </StatusTag>
             )}
             <Container>
-                <Img style={{ backgroundImage: `url(${displayThumbnail})` }}></Img>
+                <ImageContainer>
+                <Image src={displayThumbnail} />
+                </ImageContainer>    
                 <InfoContainer>
                     <Title>
                         <Name>{programName}</Name>
@@ -107,6 +109,7 @@ const CardWrapper = styled.div`
     border-radius: 20px;
     position: relative;
     cursor: pointer;
+    height: 278px;
 `;
 
 const BookmarkButtonWrapper = styled.div`
@@ -115,6 +118,22 @@ const BookmarkButtonWrapper = styled.div`
     right: 0.8rem;
     z-index: 10;
 `;
+
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  border-top-right-radius: 12px;
+  border-top-left-radius: 12px;
+`;
+
+const ImageContainer = styled.div`
+    height: 120px;
+    border-radius: 12px;
+`
 
 const CategoryTag = styled.div`
     position: absolute;
@@ -151,27 +170,19 @@ const StatusTag = styled.div<{ $isDone: boolean }>`
 
 const Container = styled.div`
     display: grid;
-    grid-template-rows: 12fr 13fr;
+    grid-template-rows: 3fr 4fr;
     border-radius: 12px;
     height: 100%;
     border: 1px solid ${({ theme }) => theme.colors.gray03};
 `;
 
-const Img = styled.div`
-    overflow: hidden;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-`;
 
 const InfoContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 0.8rem 1.1rem;
-    gap: 0.5rem;
+    padding: 0.8rem 1.1rem 0 1.1rem;
+    gap: 0.25rem;
 `;
 
 const Title = styled.div`
@@ -179,6 +190,7 @@ const Title = styled.div`
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    margin-left: 2px;
 `;
 
 const Name = styled.div`
@@ -240,6 +252,7 @@ const Applicants = styled.div`
     align-items: center;
     gap: 0.5rem;
     padding: 0 1.1rem 0.8rem 1.1rem;
+    margin-top: 0.5rem;
 `;
 
 const ApplicantText = styled.p`

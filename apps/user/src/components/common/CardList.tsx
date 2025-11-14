@@ -4,24 +4,26 @@ interface CardListProps<T> {
   items: T[];
   renderCard: (item: T) => React.ReactNode;
   direction?: 'horizontal' | 'vertical';
+  gap?: string;
 }
 
 export default function CardList<T>({ 
   items, 
   renderCard, 
-  direction = 'horizontal'
+  direction = 'horizontal',
+  gap
 }: CardListProps<T>) {
   return (
-    <Container $direction={direction}>
+    <Container $direction={direction} $gap={gap}>
       {items.map((item) => renderCard(item))}
     </Container>
   );
 }
 
-const Container = styled.div<{ $direction: 'horizontal' | 'vertical' }>`
+const Container = styled.div<{ $direction: 'horizontal' | 'vertical'; $gap?: string }>`
   display: flex;
   flex-direction: ${({ $direction }) => $direction === 'vertical' ? 'column' : 'row'};
-  gap: ${({ $direction }) => $direction === 'vertical' ? '1.5rem' : '1rem'};
+  gap: ${({ $gap, $direction }) => $gap || ($direction === 'vertical' ? '1.5rem' : '1rem')};
   
   ${({ $direction }) => $direction === 'horizontal' && `
     overflow-x: auto;
