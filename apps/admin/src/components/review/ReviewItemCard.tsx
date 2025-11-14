@@ -29,7 +29,7 @@ export default function ReviewItemCard({ item }: Props) {
       </HeaderRow>
 
       <StarsRow aria-label={`별점 ${rating}점`}>
-        {Array.from({ length: 5 }).map((_, idx) => (
+        {Array.from({ length: rating }).map((_, idx) => (
           <Star key={idx} $active={idx < rating}>
             <img src="/img/review/star.svg" />
           </Star>

@@ -36,7 +36,7 @@ export async function getReviews(params?: {
 }): Promise<ReviewsRes> {
   const search = new URLSearchParams();
   if (params?.page) search.set("page", String(params.page));
-  if (params?.rating) search.set("status", String(params.rating));
+  if (params?.rating) search.set("rating", String(params.rating));
 
   const url =
     "/api/reviews" + (search.toString() ? `?${search.toString()}` : "");
