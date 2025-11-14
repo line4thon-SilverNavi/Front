@@ -4,7 +4,6 @@ import type { PatchProgramPayload, ApiEnvelope, ProgramDetail } from "./types";
 const fdAdd = (fd: FormData, key: string, val: unknown) => {
   if (val === null || val === undefined) return;
   if (Array.isArray(val)) {
-    // supplies 같은 애들만 여기 타게 (서버에서 JSON 문자열로 받는 경우)
     fd.append(key, JSON.stringify(val));
   } else {
     fd.append(key, String(val));
