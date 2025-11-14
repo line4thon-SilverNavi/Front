@@ -13,6 +13,7 @@ import EditProgramModal from "@components/program/EditProgramModal";
 import AttendanceModal from "@components/program/attendance/AttendanceModal";
 import type { ProgramItem } from "@apis/program/getPrograms";
 import type { ProgramDetail } from "@apis/program/types";
+import { searchPrograms } from "@apis/program/searchPrograms";
 
 type OutletCtx = {
   setHeader: (o: {
@@ -43,6 +44,7 @@ const AdminProgram = () => {
   const visibleItems = localItems ?? items;
 
   const [query, setQuery] = useState("");
+  const [searching, setSearching] = useState(false);
   const [open, setOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -58,11 +60,29 @@ const AdminProgram = () => {
   );
 
   const handleSearchSubmit = useCallback(
-    (q: string) => {
-      // TODO: 검색 파라미터 연결
-      refetch();
+    async (raw: string) => {
+      const keyword = raw.trim();
+      setQuery(raw);
+
+      if (!keyword) {
+        setLocalItems(null);
+        setPage(1);
+        await refetch();
+        return;
+      }
+
+      try {
+        setSearching(true);
+        const result = await searchPrograms(keyword);
+        setLocalItems(result);
+        setPage(1);
+      } catch (e: any) {
+        toast.error(e?.message || "프로그램 검색에 실패했습니다.");
+      } finally {
+        setSearching(false);
+      }
     },
-    [refetch]
+    [refetch, setPage]
   );
 
   const handleConfirmDelete = useCallback(async () => {
@@ -132,6 +152,13 @@ const AdminProgram = () => {
     [editId, items, mergeDetailIntoItem]
   );
 
+  const currentProgramName = useMemo(() => {
+    if (!attPid) return "";
+    const base = localItems ?? items;
+    const found = base.find((it) => it.programId === attPid);
+    return found?.programName ?? "";
+  }, [attPid, localItems, items]);
+
   return (
     <Wrap>
       <ProgramSearchBar
@@ -140,6 +167,7 @@ const AdminProgram = () => {
           setCategory(c);
           setPage(1);
           setLocalItems(null);
+          setQuery("");
         }}
         query={query}
         onQueryChange={setQuery}
@@ -148,7 +176,7 @@ const AdminProgram = () => {
 
       <ProgramList
         items={visibleItems}
-        loading={loading}
+        loading={loading || searching}
         onEditClick={(id) => {
           setEditId(id);
           setEditOpen(true);
@@ -190,6 +218,7 @@ const AdminProgram = () => {
       <AttendanceModal
         open={attOpen}
         programId={attPid}
+        programName={currentProgramName}
         onClose={() => {
           setAttOpen(false);
           setAttPid(null);

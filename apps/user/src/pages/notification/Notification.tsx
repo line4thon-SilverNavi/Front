@@ -2,10 +2,9 @@ import DefaultLayout from "@layouts/DefaultLayout";
 import CommonHeader from "@components/common/CommonHeader";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { type NotificationResponse } from "@apis/notification/notilist";
+import { type NotificationResponse, getNotificationList } from "@apis/notification/notilist";
 import CardList from "@components/common/CardList";
 import NotiCard from "@components/notification/NotiCard";
-import { notificationDummyData } from "@apis/dummy/notificationDummy";
 import { postReadNotification } from "@apis/notification/readnoti";
 
 export default function Notification(){
@@ -14,9 +13,7 @@ export default function Notification(){
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                // const data = await getNotificationList();
-                // 더미 데이터 사용
-                const data = notificationDummyData;
+                const data = await getNotificationList();
                 setNotifications(data);
                 
                 // isRead가 false인 알림들에 대해 읽음 처리

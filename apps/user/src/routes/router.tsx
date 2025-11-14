@@ -21,6 +21,7 @@ import History from "@pages/history/History";
 import Notification from "@pages/notification/Notification";
 import Search from "@pages/search/Search";
 import SearchResult from "@pages/search/SearchResult";
+import Bookmark from "@pages/mypage/Bookmark";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,7 @@ const router = createBrowserRouter([
       { path: "facility/:facilityId/finish-apply", element: <FinishApplyPage />},
       { path: "finishapply", element: <FinishApplyPage />},
       { path: "mypage", element: <Mypage /> },
+      { path: "bookmark", element: <Bookmark /> },
       { path: "setuser", element: <SetUserInfo /> },
       { path: "certify", element: <Certify /> },
       { path: "history", element: <History /> },

@@ -24,7 +24,6 @@ import FileFields from "./AddProgramModal/sections/FileFields";
 type Props = {
   open: boolean;
   onClose: () => void;
-  /** ✅ 낙관적 업데이트: patch 결과 ProgramDetail을 넘겨준다 */
   onSuccess?: (updated: ProgramDetail) => void;
   programId: number | null;
   facilityName?: string;
@@ -94,10 +93,13 @@ export default function EditProgramModal({
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const originalRef = useRef<ProgramDetail | null>(null);
+  const [existingProposalUrl, setExistingProposalUrl] = useState<string | null>(
+    null
+  );
+  const [existingImages, setExistingImages] = useState<string[]>([]);
 
   useEffect(() => {
     if (open) f.reset();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   // 상세 로드
@@ -124,7 +126,9 @@ export default function EditProgramModal({
         f.setFee(d.fee ?? "");
         f.setNumber(d.number ?? "");
         f.setDescription(d.description ?? "");
-        f.setSuppliesText((d.supplies ?? []).join("\n"));
+        f.setSuppliesText((d.supplies ?? []).join(", "));
+        setExistingProposalUrl(d.proposal ?? null);
+        setExistingImages(d.images ?? []);
 
         f.setProposal(null);
         f.setImages([]);
@@ -139,7 +143,6 @@ export default function EditProgramModal({
     return () => {
       alive = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, programId]);
 
   /* ---------- 로컬 검증 ---------- */
@@ -182,9 +185,22 @@ export default function EditProgramModal({
   function buildPayload(): PatchProgramPayload {
     const prev = originalRef.current!;
     const suppliesArr = f.suppliesText
-      .split("\n")
+      .split(/[,\n]/)
       .map((s) => s.trim())
       .filter(Boolean);
+
+    const hadPrevProposal = !!prev.proposal;
+    const hasExistingProposal = !!existingProposalUrl;
+    const hasNewProposal = !!f.proposal;
+
+    let isDeleteProposal: boolean | undefined = undefined;
+    if (hasNewProposal) {
+      isDeleteProposal = false;
+    } else if (hadPrevProposal && !hasExistingProposal) {
+      isDeleteProposal = true;
+    }
+
+    const existingImageUrls = existingImages;
 
     return {
       name: f.name === prev.name ? null : f.name.trim(),
@@ -199,9 +215,12 @@ export default function EditProgramModal({
       number: diffString(f.number, prev.number, true),
       description: diffString(f.description, prev.description, true),
       supplies: diffList(suppliesArr, prev.supplies),
+
       proposal: f.proposal ?? null,
-      newImages: f.images && f.images.length ? f.images : undefined,
-      // isDeleteProposal / existingImageUrls 필요 시 추가
+      newImages: f.images && f.images.length ? f.images : null,
+      existingImageUrls,
+
+      isDeleteProposal,
     } as PatchProgramPayload;
   }
 
@@ -212,7 +231,6 @@ export default function EditProgramModal({
     try {
       setSaving(true);
       const updated = await patchProgram(programId, buildPayload());
-      // ✅ 부모로 결과 전달 → 낙관적 리스트 치환
       onSuccess?.(updated);
       onClose();
       toast.success("수정되었습니다.");
@@ -293,6 +311,12 @@ export default function EditProgramModal({
                 onPickImages={f.onPickImages}
                 fileInputRef={f.fileInputRef}
                 imgInputRef={f.imgInputRef}
+                existingProposalUrl={existingProposalUrl}
+                onDeleteExistingProposal={() => setExistingProposalUrl(null)}
+                existingImages={existingImages}
+                onDeleteExistingImage={(url) =>
+                  setExistingImages((prev) => prev.filter((img) => img !== url))
+                }
               />
             </Field>
           </S.Form>

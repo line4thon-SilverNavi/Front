@@ -113,7 +113,7 @@ export default function Mypage () {
               <S.ActivityCount>{userData?.consultCount || 0}</S.ActivityCount>
               <S.ActivityLabel>신청한 <br/> 프로그램</S.ActivityLabel>
             </S.ActivityCard>
-            <S.ActivityCard onClick={() => navigate('/mypage/consults')}>
+            <S.ActivityCard onClick={() => navigate('/bookmark')}>
               <S.ActivityCount>{userData?.bookmarkCount || 0}</S.ActivityCount>
               <S.ActivityLabel>찜한 목록</S.ActivityLabel>
             </S.ActivityCard>
@@ -127,7 +127,7 @@ export default function Mypage () {
         <S.Menu>
           <S.Title>메뉴</S.Title>
           <S.MenuContainer>
-            <S.MenuList type="bookmark" onClick={() => navigate('/mypage/bookmarks')}>
+            <S.MenuList type="bookmark" onClick={() => navigate('/bookmark')}>
               <S.Left>
                 <img src="/img/mypage/heart-red.png" style={{width:"17px", height:"14px"}}/>
                 찜한 목록
