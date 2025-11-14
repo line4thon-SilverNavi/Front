@@ -30,8 +30,8 @@ export async function patchProgram(
   fdAdd(fd, "supplies", payload.supplies);
   fdAdd(fd, "isDeleteProposal", payload.isDeleteProposal);
 
-  if (payload.supplies !== null) {
-    fd.append("supplies", JSON.stringify(payload.supplies ?? []));
+  if (payload.supplies && payload.supplies.length > 0) {
+    fd.append("supplies", payload.supplies.join(", "));
   }
 
   // 파일들

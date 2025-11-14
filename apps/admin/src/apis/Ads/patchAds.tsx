@@ -20,18 +20,35 @@ export async function patchAds(payload: PatchAdsPayload): Promise<AdsDetail> {
   fdAdd(fd, "address", payload.address);
   fdAdd(fd, "description", payload.description);
 
-  if (payload.mainServices !== null) {
-    fd.append("mainServices", JSON.stringify(payload.mainServices ?? []));
+  if (payload.mainServices !== undefined && payload.mainServices !== null) {
+    if (payload.mainServices.length === 0) {
+      // 삭제 의도: BE에서 "빈 값이면 다 지우기"로 처리
+      fd.append("mainServices", "");
+    } else {
+      fd.append("mainServices", payload.mainServices.join(", "));
+    }
   }
 
-  payload.newImages?.forEach((f) => {
-    if (f) fd.append("newImages", f);
-  });
-
-  if (payload.existingImageUrls) {
-    payload.existingImageUrls.forEach((url) => {
-      fd.append("existingImageUrls", url);
+  if (payload.newImages) {
+    payload.newImages.forEach((file) => {
+      if (file) {
+        fd.append("newImages", file);
+      }
     });
+  }
+
+  if (
+    payload.existingImageUrls !== undefined &&
+    payload.existingImageUrls !== null
+  ) {
+    if (payload.existingImageUrls.length === 0) {
+      // 완전 삭제 의도라면, 서버 설계에 따라
+      // fd.append("existingImageUrls", "");
+    } else {
+      payload.existingImageUrls.forEach((url) => {
+        fd.append("existingImageUrls", url);
+      });
+    }
   }
 
   const res = await instance.patch<ApiEnvelope<AdsDetail>>(

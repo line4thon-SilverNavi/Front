@@ -13,7 +13,7 @@ import AttendanceModal from "@components/program/attendance/AttendanceModal";
 import type { ProgramItem } from "@apis/program/getPrograms";
 import type { ProgramDetail } from "@apis/program/types";
 import { searchPrograms } from "@apis/program/searchPrograms";
-import Pagination from "@components/common/Pagination";
+import Pagination from "@components/common/pagination";
 
 type OutletCtx = {
   setHeader: (o: {

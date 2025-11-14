@@ -18,7 +18,7 @@ import RequestSearchBar, {
 import ConsultList from "@components/counsel/CounselList";
 import ConsultDetailModal from "@components/counsel/CounselDetailModal";
 import { searchConsults } from "@apis/consult/searchConsults";
-import Pagination from "@components/common/Pagination";
+import Pagination from "@components/common/pagination";
 
 const DEFAULT_SUMMARY: CounselSummary = {
   totalCount: 0,
