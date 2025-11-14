@@ -33,9 +33,10 @@ export function CounselStatusItem({
         </p>
       )}
       {!showStar && !showReview && (
-        <>
-          <span className="value">{value}</span>건
-        </>
+        <span className="cntValue">
+          {value}
+          <p className="cnt">건</p>
+        </span>
       )}
     </CardContainer>
   );
@@ -67,5 +68,19 @@ const CardContainer = styled.div<{ $color: string }>`
     font-style: normal;
     font-weight: 700;
     margin-right: 5px;
+  }
+
+  .cntValue {
+    color: ${({ $color }) => $color};
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    margin-right: 5px;
+    display: flex;
+    align-items: baseline;
+  }
+
+  .cnt {
+    margin-left: 4px;
   }
 `;
