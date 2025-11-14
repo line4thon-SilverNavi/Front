@@ -14,7 +14,7 @@ export default function NotiCard({ notification }: NotiCardProps) {
     const showFacility = notification.type === "리뷰 답변" || notification.type === "상담";
     const [showRejectReason, setShowRejectReason] = useState(false);
     
-    const isRejected = (notification.type === "상담" || notification.type === "프로그램 신청") && notification.status === "거부";
+    const isRejected = (notification.type === "상담" || notification.type === "프로그램 신청");
     
     return (
         <CardWrapper $isRead={notification.isRead}>
@@ -32,12 +32,12 @@ export default function NotiCard({ notification }: NotiCardProps) {
                             e.stopPropagation();
                             setShowRejectReason(!showRejectReason);
                         }}>
-                            거부 사유 보기 &gt;
+                            자세히 보기 &gt;
                         </RejectToggle>
                         
                         {showRejectReason && (
                             <RejectReasonBox>
-                                <RejectReasonTitle>거부 사유</RejectReasonTitle>
+                                <RejectReasonTitle>{notification.targetName}</RejectReasonTitle>
                                 <RejectReasonContent>{notification.rejectReason}</RejectReasonContent>
                             </RejectReasonBox>
                         )}
