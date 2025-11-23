@@ -28,27 +28,20 @@ const Home = () => {
     : programs.filter(program => program.category === selectedCategory);
 
   useEffect(() => {
-    // 최초 1회만 위치 정보 전송
+    // 최초 1회만 위치 정보 전송 (고정 좌표)
     const sendLocation = async () => {
       if (locationSentRef.current) return;
 
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            await patchLocation({
-              latitude: position.coords.latitude.toString(),
-              longitude: position.coords.longitude.toString(),
-            });
-            locationSentRef.current = true;
-            console.log("✅ 위치 정보 전송 완료");
-          } catch (error) {
-            console.error("❌ 위치 정보 전송 실패:", error);
-          }
-        },
-        (error) => {
-          console.error("❌ 위치 권한 거부 또는 오류:", error.message);
-        }
-      );
+      try {
+        await patchLocation({
+          latitude: "37.599",
+          longitude: "126.925",
+        });
+        locationSentRef.current = true;
+        console.log("✅ 위치 정보 전송 완료 (고정 좌표)");
+      } catch (error) {
+        console.error("❌ 위치 정보 전송 실패:", error);
+      }
     };
 
     const fetchFacilities = async () => {
