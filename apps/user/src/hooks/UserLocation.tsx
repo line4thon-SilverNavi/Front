@@ -3,12 +3,12 @@ import { getaddress } from "@apis/home/getaddress";
 
 // 사용자의 현재 위도, 경도값 불러오기 (고정 좌표 사용)
 export function useUserLocation(){
-    const [location, setLocation] = useState<{
-        latitude: number | null;
-        longtitude: number | null;
-    }>({ latitude: 37.6154147804327, longtitude: 127.013565764354 });
+    const location = {
+        latitude: 37.6154147804327,
+        longtitude: 127.013565764354
+    };
 
-    const [error, setError] = useState<string | null>(null);
+    const error = null;
 
     // 고정 좌표 사용으로 실제 위치 조회 불필요
     // useEffect(()=> {

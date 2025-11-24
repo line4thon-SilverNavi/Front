@@ -2,12 +2,12 @@ import CommonHeader from "@components/common/CommonHeader";
 import DefaultLayout from "@layouts/DefaultLayout";
 import Map from "@components/location/Map";
 import SetRange from "@components/location/SetRange";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 
 export default function Location(){
-    const [latitude, setLatitude] = useState(37.6154147804327); // 고정 좌표
-    const [longitude, setLongitude] = useState(127.013565764354); // 고정 좌표
+    const latitude = 37.6154147804327; // 고정 좌표
+    const longitude = 127.013565764354; // 고정 좌표
     const [radius, setRadius] = useState(5); // 기본 5km
 
     // 고정 좌표 사용으로 현재 위치 조회 불필요
