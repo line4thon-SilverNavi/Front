@@ -29,7 +29,6 @@ const AuthLayoutWrapper = styled.div`
   padding-bottom: calc(
     clamp(16px, 5vh, 25px) + env(safe-area-inset-bottom, 0px)
   );
-  background-color: white;
 `;
 const TitleArea = styled.div`
   width: 100%;

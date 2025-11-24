@@ -6,24 +6,24 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 
 export default function Location(){
-    const [latitude, setLatitude] = useState(37.5665); // 서울 기본값
-    const [longitude, setLongitude] = useState(126.9780);
+    const [latitude, setLatitude] = useState(37.6154147804327); // 고정 좌표
+    const [longitude, setLongitude] = useState(127.013565764354); // 고정 좌표
     const [radius, setRadius] = useState(5); // 기본 5km
 
-    // 현재 위치 가져오기
-    useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    setLatitude(position.coords.latitude);
-                    setLongitude(position.coords.longitude);
-                },
-                (error) => {
-                    console.error("위치 정보를 가져올 수 없습니다:", error);
-                }
-            );
-        }
-    }, []);
+    // 고정 좌표 사용으로 현재 위치 조회 불필요
+    // useEffect(() => {
+    //     if (navigator.geolocation) {
+    //         navigator.geolocation.getCurrentPosition(
+    //             (position) => {
+    //                 setLatitude(position.coords.latitude);
+    //                 setLongitude(position.coords.longitude);
+    //             },
+    //             (error) => {
+    //                 console.error("위치 정보를 가져올 수 없습니다:", error);
+    //             }
+    //         );
+    //     }
+    // }, []);
 
     const handleRangeConfirm = (newRange: number) => {
         setRadius(newRange);
