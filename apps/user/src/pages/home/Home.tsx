@@ -28,51 +28,42 @@ const Home = () => {
     : programs.filter(program => program.category === selectedCategory);
 
   useEffect(() => {
-    // 최초 1회만 위치 정보 전송 (고정 좌표)
-    const sendLocation = async () => {
-      if (locationSentRef.current) return;
-
-      try {
-        await patchLocation({
-          latitude: "37.599",
-          longitude: "126.925",
-        });
-        locationSentRef.current = true;
-        console.log("✅ 위치 정보 전송 완료 (고정 좌표)");
-      } catch (error) {
-        console.error("❌ 위치 정보 전송 실패:", error);
+    const initializeData = async () => {
+      // 최초 1회만 위치 정보 전송 (고정 좌표)
+      if (!locationSentRef.current) {
+        try {
+          await patchLocation({
+            latitude: "37.6154147804327",
+            longitude: "127.013565764354",
+          });
+          locationSentRef.current = true;
+          console.log("✅ 위치 정보 전송 완료 (고정 좌표)");
+        } catch (error) {
+          console.error("❌ 위치 정보 전송 실패:", error);
+        }
       }
-    };
 
-    const fetchFacilities = async () => {
+      // 위치 정보 전송 후 시설/프로그램 목록 불러오기
       try {
-        const data = await getFacilityList();
-        if (data && data.length > 0) {
-          // 최대 3개만 표시
-          setFacilities(data.slice(0, 3));
+        const [facilitiesData, programsData] = await Promise.all([
+          getFacilityList(),
+          getProgramList()
+        ]);
+
+        if (facilitiesData && facilitiesData.length > 0) {
+          setFacilities(facilitiesData.slice(0, 3));
+        }
+
+        if (programsData && programsData.length > 0) {
+          setPrograms(programsData.slice(0, 3));
         }
       } catch (error) {
-        console.error("시설 목록 불러오기 실패:", error);
+        console.error("목록 불러오기 실패:", error);
         // API 실패 시 더미 데이터 유지
       }
     };
 
-    const fetchPrograms = async () => {
-      try {
-        const data = await getProgramList();
-        if (data && data.length > 0) {
-          // 최대 3개만 표시
-          setPrograms(data.slice(0, 3));
-        }
-      } catch (error) {
-        console.error("프로그램 목록 불러오기 실패:", error);
-        // API 실패 시 더미 데이터 유지
-      }
-    };
-
-    sendLocation();
-    fetchFacilities();
-    fetchPrograms();
+    initializeData();
   }, []);
 
   return (
