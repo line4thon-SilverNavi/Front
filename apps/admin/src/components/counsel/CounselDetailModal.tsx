@@ -206,7 +206,7 @@ export default function ConsultDetailModal({
           consultId,
           category,
           content: trimmedDesc,
-          status: "거부",
+          consultStatus: "거부",
         });
       } else if (hasDescription) {
         // 2) 답변이 있을 때: 무조건 POST
@@ -215,7 +215,7 @@ export default function ConsultDetailModal({
           consultId,
           category,
           content: trimmedDesc,
-          status: "완료",
+          consultStatus: "완료",
           confirmedDate: baseDate,
           confirmedTime: timeForPatch,
         });

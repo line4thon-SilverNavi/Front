@@ -7,7 +7,7 @@ export type ConsultReplyBody = {
   content: string;
   confirmedDate?: string;
   confirmedTime?: ConfirmedTime;
-  status: "거부" | "완료";
+  consultStatus: "거부" | "완료";
 };
 
 export async function postConsultReply(body: ConsultReplyBody) {
