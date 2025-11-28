@@ -213,6 +213,18 @@ const Input = styled.input<{
   &[value=""] {
     color: ${({ theme }) => theme.colors.gray04}; /* 값이 없을 때의 색상 */
   }
+
+  /* date/time input 달력 아이콘 색상 조정 */
+  &[type="date"],
+  &[type="time"] {
+    color-scheme: light;
+    
+    &::-webkit-calendar-picker-indicator {
+      filter: invert(0);
+      opacity: 0.7;
+      cursor: pointer;
+    }
+  }
 `;
 
 const IconButton = styled.div<{ width?: string; height?: string }>`

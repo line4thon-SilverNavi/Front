@@ -133,6 +133,7 @@ const Item = styled.section`
   padding: 12px 14px;
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.colors.gray03};
+  color: ${({ theme }) => theme.colors.gray07};
   cursor: pointer;
 
   span {
